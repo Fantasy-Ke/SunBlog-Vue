@@ -20,18 +20,17 @@
               :router="true"
               :default-active="state.activeIndex"
               active-text-color="#409eff"
-              class="el-menu-demo"
               mode="horizontal"
               @select="handleSelect"
             >
-              <el-menuItem
+              <el-menu-item
                 :route="l.path"
                 :index="l.index"
                 v-for="l in state.list"
                 :key="l.index"
               >
                 {{l.name}}
-              </el-menuItem>
+              </el-menu-item>
             </el-menu>
           </el-col>
           <el-col
@@ -419,7 +418,7 @@ export default defineComponent({
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less">
+<style  lang="less" scoped>
 .nav-mobile {
   display: flex;
   line-height: 60px;
@@ -475,13 +474,7 @@ export default defineComponent({
     border-radius: 50%;
     margin-top: 5px;
   }
-  .el-menu.el-menu--horizontal {
-    border-bottom: none;
-  }
-  .el-menu--horizontal > .el-menu-item {
-    cursor: pointer;
-    color: #333;
-  }
+  
   .nav-right {
     position: relative;
     padding-top: 15px;

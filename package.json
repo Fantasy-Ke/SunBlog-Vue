@@ -7,13 +7,14 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.5.1",
+    "@types/node": "^20.8.3",
+    "axios": "^0.21.1",
     "element-plus": "^2.3.14",
-    "highlight.js": "^11.9.0",
+    "highlight.js": "^10.7.2",
     "marked": "^9.1.0",
-    "vue": "^3.3.4",
+    "vue": "^3.0.5",
     "vue-router": "^4.0.6",
-    "vuex": "^4.1.0"
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@types/marked": "^6.0.0",
@@ -21,8 +22,10 @@
     "@vue/compiler-sfc": "^3.0.5",
     "less": "^4.1.1",
     "typescript": "^5.2.2",
+    "unplugin-auto-import": "^0.16.6",
+    "unplugin-vue-components": "^0.25.2",
     "vite": "^4.4.11",
     "vite-plugin-style-import": "^0.10.0",
-    "vue-tsc": "^1.8.18"
+    "vue-tsc": "^0.0.24"
   }
 }

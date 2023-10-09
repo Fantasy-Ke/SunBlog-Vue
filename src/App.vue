@@ -13,7 +13,7 @@
 <script lang="ts">
 import { defineComponent, defineAsyncComponent, reactive, onMounted } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
-import { isMobileOrPc } from "./utils/utils";
+import { isMobileOrPc } from "@utils/utils";
 
 // 移动端 rem 单位适配
 if (isMobileOrPc()) {

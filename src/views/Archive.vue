@@ -34,8 +34,10 @@ import { timestampToTime } from "../utils/utils";
 import { ParamsArchive, ArchiveData } from "../types/index";
 import service from "../utils/https";
 import urls from "../utils/urls";
+import SharedComponents from "@/mixins";
 
 export default defineComponent({
+  mixins: [SharedComponents],
   name: "Archive",
   setup() {
     const state = reactive({

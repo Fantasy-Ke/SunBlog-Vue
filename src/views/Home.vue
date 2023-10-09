@@ -67,14 +67,14 @@ export default defineComponent({
   name: "Home",
   setup() {
     onMounted(() => {
-      // if (document.location.protocol === "http:") {
-      //   ElMessage({
-      //     message:
-      //       "本网站已经配置了 https，为了有更好的体验效果，请把地址前缀换成 https 哦",
-      //     type: "warning",
-      //     duration: 3000,
-      //   });
-      // }
+      if (document.location.protocol === "http:") {
+        ElMessage({
+          message:
+            "本网站已经配置了 https，为了有更好的体验效果，请把地址前缀换成 https 哦",
+          type: "warning",
+          duration: 3000,
+        });
+      }
       let sakura_point_vsh: string = `
     uniform mat4 uProjection;
     uniform mat4 uModelview;

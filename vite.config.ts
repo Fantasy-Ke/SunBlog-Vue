@@ -1,12 +1,21 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import styleImport from 'vite-plugin-style-import'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
     styleImport({
       libs: [
         {
@@ -15,9 +24,6 @@ export default defineConfig({
           ensureStyleFile: true,
           resolveStyle: (name) => {
             return `element-plus/lib/theme-chalk/${name}.css`;
-          },
-          resolveComponent: (name) => {
-            return `element-plus/lib/${name}`;
           },
         }
       ]
@@ -29,6 +35,7 @@ export default defineConfig({
    * @default '/'
    */
   base: './',
+  
   /**
   * 与“根”相关的目录，构建输出将放在其中。如果目录存在，它将在构建之前被删除。
   * @default 'dist'
@@ -57,14 +64,13 @@ export default defineConfig({
     // 导入文件夹别名
     alias: {
       '@': path.resolve(__dirname, './src'),
-      views: path.resolve(__dirname, './src/views'),
-      components: path.resolve(__dirname, './src/components'),
-      utils: path.resolve(__dirname, './src/utils'),
-      less: path.resolve(__dirname, "./src/less"),
-      assets: path.resolve(__dirname, "./src/assets"),
-      com: path.resolve(__dirname, "./src/components"),
-      store: path.resolve(__dirname, "./src/store"),
-      mixins: path.resolve(__dirname, "./src/mixins")
+      '@views': path.resolve(__dirname, './src/views'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@less': path.resolve(__dirname, "./src/less"),
+      '@assets': path.resolve(__dirname, "./src/assets"),
+      '@store': path.resolve(__dirname, "./src/store"),
+      '@mixins': path.resolve(__dirname, "./src/mixins")
     },
   }
 })

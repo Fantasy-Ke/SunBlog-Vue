@@ -102,8 +102,10 @@ import { ElMessage } from "element-plus";
 import { defineComponent, defineAsyncComponent, reactive } from "vue";
 import { timestampToTime } from "../utils/utils";
 import { ToUser } from "../types/index";
+import SharedComponents from "../mixins";
 
 export default defineComponent({
+  mixins: [SharedComponents],
   name: "CommentList",
   components: {
     Comment: defineAsyncComponent(() => import("./Comment.vue")),
@@ -133,10 +135,6 @@ export default defineComponent({
         type: 0,
       }
     });
-
-    const formatTime = (value: string | Date): string => {
-      return timestampToTime(value, true);
-    };
 
     const handleCancel = (): void => {
       state.visible = false;
