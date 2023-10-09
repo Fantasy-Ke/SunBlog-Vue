@@ -5,8 +5,8 @@
       <router-view />
       <CustomSlider v-if="state.isShowSlider"></CustomSlider>
     </div>
-    <ArrowUp></ArrowUp>
-    <!-- <Footer v-if="isShowNav"></Footer> -->
+    <!-- <ArrowUp></ArrowUp> -->
+   <Footer ></Footer>
   </div>
 </template>
 
@@ -32,7 +32,6 @@ export default defineComponent({
       () => import("./components/CustomSlider.vue")
     ),
     Footer: defineAsyncComponent(() => import("./components/Footer.vue")),
-    ArrowUp: defineAsyncComponent(() => import("./components/Footer.vue")),
   },
   watch: {
     $route: function (val: any, oldVal: any) {

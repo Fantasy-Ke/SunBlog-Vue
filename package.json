@@ -8,19 +8,19 @@
   },
   "dependencies": {
     "@types/node": "^20.8.3",
-    "axios": "^0.21.1",
+    "axios": "^1.5.1",
     "element-plus": "^2.3.14",
     "highlight.js": "^10.7.2",
     "marked": "^9.1.0",
-    "vue": "^3.0.5",
-    "vue-router": "^4.0.6",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@types/marked": "^6.0.0",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vue/compiler-sfc": "^3.0.5",
-    "less": "^4.1.1",
+    "less": "^4.2.0",
     "typescript": "^5.2.2",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.25.2",
