@@ -175,8 +175,7 @@ export default defineComponent({
       state,
       showCommentModal,
       handleOk,
-      handleCancel,
-      formatTime,
+      handleCancel
     };
   },
 });

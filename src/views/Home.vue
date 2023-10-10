@@ -63,7 +63,7 @@
 import { defineComponent, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 
-export default {
+export default defineComponent({
   name: "Home",
   mounted(){
       if (document.location.protocol === "http:") {
@@ -1350,7 +1350,7 @@ export default {
           };
       })(window, "equestAnimationFrame");
   },
-};
+});
 </script>
 
 <style lang="less" scoped>

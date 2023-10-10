@@ -5,7 +5,7 @@
       src="../assets/userLogo.jpeg"
       alt=""
     >
-    <div class="title">夜尽天明</div>
+    <div class="title">Fantasy-Ke</div>
     <div class="right-content">
       <!-- <div class="item">
         <div class="num">123</div>粉丝
@@ -36,7 +36,7 @@
       <div class="content">
         <img
           style="width:100%;"
-          src="../assets/BiaoChenXuYing.png"
+          src="https://img-blog.csdnimg.cn/img_convert/efcd9fdbd329a96b49e2ed28f3d263fd.gif"
           alt="全栈修炼"
         />
       </div>
@@ -46,7 +46,7 @@
       <div class="content">
         <img
           style="width:100%;"
-          src="../assets/FrontEndGitHub.png"
+          src="https://raw.githubusercontent.com/devSouvik/devSouvik/master/gif3.gif"
           alt="前端GitHub"
         />
       </div>

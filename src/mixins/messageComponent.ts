@@ -1,6 +1,7 @@
 import {ElMessageBox, ElMessage} from 'element-plus'
+import { defineComponent } from 'vue';
 
-const messageComponent = {
+const messageComponent = defineComponent( {
     methods: {
          /**
          * 消息提示
@@ -82,6 +83,6 @@ const messageComponent = {
             }).then(ok ? ok : () => {}).catch(cancel ? cancel : () => {});
         }
     }
-}
+});
 
 export default messageComponent;

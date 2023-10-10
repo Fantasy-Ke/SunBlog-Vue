@@ -2,7 +2,7 @@
   <div class="archive left">
     <el-timeline>
       <el-timeline-item
-        v-for="(l, i) in state.articlesList"
+        v-for="(l) in state.articlesList"
         :key="l.year"
         placement="top"
         hide-timestamp
@@ -10,7 +10,7 @@
         <h3 class="year">{{l.year}}</h3>
 
         <el-timeline-item
-          v-for="(item, index) in l.list"
+          v-for="(item) in l.list"
           :key="item._id"
           :color="item.state === 1 ? 'green' : item.state === 3 ? 'red' : ''"
           placement="top"

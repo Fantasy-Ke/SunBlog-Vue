@@ -47,7 +47,7 @@
               title="标签"
             >
               <el-tag
-                size="mini"
+                size="small"
                 v-for="tag in state.articleDetail.tags"
                 :key="tag._id"
                 class="tag"

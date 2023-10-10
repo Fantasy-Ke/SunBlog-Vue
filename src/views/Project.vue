@@ -4,7 +4,7 @@
       <el-col
         class="el-col-pointer"
         :span="state.isMobileOrPc ? 24 : 12"
-        v-for="(l, index) in state.list"
+        v-for="(l) in state.list"
         :key="l._id"
         style="margin-bottom: 20px"
       >

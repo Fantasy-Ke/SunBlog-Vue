@@ -1,10 +1,10 @@
 
 <template>
   <div class="footer">
-    <div>全栈修炼 ©2018 Created by BiaoChenXuYing</div>
+    <div>梦幻小周 ©2023 Created by Fantasy-Ke</div>
     <div class="number">
       <a href="http://www.beian.miit.gov.cn" target="_blank"
-        >粤ICP备18141506号</a
+        >粤ICP备【还没有】号</a
       >
     </div>
   </div>

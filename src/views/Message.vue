@@ -100,7 +100,7 @@ const checkContent = (
   }
 };
 
-export default{
+export default defineComponent({
   mixins:[messageComponent],
   name: "Message",
   data() {
@@ -120,7 +120,7 @@ export default{
         phone: [{ validator: checkPhone, trigger: "blur" }],
         name: [{ validator: checkName, trigger: "blur" }],
         content: [{ validator: checkContent, trigger: "blur" }],
-      } as Rules,
+      } as any,
     })
     }
   },
@@ -181,7 +181,7 @@ export default{
     }
   }
 
-};
+});
 </script>
 <style scoped>
 .message {

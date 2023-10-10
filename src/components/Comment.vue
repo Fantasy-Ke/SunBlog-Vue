@@ -15,8 +15,8 @@
         ></el-input>
       </el-form-item>
     </el-form>
+    <template #footer>
     <div
-      slot="footer"
       class="dialog-footer"
     >
       <el-button
@@ -28,6 +28,7 @@
         @click="handleOk"
       >确 定</el-button>
     </div>
+  </template>
   </el-dialog>
 </template>
 

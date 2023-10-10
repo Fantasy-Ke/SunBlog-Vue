@@ -54,9 +54,11 @@
                   :src="userInfo.avatar"
                   alt="BiaoChenXuYing"
                 >
-                <el-dropdown-menu slot="dropdown">
+                <template #dropdown>
+                <el-dropdown-menu>
                   <el-dropdown-item command="logout">登 出</el-dropdown-item>
                 </el-dropdown-menu>
+              </template>
               </el-dropdown>
             </div>
           </el-col>
@@ -66,12 +68,10 @@
           >
             <div class="nav-right">
               <el-button
-                size="small"
                 type="primary"
                 @click="handleClick('login')"
               >登录</el-button>
               <el-button
-                size="small"
                 type="danger"
                 @click="handleClick('register')"
               >注册</el-button>
@@ -307,8 +307,8 @@ export default defineComponent({
       }
     };
 
-    const handleSelect = (val: string, oldVal: string): void => {
-      state.activeIndex = val;
+    const handleSelect = (key: string, keyPath: string[]) : void => {
+      state.activeIndex = key;
     };
 
     const handleOk = (value: boolean): void => {

@@ -2,7 +2,7 @@
   <div class="timeline left">
     <el-timeline>
       <el-timeline-item
-        v-for="(l, i) in state.list"
+        v-for="l in state.list"
         :key="l._id"
         :color="l.state === 1 ? 'green' : l.state === 3 ? 'red' : ''"
         placement="top"

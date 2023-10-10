@@ -1,9 +1,9 @@
 // https://github.com/vuejs/vue-class-component#using-mixins
 import { timestampToTime } from "../utils/utils";
-import { ElMessage } from "element-plus";
+import { defineComponent } from 'vue';
 import messageComponent from "./messageComponent";
 
-const SharedComponents = {
+const SharedComponents = defineComponent({
   mixins: [messageComponent],
   data(){
       return{
@@ -15,5 +15,5 @@ const SharedComponents = {
     },
     
   }
-};
+});
 export default SharedComponents;

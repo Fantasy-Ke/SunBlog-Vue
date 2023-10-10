@@ -6,7 +6,7 @@
       <CustomSlider v-if="state.isShowSlider"></CustomSlider>
     </div>
     <!-- <ArrowUp></ArrowUp> -->
-   <Footer ></Footer>
+   <Footer  v-if="state.isShowNav" ></Footer>
   </div>
 </template>
 
