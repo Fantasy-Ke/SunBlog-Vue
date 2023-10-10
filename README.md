@@ -3,7 +3,7 @@
 
 ## 简介
 
-**项目用 Vue3 + TypeScript + Vite2 + Vuex4 + Vue-Router4 + element-plus ！**
+**项目用 Vue3 + TypeScript + Vite4 + Vuex4 + Vue-Router4 + element-plus ！**
 
 <!-- ## 功能
 
@@ -30,15 +30,15 @@
 
 所有技术都是当前最新的。
 
-- vue： ^3.0.5
-- typescript : ^4.1.3
-- element-plus: ^1.0.2-beta.41
-- vue-router : ^4.0.6
-- vite: ^2.2.3
+- vue： ^3.3.4
+- typescript : ^5.2.2
+- element-plus: ^2.3.14
+- vue-router : ^4.2.5
+- vite: ^4.4.11
 - vuex: ^4.0.0
-- axios: ^0.21.1
+- axios: ^1.5.1
 - highlight.js: ^10.7.2
-- marked：^2.0.3
+- marked：^9.1.0
 
 
 ## Build Setup 
