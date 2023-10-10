@@ -61,6 +61,7 @@ import { ElMessage } from "element-plus";
 import service from "../utils/https";
 import urls from "../utils/urls";
 import { MessageParams, RulesItem, Rules } from "../types/index";
+import messageComponent from '@/mixins/messageComponent';
 
 const check = (
   rule: any,
@@ -99,10 +100,12 @@ const checkContent = (
   }
 };
 
-export default defineComponent({
+export default{
+  mixins:[messageComponent],
   name: "Message",
-  setup() {
-    const state = reactive({
+  data() {
+    return {
+      state: reactive({
       btnLoading: false,
       cacheTime: 0, // 缓存时间
       times: 0, // 留言次数
@@ -118,20 +121,25 @@ export default defineComponent({
         name: [{ validator: checkName, trigger: "blur" }],
         content: [{ validator: checkContent, trigger: "blur" }],
       } as Rules,
-    });
-
-    const submit = async (): Promise<void> => {
-      if (state.times > 3) {
-        ElMessage({
-          message: "您今天留言的次数已经用完，明天再来留言吧！",
-          type: "warning",
-        });
+    })
+    }
+  },
+  methods:{
+    async submit(){
+      // ElMessage({
+      //     message: "您今天留言的次数已经用完，明天再来留言吧！",
+      //     type: "warning",
+      //   });
+      
+      if (this.state.times > 3) {
+        this.warning("您今天留言的次数已经用完，明天再来留言吧！");
         return;
       }
 
       let now = new Date();
       let nowTime = now.getTime();
-      if (nowTime - state.cacheTime < 60000) {
+      if (nowTime - this.state.cacheTime < 60000) {
+        this.warning("")
         ElMessage({
           message: "您留言太过频繁，1 分钟后再来留言吧！",
           type: "warning",
@@ -142,56 +150,38 @@ export default defineComponent({
       const reg: RegExp = new RegExp(
         "^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"
       );
-      if (!state.params.email) {
-        ElMessage({
-          message: "邮箱不能为空！",
-          type: "warning",
-        });
+      if (!this.state.params.email) {
+        this.warning("邮箱不能为空！")
         return;
-      } else if (!reg.test(state.params.email)) {
-        ElMessage({
-          message: "请输入格式正确的邮箱！",
-          type: "warning",
-        });
+      } else if (!reg.test(this.state.params.email)) {
+        this.warning("请输入格式正确的邮箱！")
         return;
-      } else if (!state.params.phone) {
-        ElMessage({
-          message: "手机不能为空",
-          type: "warning",
-        });
+      } else if (!this.state.params.phone) {
+        this.warning("手机不能为空")
         return;
-      } else if (!state.params.name) {
-        ElMessage({
-          message: "名字不能为空",
-          type: "warning",
-        });
+      } else if (!this.state.params.name) {
+        this.warning("名字不能为空")
         return;
-      } else if (!state.params.content) {
-        ElMessage({
-          message: "内容不能为空",
-          type: "warning",
-        });
+      } else if (!this.state.params.content) {
+        this.elalertmsg();
         return;
       }
-      state.btnLoading = true;
-      await service.post(urls.addMessage, state.params);
-      state.btnLoading = false;
-
-      state.times++;
-      state.cacheTime = nowTime;
-      ElMessage({
-        message: "感谢您的留言，有必要的，博主有空都会回复您的 ！",
-        type: "success",
+      this.state.btnLoading = true;
+      await service.post(urls.addMessage, this.state.params)
+      .then(()=>{
+        this.state.btnLoading = false;
+        this.state.times++;
+        this.state.cacheTime = nowTime;
+        this.success("感谢您的留言，有必要的，博主有空都会回复您的 ！")
+        this.state.params.content = "";
+      }).finally (()=>{
+        
       });
-      state.params.content = "";
-    };
+      
+    }
+  }
 
-    return {
-      state,
-      submit,
-    };
-  },
-});
+};
 </script>
 <style scoped>
 .message {

@@ -63,10 +63,9 @@
 import { defineComponent, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 
-export default defineComponent({
+export default {
   name: "Home",
-  setup() {
-    onMounted(() => {
+  mounted(){
       if (document.location.protocol === "http:") {
         ElMessage({
           message:
@@ -1350,9 +1349,8 @@ export default defineComponent({
             w.setTimeout(c, 1000 / 60);
           };
       })(window, "equestAnimationFrame");
-    });
   },
-});
+};
 </script>
 
 <style lang="less" scoped>
