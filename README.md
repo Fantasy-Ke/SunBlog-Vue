@@ -3,6 +3,8 @@
 
 ## 简介
 
+#### 该项目已通过阿里云仓库、GithubAction持续集成与部署（[Fantasy-Ke博客地址](http://124.71.15.19:5100/)）
+
 **项目用 Vue3 + TypeScript + Vite4 + Vuex4 + Vue-Router4 + element-plus ！**
 
 <!-- ## 功能
