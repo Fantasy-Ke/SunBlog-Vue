@@ -1,13 +1,17 @@
 FROM node:16.20.2-alpine as builder
 
-EXPOSE 80
 # 设置项目目录
 WORKDIR /app
+
+COPY package*.json ./
+RUN echo "COPY is success"
+
+RUN npm install
+RUN echo "install is success"
 
 COPY . .
 
 # 编译项目
-# RUN npm run build
 RUN npm run build
 RUN echo "build is success"
 
