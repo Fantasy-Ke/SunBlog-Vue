@@ -8,7 +8,7 @@ COPY . .
 
 # 编译项目
 # RUN npm run build
-RUN npm  build
+RUN npm run build
 RUN echo "build is success"
 
 FROM nginx
