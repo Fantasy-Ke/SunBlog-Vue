@@ -9,7 +9,7 @@ const pathResolve = (dir: string): any => {
 }
 
 const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
-  const { VITE_PORT, VITE_OPEN, VITE_BASE_PATH, VITE_OUT_DIR, VITE_PROXY_URL } = loadEnv(mode)
+  const { VITE_PORT, VITE_OPEN, VITE_BASE_PATH, VITE_OUT_DIR, VITE_PROXY_URL,VITE_AXIOS_BASE_URL } = loadEnv(mode)
 
   const alias: Record<string, string> = {
       '/@': pathResolve('./src/'),
@@ -18,11 +18,12 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
   }
 
   let proxy: Record<string, string | ProxyOptions> = {}
-  if (VITE_PROXY_URL) {
+  if (VITE_AXIOS_BASE_URL) {
       proxy = {
-          '/': {
-              target: VITE_PROXY_URL,
+        '/api': {
+              target: VITE_AXIOS_BASE_URL,
               changeOrigin: true,
+              rewrite: (pathStr) => pathStr.replace('/api', '')
           },
       }
   }
