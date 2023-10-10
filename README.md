@@ -3,7 +3,7 @@
 
 ## 简介
 
-**项目用 Vue3 + TypeScript + Vite2 + Vuex4 + Vue-Router4 + element-plus ！**
+**项目用 Vue3 + TypeScript + Vite4 + Vuex4 + Vue-Router4 + element-plus ！**
 
 <!-- ## 功能
 
