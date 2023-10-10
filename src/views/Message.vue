@@ -61,7 +61,7 @@ import { ElMessage } from "element-plus";
 import service from "../utils/https";
 import urls from "../utils/urls";
 import { MessageParams, RulesItem, Rules } from "../types/index";
-import messageComponent from '@/mixins/messageComponent';
+import messageComponent from '/@/mixins/messageComponent';
 
 const check = (
   rule: any,
