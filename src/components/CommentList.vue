@@ -5,7 +5,7 @@
       <span>{{numbers}} 条评论</span>
     </div>
     <div
-      v-for="(item, i) in list"
+      v-for="item in list"
       :key="item._id"
       class="item"
     >
