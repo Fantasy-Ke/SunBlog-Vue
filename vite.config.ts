@@ -30,7 +30,9 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
   return {
       plugins: [vue()],
       root: process.cwd(),
-      resolve: { alias },
+      resolve: { 
+        alias 
+    },
       base: VITE_BASE_PATH,
       server: {
           host: '0.0.0.0',

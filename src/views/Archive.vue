@@ -32,9 +32,9 @@
 import { defineComponent, reactive, onMounted } from "vue";
 import { timestampToTime } from "../utils/utils";
 import { ParamsArchive, ArchiveData } from "../types/index";
-import service from "../utils/https";
+import service from "/@/utils/https";
 import urls from "../utils/urls";
-import SharedComponents from "@/mixins";
+import SharedComponents from "/@/mixins";
 
 export default defineComponent({
   mixins: [SharedComponents],
