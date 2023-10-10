@@ -151,10 +151,10 @@ export default defineComponent({
         "^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"
       );
       if (!this.state.params.email) {
-        this.warning("邮箱不能为空！")
+        this.$message.warning("邮箱不能为空！")
         return;
       } else if (!reg.test(this.state.params.email)) {
-        this.warning("请输入格式正确的邮箱！")
+        this.$message.success("请输入格式正确的邮箱！")
         return;
       } else if (!this.state.params.phone) {
         this.warning("手机不能为空")

@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted,h } from "vue";
 import { ElMessage } from "element-plus";
 
 export default defineComponent({
@@ -68,10 +68,14 @@ export default defineComponent({
   mounted(){
       if (document.location.protocol === "http:") {
         //"本网站已经配置了 https，为了有更好的体验效果，请把地址前缀换成 https 哦",
-        ElMessage({
-          message:"Fantasy-Ke博客🙌",
-          type: "success",
-        });
+        // ElMessage({
+        //   message:"欢迎光临！ Fantasy-Ke博客🙌",
+        //   type: "success",
+        // });
+        this.$notify({
+          title: '公告🤣',
+          message: h('i', { style: 'color: teal' }, '欢迎光临！ Fantasy-Ke博客🙌'),
+        })
       }
       let sakura_point_vsh: string = `
     uniform mat4 uProjection;
