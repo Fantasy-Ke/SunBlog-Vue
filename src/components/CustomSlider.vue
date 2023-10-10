@@ -2,7 +2,7 @@
   <div class="right slider">
     <img
       class="right-logo"
-      src="../assets/userLogo.jpeg"
+      src="../assets/userLogo.jpg"
       alt=""
     >
     <div class="title">Fantasy-Ke</div>

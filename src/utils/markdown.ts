@@ -1,8 +1,8 @@
 // https://www.cherylgood.cn/detail/5bdaf4722382b4646c27143b.html
-import highlight from 'highlight.js'
-import marked from 'marked'
-// const highlight = require("highlight.js");
-// const marked = require("marked");
+// import highlight from 'highlight.js'
+// import marked from 'marked'
+const highlight = require("highlight.js");
+const marked = require("marked");
 const tocObj = {
   add: function (text: any, level: any) {
     var anchor = `#toc${level}${++this.index}`;
