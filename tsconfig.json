@@ -7,7 +7,6 @@
     "moduleResolution": "Node",
     "strict": false,
     "jsx": "preserve",
-    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,

@@ -5,8 +5,8 @@ import { createApp } from "vue";
 
 // Plugins
 import { registerPlugins } from "@/plugins";
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
 import "animate.css";
 import "./assets/css/index.css";
 import "./assets/css/iconfont.css";
