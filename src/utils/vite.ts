@@ -9,6 +9,7 @@ export interface ViteEnv {
     VITE_OUT_DIR: string
     VITE_AXIOS_BASE_URL: string
     VITE_PROXY_URL: string
+    VITE_BASE_URL:string
 }
 
 export function isDev(mode: string): boolean {
@@ -16,6 +17,8 @@ export function isDev(mode: string): boolean {
 }
 
 export function isProd(mode: string | undefined): boolean {
+    console.log(mode === 'production');
+    
     return mode === 'production'
 }
 
@@ -28,6 +31,8 @@ export function loadEnv(mode: string): ViteEnv {
     envList.forEach((e) => {
         dotenv.config({ path: e })
     })
+    console.log(envList);
+    
     for (const envName of Object.keys(process.env)) {
         let realName = (process.env as any)[envName].replace(/\\n/g, '\n')
         realName = realName === 'true' ? true : realName === 'false' ? false : realName
