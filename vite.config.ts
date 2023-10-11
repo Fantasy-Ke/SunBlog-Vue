@@ -6,7 +6,7 @@ import { ConfigEnv, ProxyOptions, UserConfig, defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
 // 让项目支持require导入模块 import vitePluginRequire from 'vite-plugin-require'
 import requireTransform from "vite-plugin-require-transform";
-import {loadEnv} from './src/utils/vite'
+import {isProd, loadEnv} from './src/utils/vite'
 import { resolve } from "path";
 
 
@@ -26,7 +26,7 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
   let proxy: Record<string, string | ProxyOptions> = 
   {
     '/api': {
-          target: VITE_AXIOS_BASE_URL,
+          target: isProd(mode) ? VITE_AXIOS_BASE_URL : VITE_AXIOS_BASE_URL,
           ws: true,
           changeOrigin: true,
           secure: false, //解决target使用https出错问题
