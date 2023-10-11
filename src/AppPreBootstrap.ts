@@ -23,7 +23,6 @@ export class AppPreBootstrap {
     } else {
       envName = 'dev';
     }
-    console.log(222);
     
     const url = 'assets/appconfig.' + envName + '.json';
     httpClient.get(url,{

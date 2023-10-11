@@ -57,7 +57,7 @@ export function decryptJWT(token: string): any {
   export function getJWTDate(timestamp: number): Date {
     return new Date(timestamp * 1000);
   }
-// console.log('import.meta.env: ', import.meta.env);
+console.log('import.meta.env: ', import.meta.env.VITE_AXIOS_BASE_URL);
 
 // 创建 axios 实例
 const apiHttpClient = axios.create({

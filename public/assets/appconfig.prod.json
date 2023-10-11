@@ -1,5 +1,3 @@
 {
-  "remoteServiceBaseUrl": "https://proapi.52abp.com",
-  "uploadApiUrl": "/api/File/Upload",
-  "portalBaseUrl": "https://www.52abp.com"
+  "remoteServiceBaseUrl": "http://124.71.15.19:5155"
 }
