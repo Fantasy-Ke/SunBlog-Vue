@@ -1,0 +1,5 @@
+{
+  "remoteServiceBaseUrl": "https://proapi.52abp.com",
+  "uploadApiUrl": "/api/File/Upload",
+  "portalBaseUrl": "https://www.52abp.com"
+}

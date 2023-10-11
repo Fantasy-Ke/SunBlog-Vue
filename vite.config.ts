@@ -23,15 +23,14 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
      // 'vue-i18n': isProd(mode) ? 'vue-i18n/dist/vue-i18n.cjs.prod.js' : 'vue-i18n/dist/vue-i18n.cjs.js',
   }
 
-  let proxy: Record<string, string | ProxyOptions> = {}
-  if (VITE_AXIOS_BASE_URL) {
-      proxy = {
-        '/api': {
-              target: VITE_AXIOS_BASE_URL,
-              changeOrigin: true,
-              rewrite: (pathStr) => pathStr.replace('/api', '')
-          },
-      }
+  let proxy: Record<string, string | ProxyOptions> = 
+  {
+    '/api': {
+          target: VITE_AXIOS_BASE_URL,
+          ws: true,
+          changeOrigin: true,
+          secure: false, //解决target使用https出错问题
+      },
   }
 
   return {

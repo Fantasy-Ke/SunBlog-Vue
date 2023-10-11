@@ -186,13 +186,16 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import MarkdownIt from "markdown-it";
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed, inject } from "vue";
 import EasyTyper from "easy-typer-js/src/ts";
 import Swiper from "../components/Swiper.vue";
 import { talkList as talks, articles, images } from "../api/data";
 import img from "../assets/images/1.jpg";
 import { useToast } from "@/stores/toast";
+import {TestServiceProxy} from "@/shared/service-proxies"
 const route = useRoute();
+const _testservice = new TestServiceProxy('',inject('$api'));
+
 // 打字机配置
 const obj = reactive({
   output: "",
@@ -212,7 +215,6 @@ const tip = ref<boolean>(false);
 const page = reactive({
   articles: [] as Array<any>,
 });
-
 //滚动通知
 const talkList = reactive(talks);
 
@@ -229,6 +231,12 @@ const runTime = (): void => {
   time.value = str;
 };
 onMounted(() => {
+  _testservice.getUser().then((ccc)=>{
+    console.log(123456);
+  }).catch((res)=>{
+    console.log(res);
+    useToast().error(res.error.error);
+  });
   new EasyTyper(
     obj,
     "为遇一人而入红尘，人去我亦去，此生不留尘。 --魔道祖师",
