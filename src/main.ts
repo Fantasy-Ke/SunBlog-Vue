@@ -1,23 +1,34 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import { store, key } from './store'
-import router from "./router";
-import service from "/@/utils/https";
+import App from "./App.vue";
+
+// Composables
+import { createApp } from "vue";
+
+// Plugins
+import { registerPlugins } from "@/plugins";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import { ElNotification,ElMessage } from 'element-plus'
+import "animate.css";
+import "./assets/css/index.css";
+import "./assets/css/iconfont.css";
+import "./assets/css/markdown.css";
+import "highlight.js/styles/atom-one-dark.css";
+import "vue-toastification/dist/index.css";
+import "vue3-cute-component/dist/style.css";
+import InfiniteLoading from "vue-infinite-loading";
+import Toast, { PluginOptions } from "vue-toastification";
+import formatDateTime from "@/plugins/formatDateTime";
 
 async function start() {
-const app = createApp(App)
-
-app.use(store, key)
-app.use(router)
-app.use(ElementPlus);
-// app.mixin(messageComponent);
-// app.mixin(SharedComponents);
-app.mount('#app');
-app.config.globalProperties.$https = service;
-app.config.globalProperties.$notify = ElNotification;
-app.config.globalProperties.$message = ElMessage;
-}
-start()
+  const app = createApp(App)
+  registerPlugins(app);
+  const options: PluginOptions = {
+    // You can set your default options here
+  };
+  app.use(InfiniteLoading).use(Toast, options).use(formatDateTime)
+  app.use(ElementPlus);
+  // app.mixin(messageComponent);
+  // app.mixin(SharedComponents);
+  app.mount('#app');
+  app.config.globalProperties.$message = Toast;
+  }
+  start()

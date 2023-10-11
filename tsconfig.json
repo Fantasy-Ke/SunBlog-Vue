@@ -1,23 +1,26 @@
 {
-    "include": ["./src/**/*.ts", "./src/**/*.vue", "./src/*.vue"],
-     "compilerOptions": {
-       "target": "esnext",
-       "module": "esnext",
-       "moduleResolution": "node",
-       "strict": false,
-       "jsx": "preserve",
-       "sourceMap": true,
-       // 忽略 this 的类型检查, Raise error on this expressions with an implied any type.
-       "noImplicitThis": false,
-       "resolveJsonModule": true,
-       "esModuleInterop": true,
-       "lib": ["esnext", "dom"],
-       "types": ["vite/client","element-plus/global"],
-       "baseUrl": "./",
-       "paths": {
-           "/@/*": ["src/*"]
-       },
-     },
-     // ts 排除的文件
-     "exclude": ["node_modules"],
- }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "esnext",
+    "useDefineForClassFields": true,
+    "module": "esnext",
+    "moduleResolution": "Node",
+    "strict": false,
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "paths": {
+      "@/*": [
+       "src/*"
+      ]
+     }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "exclude": ["node_modules"]
+}

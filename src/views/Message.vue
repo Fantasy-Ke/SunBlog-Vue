@@ -1,190 +1,149 @@
 <template>
-  <div class="message left">
-    <el-form
-      :model="state.params"
-      status-icon
-      :rules="state.rules"
-      ref="params"
-      label-width="50px"
-      class="demo-ruleForm"
-    >
-      <el-form-item
-        label="邮箱"
-        prop="email"
+  <!-- banner -->
+  <div class="message-banner" :style="cover">
+    <!-- 弹幕输入框 -->
+    <div class="message-container">
+      <h1 class="message-title">留言板</h1>
+      <div class="animated fadeInUp message-input-wrapper">
+        <input
+          v-model="messageContent"
+          @click="show = true"
+          @keyup.enter="addToList"
+          placeholder="说点什么吧"
+        />
+        <button
+          class="ml-3 animated bounceInLeft"
+          @click="addToList"
+          v-show="show"
+        >
+          发送
+        </button>
+      </div>
+    </div>
+    <!-- 弹幕列表 -->
+    <div class="barrage-container">
+      <vue-danmaku
+        ref="danmaku"
+        v-model:danmus="danmus"
+        useSlot
+        loop
+        randomChannel
+        :speeds="150"
       >
-        <el-input
-          type="text"
-          placeholder="必填"
-          v-model="state.params.email"
-          autocomplete="off"
-        ></el-input>
-      </el-form-item>
-      <el-form-item
-        label="手机"
-        prop="phone"
-      >
-        <el-input
-          v-model="state.params.phone"
-          autocomplete="off"
-        ></el-input>
-      </el-form-item>
-      <el-form-item
-        label="名字"
-        prop="name"
-      >
-        <el-input v-model="state.params.name"></el-input>
-      </el-form-item>
-      <el-form-item
-        label="内容"
-        prop="content"
-      >
-        <el-input
-          type="textarea"
-          placeholder="必填"
-          v-model="state.params.content"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          :loading="state.btnLoading"
-          @click="submit"
-        >提交</el-button>
-      </el-form-item>
-    </el-form>
+        <template v-slot:dm="{ index, danmu }">
+          <span class="barrage-items" :key="index">
+            <img
+              :src="danmu.avatar"
+              width="30"
+              height="30"
+              style="border-radius: 50%"
+            />
+            <span class="ml-2">{{ danmu.nickname }} :</span>
+            <span class="ml-2">{{ danmu.messageContent }}</span>
+          </span>
+        </template>
+      </vue-danmaku>
+    </div>
   </div>
 </template>
+<script setup lang="ts">
+//弹幕开源地址：https://github.com/hellodigua/vue-danmaku/tree/vue3
+import vueDanmaku from "vue3-danmaku";
+import { computed, ref, reactive, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { images, messageList } from "../api/data";
+const route = useRoute();
+const messageContent = ref<string>("");
+const show = ref<boolean>(false);
 
-<script lang="ts">
-import { defineComponent, reactive, onMounted } from "vue";
-import { ElMessage } from "element-plus";
-import service from "../utils/https";
-import urls from "../utils/urls";
-import { MessageParams, RulesItem, Rules } from "../types/index";
-import messageComponent from '/@/mixins/messageComponent';
+const addToList = (): void => {};
+const barrageList = (): void => {};
+const danmaku = ref(null);
 
-const check = (
-  rule: any,
-  value: string | any,
-  callback: Function | any
-): any => {
-  if (!value) {
-    return callback(new Error("邮箱不能为空"));
-  }
-};
-const checkPhone = (
-  rule: any,
-  value: string | any,
-  callback: Function | any
-): any => {
-  if (!value) {
-    return callback(new Error("手机不能为空"));
-  }
-};
-const checkName = (
-  rule: any,
-  value: string | any,
-  callback: Function | any
-): any => {
-  if (!value) {
-    return callback(new Error("名字不能为空"));
-  }
-};
-const checkContent = (
-  rule: any,
-  value: string | any,
-  callback: Function | any
-) => {
-  if (!value) {
-    return callback(new Error("内容不能为空"));
-  }
-};
+const danmus = reactive(messageList);
+const cover = computed(() => {
+  let cover: string = images.find(
+    (item) => item.pageLabel === route.name
+  )?.pageCover;
+  return "background: url(" + cover + ") center center / cover no-repeat";
+});
 
-export default defineComponent({
-  mixins:[messageComponent],
-  name: "Message",
-  data() {
-    return {
-      state: reactive({
-      btnLoading: false,
-      cacheTime: 0, // 缓存时间
-      times: 0, // 留言次数
-      params: {
-        email: "",
-        phone: "",
-        name: "",
-        content: "",
-      } as MessageParams,
-      rules: {
-        email: [{ validator: check, trigger: "blur" }],
-        phone: [{ validator: checkPhone, trigger: "blur" }],
-        name: [{ validator: checkName, trigger: "blur" }],
-        content: [{ validator: checkContent, trigger: "blur" }],
-      } as any,
-    })
-    }
-  },
-  methods:{
-    async submit(){
-      // ElMessage({
-      //     message: "您今天留言的次数已经用完，明天再来留言吧！",
-      //     type: "warning",
-      //   });
-      
-      if (this.state.times > 3) {
-        this.warning("您今天留言的次数已经用完，明天再来留言吧！");
-        return;
-      }
-
-      let now = new Date();
-      let nowTime = now.getTime();
-      if (nowTime - this.state.cacheTime < 60000) {
-        this.warning("")
-        ElMessage({
-          message: "您留言太过频繁，1 分钟后再来留言吧！",
-          type: "warning",
-        });
-        return;
-      }
-
-      const reg: RegExp = new RegExp(
-        "^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"
-      );
-      if (!this.state.params.email) {
-        this.$message.warning("邮箱不能为空！")
-        return;
-      } else if (!reg.test(this.state.params.email)) {
-        this.$message.success("请输入格式正确的邮箱！")
-        return;
-      } else if (!this.state.params.phone) {
-        this.warning("手机不能为空")
-        return;
-      } else if (!this.state.params.name) {
-        this.warning("名字不能为空")
-        return;
-      } else if (!this.state.params.content) {
-        this.elalertmsg();
-        return;
-      }
-      this.state.btnLoading = true;
-      await service.post(urls.addMessage, this.state.params)
-      .then(()=>{
-        this.state.btnLoading = false;
-        this.state.times++;
-        this.state.cacheTime = nowTime;
-        this.success("感谢您的留言，有必要的，博主有空都会回复您的 ！")
-        this.state.params.content = "";
-      }).finally (()=>{
-        
-      });
-      
-    }
-  }
-
+onMounted(() => {
+  (danmaku.value as any).play();
 });
 </script>
+
 <style scoped>
-.message {
-  padding: 100px 20px 0 20px;
+.message-banner {
+  position: absolute;
+  top: -60px;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  /* background: url(https://www.static.talkxj.com/d5ojdj.jpg) center center /
+    cover no-repeat; */
+  background-color: #49b1f5;
+  animation: header-effect 1s;
+  margin-top: 60px;
+}
+.message-title {
+  color: #eee;
+  animation: title-scale 1s;
+}
+.message-container {
+  position: absolute;
+  width: 360px;
+  top: 35%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 5;
+  margin: 0 auto;
+  color: #fff;
+}
+.message-input-wrapper {
+  display: flex;
+  justify-content: center;
+  height: 2.5rem;
+  margin-top: 2rem;
+}
+.message-input-wrapper input {
+  outline: none;
+  width: 70%;
+  border-radius: 20px;
+  height: 100%;
+  padding: 0 1.25rem;
+  color: #eee;
+  border: #fff 1px solid;
+}
+.message-input-wrapper input::-webkit-input-placeholder {
+  color: #eeee;
+}
+.message-input-wrapper button {
+  outline: none;
+  border-radius: 20px;
+  height: 100%;
+  padding: 0 1.25rem;
+  border: #fff 1px solid;
+}
+.barrage-container {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100% -50px);
+  width: 100%;
+}
+.barrage-items {
+  background: rgb(0, 0, 0, 0.7);
+  border-radius: 100px;
+  color: #fff;
+  padding: 5px 10px 5px 5px;
+  align-items: center;
+  display: flex;
+}
+.barrage-container .vue-danmaku {
+  height: 100%;
 }
 </style>

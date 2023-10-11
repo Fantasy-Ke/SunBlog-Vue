@@ -6,13 +6,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN echo "COPY is success"
 
-RUN npm install
+RUN yarn
 RUN echo "install is success"
 
 COPY . .
 
 # 编译项目
-RUN npm run build
+RUN yarn run build
 RUN echo "build is success"
 
 FROM nginx

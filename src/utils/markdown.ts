@@ -1,109 +1,61 @@
-// https://www.cherylgood.cn/detail/5bdaf4722382b4646c27143b.html
-// import highlight from 'highlight.js'
-// import marked from 'marked'
-const highlight = require("highlight.js");
-const marked = require("marked");
-const tocObj = {
-  add: function (text: any, level: any) {
-    var anchor = `#toc${level}${++this.index}`;
-    this.toc.push({ anchor: anchor, level: level, text: text });
-    return anchor;
-  },
-  // 使用堆栈的方式处理嵌套的ul,li，level即ul的嵌套层次，1是最外层
-  // <ul>
-  //   <li></li>
-  //   <ul>
-  //     <li></li>
-  //   </ul>
-  //   <li></li>
-  // </ul>
-  toHTML: function () {
-    let levelStack: any = [];
-    let result = "";
-    const addStartUL = () => {
-      result += '<ul class="anchor-ul" id="anchor-fix">';
-    };
-    const addEndUL = () => {
-      result += "</ul>\n";
-    };
-    const addLI = (anchor: any, text: any) => {
-      result +=
-        '<li><a class="toc-link" href="#' + anchor + '">' + text + "<a></li>\n";
-    };
-
-    this.toc.forEach(function (item: any) {
-      let levelIndex = levelStack.indexOf(item.level);
-      // 没有找到相应level的ul标签，则将li放入新增的ul中
-      if (levelIndex === -1) {
-        levelStack.unshift(item.level);
-        addStartUL();
-        addLI(item.anchor, item.text);
-      } // 找到了相应level的ul标签，并且在栈顶的位置则直接将li放在此ul下
-      else if (levelIndex === 0) {
-        addLI(item.anchor, item.text);
-      } // 找到了相应level的ul标签，但是不在栈顶位置，需要将之前的所有level出栈并且打上闭合标签，最后新增li
-      else {
-        while (levelIndex--) {
-          levelStack.shift();
-          addEndUL();
+import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
+export default function markdownToHtml(content: string): string {
+    const md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+        breaks: true,
+        highlight(str: string, lang: string = "C#"): string {
+            // 当前时间加随机数生成唯一的id标识
+            let d: number = new Date().getTime();
+            if (window.performance && typeof window.performance.now === "function") {
+                d += performance.now();
+            }
+            const codeIndex = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+                /[xy]/g,
+                function (c) {
+                    let r: number = (d + Math.random() * 16) % 16 | 0;
+                    d = Math.floor(d / 16);
+                    return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
+                }
+            );
+            // 复制功能主要使用的是 clipboard.js
+            let html: string = `<button class="copy-btn iconfont iconfuzhi" type="button" data-clipboard-action="copy" data-clipboard-target="#copy${codeIndex}"></button>`;
+            const linesLength: number = str.split(/\n/).length - 1;
+            // 生成行号
+            let linesNum: string = '<span aria-hidden="true" class="line-numbers-rows">';
+            for (let index = 0; index < linesLength; index++) {
+                linesNum = linesNum + "<span></span>";
+            }
+            linesNum += "</span>";
+            if (lang && hljs.getLanguage(lang)) {
+                // highlight.js 高亮代码
+                const preCode = hljs.highlight(lang, str, true).value;
+                html = html + preCode;
+                if (linesLength) {
+                    html += '<b class="name">' + lang + "</b>";
+                }
+                // 将代码包裹在 textarea 中，由于防止textarea渲染出现问题，这里将 "<" 用 "<" 代替，不影响复制功能
+                return `<pre class="hljs"><code>${html}</code>${linesNum}</pre><textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy${codeIndex}">${str.replace(
+                    /<\/textarea>/g,
+                    "</textarea>"
+                )}</textarea>`;
+            }
+            return content;
         }
-        addLI(item.anchor, item.text);
-      }
-    });
-    // 如果栈中还有level，全部出栈打上闭合标签
-    while (levelStack.length) {
-      levelStack.shift();
-      addEndUL();
-    }
-    // 清理先前数据供下次使用
-    this.toc = [];
-    this.index = 0;
-    return result;
-  },
-  toc: [] as any,
-  index: 0
-};
-
-class MarkUtils {
-  private rendererMD: any;
-
-  constructor() {
-    this.rendererMD = new marked.Renderer() as any;
-    this.rendererMD.heading = function (text: any, level: any, raw: any) {
-      var anchor = tocObj.add(text, level);
-      return `<h${level} id=${anchor}>${text}</h${level}>\n`;
-    };
-    this.rendererMD.table = function (header: any, body: any) {
-      return '<table class="table" border="0" cellspacing="0" cellpadding="0">' + header + body + '</table>'
-    }
-    highlight.configure({ useBR: true });
-    marked.setOptions({
-      renderer: this.rendererMD,
-      headerIds: false,
-      gfm: true,
-      // tables: true,
-      breaks: false,
-      pedantic: false,
-      sanitize: false,
-      smartLists: true,
-      smartypants: false,
-      highlight: function (code: any) {
-        return highlight.highlightAuto(code).value;
-      }
-    });
-  }
-
-  async marked(data: any) {
-    if (data) {
-      let content = await marked(data);
-      let toc = tocObj.toHTML();
-      return { content: content, toc: toc };
-    } else {
-      return null;
-    }
-  }
+    })
+        .use(() => require("markdown-it-sub"))
+        .use(require("markdown-it-sup"))
+        .use(require("markdown-it-mark"))
+        .use(require("markdown-it-abbr"))
+        .use(require("markdown-it-container"))
+        .use(require("markdown-it-deflist"))
+        .use(require("markdown-it-emoji"))
+        .use(require("markdown-it-footnote"))
+        .use(require("markdown-it-ins"))
+        .use(require("markdown-it-katex-external"))
+        .use(require("markdown-it-task-lists"));
+    // 将markdown替换为html标签
+    return md.render(content);
 }
-
-const markdown: any = new MarkUtils();
-
-export default markdown;
