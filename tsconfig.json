@@ -6,7 +6,6 @@
     "module": "esnext",
     "moduleResolution": "Node",
     "strict": false,
-    "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,

@@ -3,11 +3,6 @@ import { useToast } from "@/stores/toast";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { Session } from "./storage";
 
-export interface ResponseData {
-  code: number;
-  data?: any;
-  message: string;
-}
 // token 键定义
 export const accessTokenKey = "access-token";
 export const refreshAccessTokenKey = `x-${accessTokenKey}`;
@@ -65,15 +60,13 @@ export function decryptJWT(token: string): any {
 // console.log('import.meta.env: ', import.meta.env);
 
 // 创建 axios 实例
-let apiHttpClient: AxiosInstance;
+const apiHttpClient = axios.create({
+  baseURL: AppConsts.remoteServiceBaseUrl,
+  timeout: 300000
+});
 
-const baseConfig: AxiosRequestConfig = {
-    baseURL: "/", //import.meta.env.VITE_API_URL,
-    timeout: 30000,
-};
-
- apiHttpClient = axios.create(baseConfig);
-
+ console.log(AppConsts.remoteServiceBaseUrl);
+ 
 // request 拦截器 axios 的一些配置
 apiHttpClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {

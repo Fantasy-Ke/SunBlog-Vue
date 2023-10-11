@@ -31,7 +31,6 @@ export function loadEnv(mode: string): ViteEnv {
     envList.forEach((e) => {
         dotenv.config({ path: e })
     })
-    console.log(envList);
     
     for (const envName of Object.keys(process.env)) {
         let realName = (process.env as any)[envName].replace(/\\n/g, '\n')

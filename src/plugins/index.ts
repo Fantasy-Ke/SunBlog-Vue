@@ -13,6 +13,7 @@ import apiHttpClient from "../utils/api-http-client";
 
 // Types
 import type { App } from 'vue'
+import { AppConsts } from '@/assets/appConst/AppConsts';
 
 export function registerPlugins (app: App) {
   loadFonts()
@@ -24,5 +25,7 @@ export function registerPlugins (app: App) {
 
 
 export function registerglobal (app: App) {
+  console.log(AppConsts.remoteServiceBaseUrl);
+  
   app.provide('$api',apiHttpClient)
 }
