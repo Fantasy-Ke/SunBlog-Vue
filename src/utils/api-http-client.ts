@@ -46,26 +46,24 @@ export function decryptJWT(token: string): any {
     token = token.replace(/_/g, "/").replace(/-/g, "+");
     const json = decodeURIComponent(escape(window.atob(token.split(".")[1])));
     return JSON.parse(json);
-  }
-  
-  /**
-   * 将 JWT 时间戳转换成 Date
-   * @description 主要针对 `exp`，`iat`，`nbf`
-   * @param timestamp 时间戳
-   * @returns Date 对象
-   */
-  export function getJWTDate(timestamp: number): Date {
-    return new Date(timestamp * 1000);
-  }
-console.log('import.meta.env: ', import.meta.env.VITE_AXIOS_BASE_URL);
+}
+
+/**
+ * 将 JWT 时间戳转换成 Date
+ * @description 主要针对 `exp`，`iat`，`nbf`
+ * @param timestamp 时间戳
+ * @returns Date 对象
+ */
+export function getJWTDate(timestamp: number): Date {
+  return new Date(timestamp * 1000);
+}
+console.log(import.meta.env.VITE_AXIOS_BASE_URL);
 
 // 创建 axios 实例
 const apiHttpClient = axios.create({
   baseURL: AppConsts.remoteServiceBaseUrl,
   timeout: 300000
 });
-
- console.log(AppConsts.remoteServiceBaseUrl);
  
 // request 拦截器 axios 的一些配置
 apiHttpClient.interceptors.request.use(
