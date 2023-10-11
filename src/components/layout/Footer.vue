@@ -11,7 +11,7 @@
   </v-footer>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import "APlayer/dist/APlayer.min.css";
 import APlayer from "APlayer";
 import { onMounted } from "vue";
