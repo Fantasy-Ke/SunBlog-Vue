@@ -1,6 +1,7 @@
 /* vite相关 */
 import dotenv from 'dotenv'
 
+
 export interface ViteEnv {
     VITE_PORT: number
     VITE_OPEN: boolean

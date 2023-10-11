@@ -226,7 +226,7 @@ export const images: Array<any> = [
         "id": 1,
         "pageName": "首页",
         "pageLabel": "home",
-        "pageCover": "https://37czone.com/oss/10001.jpg"
+        "pageCover": "https://37czone.com/oss/c0c18bb96c877a6fb82275b82bb4b6ec.jpg"
     },
     {
         "id": 2,
