@@ -72,7 +72,7 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
           emptyOutDir: true,
           chunkSizeWarningLimit: 1500,
           rollupOptions: {
-              external: ['APlayer'],
+              //external: ['APlayer'],
               output: {
                   manualChunks: {
                       // 分包配置，配置完成自动按需加载
