@@ -468,6 +468,7 @@ export class UsersServiceProxy {
     }
 
     /**
+     * 创建
      * @return Success
      */
     create( cancelToken?: CancelToken | undefined): Promise<ZUserInfo> {
@@ -519,6 +520,7 @@ export class UsersServiceProxy {
     }
 
     /**
+     * 查询一个用户
      * @return Success
      */
     getFrist( cancelToken?: CancelToken | undefined): Promise<ZUserInfoDto[]> {
@@ -577,6 +579,7 @@ export class UsersServiceProxy {
     }
 
     /**
+     * 登录
      * @param body (optional) 
      * @return Success
      */
@@ -879,7 +882,384 @@ export class TagssServiceProxy {
     }
 }
 
-export class ArticlesServiceProxy {
+export class ArticleCsServiceProxy {
+    private instance: AxiosInstance;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance ? instance : axios.create();
+
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+
+    }
+
+    /**
+     * 文章栏目分类
+     * @return Success
+     */
+    categories( cancelToken?: CancelToken | undefined): Promise<CategoryOutput[]> {
+        let url_ = this.baseUrl + "/api/ArticleCs/Categories";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCategories(_response);
+        });
+    }
+
+    protected processCategories(response: AxiosResponse): Promise<CategoryOutput[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(CategoryOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<CategoryOutput[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<CategoryOutput[]>(null as any);
+    }
+
+    /**
+     * 文章表查询
+     * @param tagId (optional) 标签ID
+     * @param categoryId (optional) 栏目ID
+     * @param keyword (optional) 关键词
+     * @param pageNo (optional) 
+     * @param pageSize (optional) 
+     * @return Success
+     */
+    getList(tagId: string | undefined, categoryId: string | undefined, keyword: string | undefined, pageNo: number | undefined, pageSize: number | undefined, cancelToken?: CancelToken | undefined): Promise<ArticleOutputPageResult> {
+        let url_ = this.baseUrl + "/api/ArticleCs/GetList?";
+        if (tagId === null)
+            throw new Error("The parameter 'tagId' cannot be null.");
+        else if (tagId !== undefined)
+            url_ += "TagId=" + encodeURIComponent("" + tagId) + "&";
+        if (categoryId === null)
+            throw new Error("The parameter 'categoryId' cannot be null.");
+        else if (categoryId !== undefined)
+            url_ += "CategoryId=" + encodeURIComponent("" + categoryId) + "&";
+        if (keyword === null)
+            throw new Error("The parameter 'keyword' cannot be null.");
+        else if (keyword !== undefined)
+            url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (pageNo === null)
+            throw new Error("The parameter 'pageNo' cannot be null.");
+        else if (pageNo !== undefined)
+            url_ += "PageNo=" + encodeURIComponent("" + pageNo) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetList(_response);
+        });
+    }
+
+    protected processGetList(response: AxiosResponse): Promise<ArticleOutputPageResult> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = ArticleOutputPageResult.fromJS(resultData200);
+            return Promise.resolve<ArticleOutputPageResult>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ArticleOutputPageResult>(null as any);
+    }
+
+    /**
+     * 文章详情
+     * @param id (optional) 文章ID
+     * @return Success
+     */
+    info(id: string | undefined, cancelToken?: CancelToken | undefined): Promise<ArticleInfoOutput> {
+        let url_ = this.baseUrl + "/api/ArticleCs/Info?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processInfo(_response);
+        });
+    }
+
+    protected processInfo(response: AxiosResponse): Promise<ArticleInfoOutput> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = ArticleInfoOutput.fromJS(resultData200);
+            return Promise.resolve<ArticleInfoOutput>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ArticleInfoOutput>(null as any);
+    }
+
+    /**
+     * 最新5片文章
+     * @return Success
+     */
+    latest( cancelToken?: CancelToken | undefined): Promise<ArticleBasicsOutput[]> {
+        let url_ = this.baseUrl + "/api/ArticleCs/Latest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLatest(_response);
+        });
+    }
+
+    protected processLatest(response: AxiosResponse): Promise<ArticleBasicsOutput[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(ArticleBasicsOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<ArticleBasicsOutput[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ArticleBasicsOutput[]>(null as any);
+    }
+
+    /**
+     * 文章信息统计
+     * @return Success
+     */
+    reportStatistics( cancelToken?: CancelToken | undefined): Promise<ArticleReportOutput> {
+        let url_ = this.baseUrl + "/api/ArticleCs/ReportStatistics";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processReportStatistics(_response);
+        });
+    }
+
+    protected processReportStatistics(response: AxiosResponse): Promise<ArticleReportOutput> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = ArticleReportOutput.fromJS(resultData200);
+            return Promise.resolve<ArticleReportOutput>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ArticleReportOutput>(null as any);
+    }
+
+    /**
+     * 标签列表
+     * @return Success
+     */
+    tags( cancelToken?: CancelToken | undefined): Promise<TagsOutput[]> {
+        let url_ = this.baseUrl + "/api/ArticleCs/Tags";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processTags(_response);
+        });
+    }
+
+    protected processTags(response: AxiosResponse): Promise<TagsOutput[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(TagsOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<TagsOutput[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<TagsOutput[]>(null as any);
+    }
+}
+
+export class ArticleSsServiceProxy {
     private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -898,7 +1278,7 @@ export class ArticlesServiceProxy {
      * @return Success
      */
     createOrUpdate(body: CreateOrUpdateArticleInput | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Articles/CreateOrUpdate";
+        let url_ = this.baseUrl + "/api/ArticleSs/CreateOrUpdate";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -951,7 +1331,7 @@ export class ArticlesServiceProxy {
      * @return Success
      */
     delete(id: string | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Articles/Delete?";
+        let url_ = this.baseUrl + "/api/ArticleSs/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
@@ -1004,7 +1384,7 @@ export class ArticlesServiceProxy {
      * @return Success
      */
     getDetail(id: string | undefined, cancelToken?: CancelToken | undefined): Promise<ArticleDetailOutput> {
-        let url_ = this.baseUrl + "/api/Articles/GetDetail?";
+        let url_ = this.baseUrl + "/api/ArticleSs/GetDetail?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
@@ -1064,7 +1444,7 @@ export class ArticlesServiceProxy {
      * @return Success
      */
     getPage(title: string | undefined, categoryId: string | undefined, pageNo: number | undefined, pageSize: number | undefined, cancelToken?: CancelToken | undefined): Promise<ArticlePageOutputPageResult> {
-        let url_ = this.baseUrl + "/api/Articles/GetPage?";
+        let url_ = this.baseUrl + "/api/ArticleSs/GetPage?";
         if (title === null)
             throw new Error("The parameter 'title' cannot be null.");
         else if (title !== undefined)
@@ -1128,9 +1508,78 @@ export class ArticlesServiceProxy {
     }
 }
 
+export class ArticleBasicsOutput implements IArticleBasicsOutput {
+    /** 文章ID */
+    id: string;
+    /** 封面图 */
+    cover: string | undefined;
+    /** 类型 */
+    type: number;
+    /** 标题 */
+    title: string | undefined;
+    /** 发布时间 */
+    publishTime: moment.Moment | undefined;
+
+    constructor(data?: IArticleBasicsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.cover = _data["cover"];
+            this.type = _data["type"];
+            this.title = _data["title"];
+            this.publishTime = _data["publishTime"] ? moment(_data["publishTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ArticleBasicsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ArticleBasicsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["cover"] = this.cover;
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["publishTime"] = this.publishTime ? this.publishTime.toISOString() : <any>undefined;
+        return data;
+    }
+
+    clone(): ArticleBasicsOutput {
+        const json = this.toJSON();
+        let result = new ArticleBasicsOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IArticleBasicsOutput {
+    /** 文章ID */
+    id: string;
+    /** 封面图 */
+    cover: string | undefined;
+    /** 类型 */
+    type: number;
+    /** 标题 */
+    title: string | undefined;
+    /** 发布时间 */
+    publishTime: moment.Moment | undefined;
+}
+
 export class ArticleDetailOutput implements IArticleDetailOutput {
     /** 文章ID */
-    id: number;
+    id: string;
     /** 标题 */
     title: string | undefined;
     /** 简介 */
@@ -1156,9 +1605,9 @@ export class ArticleDetailOutput implements IArticleDetailOutput {
     /** 过期时间（过期后文章不显示） */
     expiredTime: moment.Moment | undefined;
     /** 标签 */
-    tags: number[] | undefined;
+    tags: string[] | undefined;
     /** 栏目ID */
-    categoryId: number | undefined;
+    categoryId: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
 
@@ -1240,7 +1689,7 @@ export class ArticleDetailOutput implements IArticleDetailOutput {
 
 export interface IArticleDetailOutput {
     /** 文章ID */
-    id: number;
+    id: string;
     /** 标题 */
     title: string | undefined;
     /** 简介 */
@@ -1266,11 +1715,364 @@ export interface IArticleDetailOutput {
     /** 过期时间（过期后文章不显示） */
     expiredTime: moment.Moment | undefined;
     /** 标签 */
-    tags: number[] | undefined;
+    tags: string[] | undefined;
     /** 栏目ID */
-    categoryId: number | undefined;
+    categoryId: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
+}
+
+export class ArticleInfoOutput implements IArticleInfoOutput {
+    /** 文章ID */
+    id: string;
+    /** 标题 */
+    title: string | undefined;
+    /** 文章内容 */
+    content: string | undefined;
+    /** 简介 */
+    summary: string | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    /** 发布时间 */
+    publishTime: moment.Moment;
+    /** 作者 */
+    author: string | undefined;
+    /** 浏览量 */
+    views: number;
+    creationType: CreationType;
+    /** 是否允许评论 */
+    isAllowComments: boolean;
+    /** 是否是html */
+    isHtml: boolean;
+    /** 是否置顶 */
+    isTop: boolean;
+    /** 转载链接 */
+    link: string | undefined;
+    /** 点赞数量 */
+    praiseTotal: number;
+    /** 当前用户是否已点赞 */
+    isPraise: boolean;
+    /** 栏目Id */
+    categoryId: string;
+    /** 栏目名称 */
+    categoryName: string | undefined;
+    /** 最后更新时间 */
+    updatedTime: moment.Moment | undefined;
+    prev: ArticleBasicsOutput;
+    next: ArticleBasicsOutput;
+    /** 随机 */
+    random: ArticleBasicsOutput[] | undefined;
+    /** 标签 */
+    tags: TagsOutput[] | undefined;
+
+    constructor(data?: IArticleInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.content = _data["content"];
+            this.summary = _data["summary"];
+            this.cover = _data["cover"];
+            this.publishTime = _data["publishTime"] ? moment(_data["publishTime"].toString()) : <any>undefined;
+            this.author = _data["author"];
+            this.views = _data["views"];
+            this.creationType = _data["creationType"];
+            this.isAllowComments = _data["isAllowComments"];
+            this.isHtml = _data["isHtml"];
+            this.isTop = _data["isTop"];
+            this.link = _data["link"];
+            this.praiseTotal = _data["praiseTotal"];
+            this.isPraise = _data["isPraise"];
+            this.categoryId = _data["categoryId"];
+            this.categoryName = _data["categoryName"];
+            this.updatedTime = _data["updatedTime"] ? moment(_data["updatedTime"].toString()) : <any>undefined;
+            this.prev = _data["prev"] ? ArticleBasicsOutput.fromJS(_data["prev"]) : <any>undefined;
+            this.next = _data["next"] ? ArticleBasicsOutput.fromJS(_data["next"]) : <any>undefined;
+            if (Array.isArray(_data["random"])) {
+                this.random = [] as any;
+                for (let item of _data["random"])
+                    this.random.push(ArticleBasicsOutput.fromJS(item));
+            }
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags.push(TagsOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ArticleInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ArticleInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["content"] = this.content;
+        data["summary"] = this.summary;
+        data["cover"] = this.cover;
+        data["publishTime"] = this.publishTime ? this.publishTime.toISOString() : <any>undefined;
+        data["author"] = this.author;
+        data["views"] = this.views;
+        data["creationType"] = this.creationType;
+        data["isAllowComments"] = this.isAllowComments;
+        data["isHtml"] = this.isHtml;
+        data["isTop"] = this.isTop;
+        data["link"] = this.link;
+        data["praiseTotal"] = this.praiseTotal;
+        data["isPraise"] = this.isPraise;
+        data["categoryId"] = this.categoryId;
+        data["categoryName"] = this.categoryName;
+        data["updatedTime"] = this.updatedTime ? this.updatedTime.toISOString() : <any>undefined;
+        data["prev"] = this.prev ? this.prev.toJSON() : <any>undefined;
+        data["next"] = this.next ? this.next.toJSON() : <any>undefined;
+        if (Array.isArray(this.random)) {
+            data["random"] = [];
+            for (let item of this.random)
+                data["random"].push(item.toJSON());
+        }
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): ArticleInfoOutput {
+        const json = this.toJSON();
+        let result = new ArticleInfoOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IArticleInfoOutput {
+    /** 文章ID */
+    id: string;
+    /** 标题 */
+    title: string | undefined;
+    /** 文章内容 */
+    content: string | undefined;
+    /** 简介 */
+    summary: string | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    /** 发布时间 */
+    publishTime: moment.Moment;
+    /** 作者 */
+    author: string | undefined;
+    /** 浏览量 */
+    views: number;
+    creationType: CreationType;
+    /** 是否允许评论 */
+    isAllowComments: boolean;
+    /** 是否是html */
+    isHtml: boolean;
+    /** 是否置顶 */
+    isTop: boolean;
+    /** 转载链接 */
+    link: string | undefined;
+    /** 点赞数量 */
+    praiseTotal: number;
+    /** 当前用户是否已点赞 */
+    isPraise: boolean;
+    /** 栏目Id */
+    categoryId: string;
+    /** 栏目名称 */
+    categoryName: string | undefined;
+    /** 最后更新时间 */
+    updatedTime: moment.Moment | undefined;
+    prev: ArticleBasicsOutput;
+    next: ArticleBasicsOutput;
+    /** 随机 */
+    random: ArticleBasicsOutput[] | undefined;
+    /** 标签 */
+    tags: TagsOutput[] | undefined;
+}
+
+export class ArticleOutput implements IArticleOutput {
+    /** 文章ID */
+    id: string;
+    /** 标题 */
+    title: string | undefined;
+    /** 栏目ID */
+    categoryId: string;
+    /** 栏目名称 */
+    categoryName: string | undefined;
+    /** 是否置顶 */
+    isTop: boolean;
+    creationType: CreationType;
+    /** 简介 */
+    summary: string | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    /** 发布时间 */
+    publishTime: moment.Moment;
+    /** 标签 */
+    tags: TagsOutput[] | undefined;
+
+    constructor(data?: IArticleOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.categoryId = _data["categoryId"];
+            this.categoryName = _data["categoryName"];
+            this.isTop = _data["isTop"];
+            this.creationType = _data["creationType"];
+            this.summary = _data["summary"];
+            this.cover = _data["cover"];
+            this.publishTime = _data["publishTime"] ? moment(_data["publishTime"].toString()) : <any>undefined;
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags.push(TagsOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ArticleOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ArticleOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["categoryId"] = this.categoryId;
+        data["categoryName"] = this.categoryName;
+        data["isTop"] = this.isTop;
+        data["creationType"] = this.creationType;
+        data["summary"] = this.summary;
+        data["cover"] = this.cover;
+        data["publishTime"] = this.publishTime ? this.publishTime.toISOString() : <any>undefined;
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): ArticleOutput {
+        const json = this.toJSON();
+        let result = new ArticleOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IArticleOutput {
+    /** 文章ID */
+    id: string;
+    /** 标题 */
+    title: string | undefined;
+    /** 栏目ID */
+    categoryId: string;
+    /** 栏目名称 */
+    categoryName: string | undefined;
+    /** 是否置顶 */
+    isTop: boolean;
+    creationType: CreationType;
+    /** 简介 */
+    summary: string | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    /** 发布时间 */
+    publishTime: moment.Moment;
+    /** 标签 */
+    tags: TagsOutput[] | undefined;
+}
+
+export class ArticleOutputPageResult implements IArticleOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: ArticleOutput[] | undefined;
+
+    constructor(data?: IArticleOutputPageResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.pages = _data["pages"];
+            this.total = _data["total"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows.push(ArticleOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ArticleOutputPageResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new ArticleOutputPageResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["pages"] = this.pages;
+        data["total"] = this.total;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): ArticleOutputPageResult {
+        const json = this.toJSON();
+        let result = new ArticleOutputPageResult();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IArticleOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: ArticleOutput[] | undefined;
 }
 
 export class ArticlePageOutput implements IArticlePageOutput {
@@ -1441,9 +2243,147 @@ export interface IArticlePageOutputPageResult {
     rows: ArticlePageOutput[] | undefined;
 }
 
+export class ArticleReportOutput implements IArticleReportOutput {
+    /** 文章数量 */
+    articleCount: number;
+    /** 标签数量 */
+    tagCount: number;
+    /** 栏目数量 */
+    categoryCount: number;
+    /** 用户量 */
+    userCount: number;
+    /** 友链数量 */
+    linkCount: number;
+
+    constructor(data?: IArticleReportOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.articleCount = _data["articleCount"];
+            this.tagCount = _data["tagCount"];
+            this.categoryCount = _data["categoryCount"];
+            this.userCount = _data["userCount"];
+            this.linkCount = _data["linkCount"];
+        }
+    }
+
+    static fromJS(data: any): ArticleReportOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ArticleReportOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["articleCount"] = this.articleCount;
+        data["tagCount"] = this.tagCount;
+        data["categoryCount"] = this.categoryCount;
+        data["userCount"] = this.userCount;
+        data["linkCount"] = this.linkCount;
+        return data;
+    }
+
+    clone(): ArticleReportOutput {
+        const json = this.toJSON();
+        let result = new ArticleReportOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IArticleReportOutput {
+    /** 文章数量 */
+    articleCount: number;
+    /** 标签数量 */
+    tagCount: number;
+    /** 栏目数量 */
+    categoryCount: number;
+    /** 用户量 */
+    userCount: number;
+    /** 友链数量 */
+    linkCount: number;
+}
+
 export enum AvailabilityStatus {
     _0 = 0,
     _1 = 1,
+}
+
+export class CategoryOutput implements ICategoryOutput {
+    /** 栏目ID */
+    id: string;
+    /** 父级ID */
+    parentId: string | undefined;
+    /** 排序 */
+    sort: number;
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 文章条数 */
+    total: number;
+
+    constructor(data?: ICategoryOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.parentId = _data["parentId"];
+            this.sort = _data["sort"];
+            this.name = _data["name"];
+            this.total = _data["total"];
+        }
+    }
+
+    static fromJS(data: any): CategoryOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CategoryOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["parentId"] = this.parentId;
+        data["sort"] = this.sort;
+        data["name"] = this.name;
+        data["total"] = this.total;
+        return data;
+    }
+
+    clone(): CategoryOutput {
+        const json = this.toJSON();
+        let result = new CategoryOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICategoryOutput {
+    /** 栏目ID */
+    id: string;
+    /** 父级ID */
+    parentId: string | undefined;
+    /** 排序 */
+    sort: number;
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 文章条数 */
+    total: number;
 }
 
 export class CreateOrUpdateArticleInput implements ICreateOrUpdateArticleInput {
@@ -1729,6 +2669,69 @@ export class SelectOutput implements ISelectOutput {
 export interface ISelectOutput {
     label: string | undefined;
     value: string;
+}
+
+export class TagsOutput implements ITagsOutput {
+    /** 标签ID */
+    id: string;
+    /** 图标 */
+    icon: string | undefined;
+    /** 标签名称 */
+    name: string | undefined;
+    /** 颜色 */
+    color: string | undefined;
+
+    constructor(data?: ITagsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.icon = _data["icon"];
+            this.name = _data["name"];
+            this.color = _data["color"];
+        }
+    }
+
+    static fromJS(data: any): TagsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new TagsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["icon"] = this.icon;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        return data;
+    }
+
+    clone(): TagsOutput {
+        const json = this.toJSON();
+        let result = new TagsOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ITagsOutput {
+    /** 标签ID */
+    id: string;
+    /** 图标 */
+    icon: string | undefined;
+    /** 标签名称 */
+    name: string | undefined;
+    /** 颜色 */
+    color: string | undefined;
 }
 
 export class TagsPageOutput implements ITagsPageOutput {
