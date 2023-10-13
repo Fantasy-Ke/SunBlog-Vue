@@ -60,7 +60,7 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
     base: VITE_BASE_PATH,
     server: {
         host: true,
-        port: VITE_PORT,
+        port: VITE_PORT ?? window.configs.port,
         open: VITE_OPEN,
         proxy: proxy,
     },

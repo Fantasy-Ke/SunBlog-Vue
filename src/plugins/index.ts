@@ -25,7 +25,5 @@ export function registerPlugins (app: App) {
 
 
 export function registerglobal (app: App) {
-  console.log(AppConsts.remoteServiceBaseUrl);
-  
   app.provide('$api',apiHttpClient)
 }

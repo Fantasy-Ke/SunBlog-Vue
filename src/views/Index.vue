@@ -194,7 +194,7 @@ import img from "../assets/images/1.jpg";
 import { useToast } from "@/stores/toast";
 import {TestServiceProxy} from "@/shared/service-proxies"
 const route = useRoute();
-const _testservice = new TestServiceProxy('',inject('$api'));
+const _testservice = new TestServiceProxy(inject('$baseurl'),inject('$api'));
 
 // 打字机配置
 const obj = reactive({

@@ -23,20 +23,20 @@ export class AppPreBootstrap {
     } else {
       envName = 'dev';
     }
-    
-    const url = 'assets/appconfig.' + envName + '.json';
-    httpClient.get(url,{
-      headers: {
-          'Cache-Control': 'no-cache'
-      }})
-      .then((response: any) => {
-        const result = response.data;
-        AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
-        AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
-        callback();
-      })
-      .catch((err) => {
-        alert(`初始化配置信息出错,错误信息:\n\n${err.message}`);
-      });
+    callback();
+    // const url = 'assets/appconfig.' + envName + '.json';
+    // httpClient.get(url,{
+    //   headers: {
+    //       'Cache-Control': 'no-cache'
+    //   }})
+    //   .then((response: any) => {
+    //     const result = response.data;
+    //     AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
+    //     AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
+        
+    //   })
+    //   .catch((err) => {
+    //     alert(`初始化配置信息出错,错误信息:\n\n${err.message}`);
+    //   });
   }
 }
