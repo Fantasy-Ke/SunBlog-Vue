@@ -1,10 +1,14 @@
-Set-Location ../src/shared/service-proxies.ts
+Set-ExecutionPolicy  RemoteSigned
+$serviceResponse = (Get-Content -Raw -Path 'Response.ts' )
+$importMoment = "import * as moment from 'moment';"
+Set-Location ../src/shared/service-proxies
 
+$serviceProxies = (Get-Content -Raw -Path 'service-proxies.ts' )
 
-$serviceProxies = (Get-Content -Raw -Path "service-proxies.ts" )
+$serviceProxiesOutput = $serviceProxies.Replace($importMoment,$serviceResponse)
 
-Write-Output "test1";
+Write-Host $serviceProxiesOutput
 
-$serviceProxiesOutput = $serviceProxies.Replace('import * as moment','import moment')
+Set-ItemProperty -Path 'service-proxies.ts' -Name IsReadOnly -Value $false
 
-Set-Content -Encoding "UTF8NoBOM" -Path "service-proxies.ts" -Value $serviceProxiesOutput
+Set-Content -Path 'service-proxies.ts' -Value $serviceProxiesOutput
