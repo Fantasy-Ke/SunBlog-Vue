@@ -56,7 +56,7 @@
       "queryNullValue": "",
       "inlineNamedDictionaries": false,
       "inlineNamedAny": false,
-      "templateDirectory": null,
+      "templateDirectory": "./",
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
