@@ -5,31 +5,46 @@
   </div>
   <!-- 标签列表 -->
   <v-card class="blog-container">
-    <div class="tag-cloud-title">标签 - {{ tagList.length }}</div>
+    <div class="tag-cloud-title">标签 - {{ state.tags.length }}</div>
     <div class="tag-cloud">
       <router-link
         :style="{ 'font-size': Math.floor(Math.random() * 10) + 18 + 'px' }"
-        v-for="item of tagList"
+        v-for="item of state.tags"
         :key="item.id"
         :to="'/tags/' + item.id"
       >
-        {{ item.categoryName }}
+        {{ item.name }}
       </router-link>
     </div>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, inject, onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { tagList, images } from "../../api/data";
+import { ArticleCsServiceProxy, TagsOutput } from "@/shared/service-proxies";
 const route = useRoute();
+const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+const state = reactive({
+  tags: [] as TagsOutput[],
+});
 const cover = computed(() => {
   let cover: string = images.find(
     (item) => item.pageLabel === route.name
   )?.pageCover;
   return "background: url(" + cover + ") center center / cover no-repeat";
 });
+
+onMounted(async () => {
+   await _articleCService.tags().then((res)=>{
+    if (res.result) {
+    state.tags = res.result ?? [];
+  }
+   });
+  
+});
+
 </script>
 
 <style scoped lang="scss">
