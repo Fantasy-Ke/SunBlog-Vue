@@ -110,12 +110,12 @@ readonly apiHttpClient: AxiosInstance;
         if (
           res.config.url?.toLocaleLowerCase() === "/file/upload".toLowerCase()
         ) {
-          return data;
+          return res;
         }
 
         // code为200 或 返回的是文件流 直接返回
         if (data.statusCode === 200 || res.config.responseType === "blob") {
-          return data;
+          return res;
         }
         let message = "";
         switch (data.statusCode) {
@@ -137,7 +137,7 @@ readonly apiHttpClient: AxiosInstance;
         if (data.statusCode === 401) {
           clearAccessTokens();
         }
-        return data;
+        return res;
       },
       (err: any) => {
         // 这里用来处理http常见错误，进行全局提示
@@ -182,7 +182,8 @@ readonly apiHttpClient: AxiosInstance;
               message = "HTTP版本不受支持(505)";
               break;
             default:
-              message = `连接出错(${err.response.status})!`;
+              console.log(err,15212);
+              message = `连接出错(${err.response})!`;
           }
         }
         // 这里错误消息可以使用全局弹框展示出来

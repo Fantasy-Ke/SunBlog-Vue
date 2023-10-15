@@ -192,9 +192,9 @@ import Swiper from "../components/Swiper.vue";
 import { talkList as talks, articles, images } from "../api/data";
 import img from "../assets/images/1.jpg";
 import { useToast } from "@/stores/toast";
-import {TestServiceProxy} from "@/shared/service-proxies"
+import {AlbumsCsServiceProxy, AlbumsOutput, Pagination} from "@/shared/service-proxies"
 const route = useRoute();
-const _testservice = new TestServiceProxy(inject('$baseurl'),inject('$api'));
+const _albumsCService = new AlbumsCsServiceProxy('',inject('$api'));
 
 // 打字机配置
 const obj = reactive({
@@ -230,13 +230,29 @@ const runTime = (): void => {
   str += day.getSeconds() + "秒";
   time.value = str;
 };
+const state = reactive({
+  query: {
+    pageNo: 1,
+    pageSize: 6,
+  } as Pagination,
+  pages: 0,
+  albums: [] as AlbumsOutput[],
+});
 onMounted(() => {
-  _testservice.getUser().then((ccc)=>{
-    console.log(123456);
-  }).catch((res)=>{
-    console.log(res);
-    useToast().error(res.error.error);
+ _albumsCService.getList(state.query).then((res)=>{
+  console.log(res,1222);
+    if (res) {
+  }
+  }).catch((c)=>{
+    console.log(c,4444);
+    
   });
+  // _testservice.getUser().then((ccc)=>{
+  //   console.log(123456);
+  // }).catch((res)=>{
+  //   console.log(res);
+  //   useToast().error(res.error.message);
+  // });
   new EasyTyper(
     obj,
     "为遇一人而入红尘，人去我亦去，此生不留尘。 --魔道祖师",

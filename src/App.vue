@@ -5,7 +5,7 @@
     <!-- 侧边导航栏 -->
     <SideNavBar />
     <v-main>
-      <router-view />
+      <router-view  :key="key" />
     </v-main>
     <!-- 脚部 -->
     <Footer v-if="useRoute().name !== 'message'" />
@@ -22,7 +22,11 @@ import SideNavBar from "./components/layout/SideNavBar.vue";
 import Footer from "./components/layout/Footer.vue";
 import BackTop from "./components/BackTop.vue";
 import { useThemeSettingStore } from "./stores/themeSetting";
+import { computed } from "vue";
 const { theme } = storeToRefs(useThemeSettingStore());
-
+const route = useRoute();
+const key = computed(() => {
+  return route.fullPath + Math.random();
+});
 
 </script>
