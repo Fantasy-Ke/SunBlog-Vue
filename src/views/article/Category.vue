@@ -5,12 +5,16 @@
   </div>
   <!-- 分类列表 -->
   <v-card class="blog-container">
-    <div class="category-title">分类 - {{ categoryies.length }}</div>
+    <div class="category-title">分类 - {{ state.report.categoryCount }}</div>
     <ul class="category-list">
-      <li class="category-list-item" v-for="item of categoryies" :key="item.id">
+      <li
+        class="category-list-item"
+        v-for="item of state.categories"
+        :key="item.id"
+      >
         <router-link :to="'/categories/' + item.id">
-          {{ item.categoryName }}
-          <span class="category-count">({{ item.articleCount }})</span>
+          {{ item.name }}
+          <span class="category-count">({{ item.total }})</span>
         </router-link>
       </li>
     </ul>
@@ -18,16 +22,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, inject, onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { images } from "../../api/data";
 import { categoryies } from "../../api/data";
+import { ArticleCsServiceProxy, ArticleReportOutput, CategoryOutput } from "@/shared/service-proxies";
 const route = useRoute();
+const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+const state = reactive({
+  categories: [] as CategoryOutput[],
+  report: {} as ArticleReportOutput,
+});
 const cover = computed(() => {
   let cover: string = images.find(
     (item) => item.pageLabel === route.name
   )?.pageCover;
   return "background: url(" + cover + ") center center / cover no-repeat";
+});
+onMounted(async () => {
+  _articleCService.categories().then((res)=>{
+    state.categories = res.result ?? [];
+  });
+  _articleCService.reportStatistics().then((res)=>{
+    state.report = res.result as any ?? {
+    articleCount: 0,
+    tagCount: 0,
+    categoryCount: 0,
+    linkCount: 0,
+    userCount: 0,
+  };
+  });
+  
+  
 });
 </script>
 
