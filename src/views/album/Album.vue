@@ -21,6 +21,19 @@
         </div>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <v-pagination
+          v-if="state.pages > 1"
+          v-model="state.query.pageNo"
+          size="x-small"
+          :length="state.pages"
+          active-color="#00C4B6"
+          :total-visible="3"
+          variant="elevated"
+        ></v-pagination>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -51,9 +64,10 @@ const cover = computed(() => {
 const loadData = async () => {
   await _albumsCService.getList(state.query).then((res)=>{
     console.log(res);
-    if (res) {
-    state.albums = res?.rows ?? [];
-    state.pages = res?.pages ?? 0;
+    if (res.result) {
+      let data = res.result;
+    state.albums = data?.rows ?? [];
+    state.pages = data?.pages ?? 0;
   }
   });
   

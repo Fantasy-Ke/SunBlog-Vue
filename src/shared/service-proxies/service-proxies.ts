@@ -10,18 +10,78 @@
 
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
-import moment from 'moment';
+import  moment from 'moment';
+
+
+class ErrorInfo{
+    message:any
+    init(_data?: any) {
+      if (_data) {
+          this.message = _data["message"];
+      }
+  }
+  
+  static fromJS(data: any): ErrorInfo {
+      data = typeof data === 'object' ? data : {};
+      let result = new ErrorInfo();
+      result.init(data);
+      return result;
+  }
+  
+  toJSON(data?: any) {
+      data = typeof data === 'object' ? data : {};
+      data["message"] = this.message;
+      return data;
+  }
+}
+class ZResponseBase{
+    statusCode: number;
+    error: ErrorInfo;
+    unAuthorizedRequest: boolean;
+    extras: any;
+    success:boolean;
+  
+    init(_data?: any) {
+      if (_data) {
+          this.statusCode = _data["statusCode"];
+          this.error = ErrorInfo.fromJS(_data["error"]);
+          this.unAuthorizedRequest = _data["unAuthorizedRequest"];
+          this.extras = _data["extras"];
+          this.success = _data["success"];
+      }
+  }
+  
+  static fromJS(data: any): ZResponseBase {
+      data = typeof data === 'object' ? data : {};
+      let result = new ZResponseBase();
+      result.init(data);
+      return result;
+  }
+  
+  toJSON(data?: any) {
+      data = typeof data === 'object' ? data : {};
+      data["statusCode"] = this.statusCode;
+      data["error"] = this.error;
+      data["unAuthorizedRequest"] = this.unAuthorizedRequest;
+      data["extras"] = this.extras;
+      data["success"] = this.success;
+      return data;
+  }
+}
+class ZEngineResponse<T = any> extends ZResponseBase{
+    result: T;
+}
 
 export class TestServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -30,7 +90,7 @@ export class TestServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    login(body: ZUserInfoDto | undefined, cancelToken?: CancelToken | undefined): Promise<string> {
+    login(body: ZUserInfoDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<string>> {
         let url_ = this.baseUrl + "/api/Test/Login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -58,7 +118,7 @@ export class TestServiceProxy {
         });
     }
 
-    protected processLogin(response: AxiosResponse): Promise<string> {
+    protected processLogin(response: AxiosResponse): Promise<ZEngineResponse<string>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -69,25 +129,28 @@ export class TestServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
                 result200 = resultData200 !== undefined ? resultData200 : <any>null;
     
-            return Promise.resolve<string>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<string>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<ZEngineResponse<string>>(null as any);
     }
 
     /**
      * 获取jwttoken
      * @return Success
      */
-    getUser( cancelToken?: CancelToken | undefined): Promise<string> {
+    getUser( cancelToken?: CancelToken): Promise<ZEngineResponse<string>> {
         let url_ = this.baseUrl + "/api/Test/GetUser";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -111,7 +174,7 @@ export class TestServiceProxy {
         });
     }
 
-    protected processGetUser(response: AxiosResponse): Promise<string> {
+    protected processGetUser(response: AxiosResponse): Promise<ZEngineResponse<string>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -122,32 +185,35 @@ export class TestServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
                 result200 = resultData200 !== undefined ? resultData200 : <any>null;
     
-            return Promise.resolve<string>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<string>>(result200Data);
 
         } else if (status === 401) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Unauthorized", status, _responseText, _headers);
 
         } else if (status === 403) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Forbidden", status, _responseText, _headers);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<ZEngineResponse<string>>(null as any);
     }
 
     /**
      * @return Success
      */
-    logout( cancelToken?: CancelToken | undefined): Promise<string> {
+    logout( cancelToken?: CancelToken): Promise<ZEngineResponse<string>> {
         let url_ = this.baseUrl + "/api/Test/Logout";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -171,7 +237,7 @@ export class TestServiceProxy {
         });
     }
 
-    protected processLogout(response: AxiosResponse): Promise<string> {
+    protected processLogout(response: AxiosResponse): Promise<ZEngineResponse<string>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -182,25 +248,28 @@ export class TestServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
                 result200 = resultData200 !== undefined ? resultData200 : <any>null;
     
-            return Promise.resolve<string>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<string>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<ZEngineResponse<string>>(null as any);
     }
 
     /**
      * 创建用户
      * @return Success
      */
-    createUser( cancelToken?: CancelToken | undefined): Promise<void> {
+    createUser( cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/Test/CreateUser";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -223,7 +292,7 @@ export class TestServiceProxy {
         });
     }
 
-    protected processCreateUser(response: AxiosResponse): Promise<void> {
+    protected processCreateUser(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -234,29 +303,29 @@ export class TestServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status === 401) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Unauthorized", status, _responseText, _headers);
 
         } else if (status === 403) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Forbidden", status, _responseText, _headers);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
      * 获取用户
      * @return Success
      */
-    seacthUser( cancelToken?: CancelToken | undefined): Promise<ZUserInfoDto[]> {
+    seacthUser( cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfoDto[]>> {
         let url_ = this.baseUrl + "/api/Test/SeacthUser";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -280,7 +349,7 @@ export class TestServiceProxy {
         });
     }
 
-    protected processSeacthUser(response: AxiosResponse): Promise<ZUserInfoDto[]> {
+    protected processSeacthUser(response: AxiosResponse): Promise<ZEngineResponse<ZUserInfoDto[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -291,9 +360,10 @@ export class TestServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -302,28 +372,30 @@ export class TestServiceProxy {
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<ZUserInfoDto[]>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ZUserInfoDto[]>>(result200Data);
 
         } else if (status === 401) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Unauthorized", status, _responseText, _headers);
 
         } else if (status === 403) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Forbidden", status, _responseText, _headers);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ZUserInfoDto[]>(null as any);
+        return Promise.resolve<ZEngineResponse<ZUserInfoDto[]>>(null as any);
     }
 
     /**
      * 获取用户
      * @return Success
      */
-    seacthUserCache( cancelToken?: CancelToken | undefined): Promise<ZUserInfoDto[]> {
+    seacthUserCache( cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfoDto[]>> {
         let url_ = this.baseUrl + "/api/Test/SeacthUserCache";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -347,7 +419,7 @@ export class TestServiceProxy {
         });
     }
 
-    protected processSeacthUserCache(response: AxiosResponse): Promise<ZUserInfoDto[]> {
+    protected processSeacthUserCache(response: AxiosResponse): Promise<ZEngineResponse<ZUserInfoDto[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -358,9 +430,10 @@ export class TestServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -369,34 +442,36 @@ export class TestServiceProxy {
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<ZUserInfoDto[]>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ZUserInfoDto[]>>(result200Data);
 
         } else if (status === 401) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Unauthorized", status, _responseText, _headers);
 
         } else if (status === 403) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("Forbidden", status, _responseText, _headers);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ZUserInfoDto[]>(null as any);
+        return Promise.resolve<ZEngineResponse<ZUserInfoDto[]>>(null as any);
     }
 }
 
 export class ServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -404,7 +479,7 @@ export class ServiceProxy {
      * 查询
      * @return Success
      */
-    weatherForecast( cancelToken?: CancelToken | undefined): Promise<string> {
+    weatherForecast( cancelToken?: CancelToken): Promise<ZEngineResponse<string>> {
         let url_ = this.baseUrl + "/WeatherForecast";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -428,7 +503,7 @@ export class ServiceProxy {
         });
     }
 
-    protected processWeatherForecast(response: AxiosResponse): Promise<string> {
+    protected processWeatherForecast(response: AxiosResponse): Promise<ZEngineResponse<string>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -439,31 +514,34 @@ export class ServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
                 result200 = resultData200 !== undefined ? resultData200 : <any>null;
     
-            return Promise.resolve<string>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<string>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve<ZEngineResponse<string>>(null as any);
     }
 }
 
 export class UsersServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -471,7 +549,7 @@ export class UsersServiceProxy {
      * 创建
      * @return Success
      */
-    create( cancelToken?: CancelToken | undefined): Promise<ZUserInfo> {
+    create( cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfo>> {
         let url_ = this.baseUrl + "/api/Users/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -495,7 +573,7 @@ export class UsersServiceProxy {
         });
     }
 
-    protected processCreate(response: AxiosResponse): Promise<ZUserInfo> {
+    protected processCreate(response: AxiosResponse): Promise<ZEngineResponse<ZUserInfo>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -506,24 +584,27 @@ export class UsersServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ZUserInfo.fromJS(resultData200);
-            return Promise.resolve<ZUserInfo>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ZUserInfo>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ZUserInfo>(null as any);
+        return Promise.resolve<ZEngineResponse<ZUserInfo>>(null as any);
     }
 
     /**
      * 查询一个用户
      * @return Success
      */
-    getFrist( cancelToken?: CancelToken | undefined): Promise<ZUserInfoDto[]> {
+    getFrist( cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfoDto[]>> {
         let url_ = this.baseUrl + "/api/Users/GetFrist";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -547,7 +628,7 @@ export class UsersServiceProxy {
         });
     }
 
-    protected processGetFrist(response: AxiosResponse): Promise<ZUserInfoDto[]> {
+    protected processGetFrist(response: AxiosResponse): Promise<ZEngineResponse<ZUserInfoDto[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -558,9 +639,10 @@ export class UsersServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -569,13 +651,15 @@ export class UsersServiceProxy {
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<ZUserInfoDto[]>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ZUserInfoDto[]>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ZUserInfoDto[]>(null as any);
+        return Promise.resolve<ZEngineResponse<ZUserInfoDto[]>>(null as any);
     }
 
     /**
@@ -583,7 +667,7 @@ export class UsersServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    login(body: ZUserInfoDto | undefined, cancelToken?: CancelToken | undefined): Promise<ZUserInfoDto> {
+    login(body: ZUserInfoDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfoDto>> {
         let url_ = this.baseUrl + "/api/Users/Login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -611,7 +695,7 @@ export class UsersServiceProxy {
         });
     }
 
-    protected processLogin(response: AxiosResponse): Promise<ZUserInfoDto> {
+    protected processLogin(response: AxiosResponse): Promise<ZEngineResponse<ZUserInfoDto>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -622,30 +706,33 @@ export class UsersServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ZUserInfoDto.fromJS(resultData200);
-            return Promise.resolve<ZUserInfoDto>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ZUserInfoDto>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ZUserInfoDto>(null as any);
+        return Promise.resolve<ZEngineResponse<ZUserInfoDto>>(null as any);
     }
 }
 
 export class TalksSsServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -654,7 +741,7 @@ export class TalksSsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    createOrUpdate(body: CreateOrUpdateTalksInput | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    createOrUpdate(body: CreateOrUpdateTalksInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/TalksSs/CreateOrUpdate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -681,7 +768,7 @@ export class TalksSsServiceProxy {
         });
     }
 
-    protected processCreateOrUpdate(response: AxiosResponse): Promise<void> {
+    protected processCreateOrUpdate(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -692,14 +779,14 @@ export class TalksSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -707,7 +794,7 @@ export class TalksSsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getPage(body: TalksPageQueryInput | undefined, cancelToken?: CancelToken | undefined): Promise<TalksPageOutputPageResult> {
+    getPage(body: TalksPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<TalksPageOutputPageResult>> {
         let url_ = this.baseUrl + "/api/TalksSs/GetPage";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -735,7 +822,7 @@ export class TalksSsServiceProxy {
         });
     }
 
-    protected processGetPage(response: AxiosResponse): Promise<TalksPageOutputPageResult> {
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<TalksPageOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -746,30 +833,33 @@ export class TalksSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = TalksPageOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<TalksPageOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TalksPageOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<TalksPageOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<TalksPageOutputPageResult>>(null as any);
     }
 }
 
 export class TalksCsServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -778,7 +868,7 @@ export class TalksCsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getList(body: Pagination | undefined, cancelToken?: CancelToken | undefined): Promise<TalksOutputPageResult> {
+    getList(body: Pagination | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<TalksOutputPageResult>> {
         let url_ = this.baseUrl + "/api/TalksCs/GetList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -806,7 +896,7 @@ export class TalksCsServiceProxy {
         });
     }
 
-    protected processGetList(response: AxiosResponse): Promise<TalksOutputPageResult> {
+    protected processGetList(response: AxiosResponse): Promise<ZEngineResponse<TalksOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -817,17 +907,20 @@ export class TalksCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = TalksOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<TalksOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TalksOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<TalksOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<TalksOutputPageResult>>(null as any);
     }
 
     /**
@@ -835,7 +928,7 @@ export class TalksCsServiceProxy {
      * @param id (optional) 
      * @return Success
      */
-    talkDetail(id: string | undefined, cancelToken?: CancelToken | undefined): Promise<TalkDetailOutput> {
+    talkDetail(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<TalkDetailOutput>> {
         let url_ = this.baseUrl + "/api/TalksCs/TalkDetail?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -863,7 +956,7 @@ export class TalksCsServiceProxy {
         });
     }
 
-    protected processTalkDetail(response: AxiosResponse): Promise<TalkDetailOutput> {
+    protected processTalkDetail(response: AxiosResponse): Promise<ZEngineResponse<TalkDetailOutput>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -874,30 +967,33 @@ export class TalksCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = TalkDetailOutput.fromJS(resultData200);
-            return Promise.resolve<TalkDetailOutput>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TalkDetailOutput>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<TalkDetailOutput>(null as any);
+        return Promise.resolve<ZEngineResponse<TalkDetailOutput>>(null as any);
     }
 }
 
 export class TagssServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -906,7 +1002,7 @@ export class TagssServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    createOrUpdate(body: CreateOrUpdateTagInput | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    createOrUpdate(body: CreateOrUpdateTagInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/Tagss/CreateOrUpdate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -933,7 +1029,7 @@ export class TagssServiceProxy {
         });
     }
 
-    protected processCreateOrUpdate(response: AxiosResponse): Promise<void> {
+    protected processCreateOrUpdate(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -944,14 +1040,14 @@ export class TagssServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -959,7 +1055,7 @@ export class TagssServiceProxy {
      * @param id (optional) 
      * @return Success
      */
-    delete(id: string | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/Tagss/Delete?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -986,7 +1082,7 @@ export class TagssServiceProxy {
         });
     }
 
-    protected processDelete(response: AxiosResponse): Promise<void> {
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -997,21 +1093,21 @@ export class TagssServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
      * 文章标签下拉选项
      * @return Success
      */
-    select( cancelToken?: CancelToken | undefined): Promise<SelectOutput[]> {
+    select( cancelToken?: CancelToken): Promise<ZEngineResponse<SelectOutput[]>> {
         let url_ = this.baseUrl + "/api/Tagss/Select";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1035,7 +1131,7 @@ export class TagssServiceProxy {
         });
     }
 
-    protected processSelect(response: AxiosResponse): Promise<SelectOutput[]> {
+    protected processSelect(response: AxiosResponse): Promise<ZEngineResponse<SelectOutput[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1046,9 +1142,10 @@ export class TagssServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -1057,13 +1154,15 @@ export class TagssServiceProxy {
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<SelectOutput[]>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<SelectOutput[]>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SelectOutput[]>(null as any);
+        return Promise.resolve<ZEngineResponse<SelectOutput[]>>(null as any);
     }
 
     /**
@@ -1071,7 +1170,7 @@ export class TagssServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getPage(body: TagsPageQueryInput | undefined, cancelToken?: CancelToken | undefined): Promise<TagsPageOutputPageResult> {
+    getPage(body: TagsPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<TagsPageOutputPageResult>> {
         let url_ = this.baseUrl + "/api/Tagss/GetPage";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1099,7 +1198,7 @@ export class TagssServiceProxy {
         });
     }
 
-    protected processGetPage(response: AxiosResponse): Promise<TagsPageOutputPageResult> {
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<TagsPageOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1110,30 +1209,33 @@ export class TagssServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = TagsPageOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<TagsPageOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TagsPageOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<TagsPageOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<TagsPageOutputPageResult>>(null as any);
     }
 }
 
 export class CommentsCsServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -1142,7 +1244,7 @@ export class CommentsCsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    add(body: AddCommentInput | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    add(body: AddCommentInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/CommentsCs/Add";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1169,7 +1271,7 @@ export class CommentsCsServiceProxy {
         });
     }
 
-    protected processAdd(response: AxiosResponse): Promise<void> {
+    protected processAdd(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1180,14 +1282,14 @@ export class CommentsCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -1195,7 +1297,7 @@ export class CommentsCsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getList(body: CommentPageQueryInput | undefined, cancelToken?: CancelToken | undefined): Promise<CommentOutputPageResult> {
+    getList(body: CommentPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<CommentOutputPageResult>> {
         let url_ = this.baseUrl + "/api/CommentsCs/GetList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1223,7 +1325,7 @@ export class CommentsCsServiceProxy {
         });
     }
 
-    protected processGetList(response: AxiosResponse): Promise<CommentOutputPageResult> {
+    protected processGetList(response: AxiosResponse): Promise<ZEngineResponse<CommentOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1234,17 +1336,20 @@ export class CommentsCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = CommentOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<CommentOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<CommentOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<CommentOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<CommentOutputPageResult>>(null as any);
     }
 
     /**
@@ -1252,7 +1357,7 @@ export class CommentsCsServiceProxy {
      * @param body (optional) 对象ID
      * @return Success
      */
-    praise(body: KeyDto | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    praise(body: KeyDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/CommentsCs/Praise";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1279,7 +1384,7 @@ export class CommentsCsServiceProxy {
         });
     }
 
-    protected processPraise(response: AxiosResponse): Promise<void> {
+    protected processPraise(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1290,14 +1395,14 @@ export class CommentsCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -1305,7 +1410,7 @@ export class CommentsCsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    replyList(body: CommentPageQueryInput | undefined, cancelToken?: CancelToken | undefined): Promise<ReplyOutputPageResult> {
+    replyList(body: CommentPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<ReplyOutputPageResult>> {
         let url_ = this.baseUrl + "/api/CommentsCs/ReplyList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1333,7 +1438,7 @@ export class CommentsCsServiceProxy {
         });
     }
 
-    protected processReplyList(response: AxiosResponse): Promise<ReplyOutputPageResult> {
+    protected processReplyList(response: AxiosResponse): Promise<ZEngineResponse<ReplyOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1344,30 +1449,33 @@ export class CommentsCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ReplyOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<ReplyOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ReplyOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ReplyOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<ReplyOutputPageResult>>(null as any);
     }
 }
 
 export class ArticleSsServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -1376,7 +1484,7 @@ export class ArticleSsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    createOrUpdate(body: CreateOrUpdateArticleInput | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    createOrUpdate(body: CreateOrUpdateArticleInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/ArticleSs/CreateOrUpdate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1403,7 +1511,7 @@ export class ArticleSsServiceProxy {
         });
     }
 
-    protected processCreateOrUpdate(response: AxiosResponse): Promise<void> {
+    protected processCreateOrUpdate(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1414,14 +1522,14 @@ export class ArticleSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -1429,7 +1537,7 @@ export class ArticleSsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    delete(body: KeyDto | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    delete(body: KeyDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/ArticleSs/Delete";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1456,7 +1564,7 @@ export class ArticleSsServiceProxy {
         });
     }
 
-    protected processDelete(response: AxiosResponse): Promise<void> {
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1467,14 +1575,14 @@ export class ArticleSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -1482,7 +1590,7 @@ export class ArticleSsServiceProxy {
      * @param id (optional) 
      * @return Success
      */
-    getDetail(id: string | undefined, cancelToken?: CancelToken | undefined): Promise<ArticleDetailOutput> {
+    getDetail(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<ArticleDetailOutput>> {
         let url_ = this.baseUrl + "/api/ArticleSs/GetDetail?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -1510,7 +1618,7 @@ export class ArticleSsServiceProxy {
         });
     }
 
-    protected processGetDetail(response: AxiosResponse): Promise<ArticleDetailOutput> {
+    protected processGetDetail(response: AxiosResponse): Promise<ZEngineResponse<ArticleDetailOutput>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1521,17 +1629,20 @@ export class ArticleSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ArticleDetailOutput.fromJS(resultData200);
-            return Promise.resolve<ArticleDetailOutput>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ArticleDetailOutput>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ArticleDetailOutput>(null as any);
+        return Promise.resolve<ZEngineResponse<ArticleDetailOutput>>(null as any);
     }
 
     /**
@@ -1539,7 +1650,7 @@ export class ArticleSsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getPage(body: ArticlePageQueryInput | undefined, cancelToken?: CancelToken | undefined): Promise<ArticlePageOutputPageResult> {
+    getPage(body: ArticlePageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<ArticlePageOutputPageResult>> {
         let url_ = this.baseUrl + "/api/ArticleSs/GetPage";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1567,7 +1678,7 @@ export class ArticleSsServiceProxy {
         });
     }
 
-    protected processGetPage(response: AxiosResponse): Promise<ArticlePageOutputPageResult> {
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<ArticlePageOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1578,30 +1689,33 @@ export class ArticleSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ArticlePageOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<ArticlePageOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ArticlePageOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ArticlePageOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<ArticlePageOutputPageResult>>(null as any);
     }
 }
 
 export class ArticleCsServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -1609,7 +1723,7 @@ export class ArticleCsServiceProxy {
      * 文章栏目分类
      * @return Success
      */
-    categories( cancelToken?: CancelToken | undefined): Promise<CategoryOutput[]> {
+    categories( cancelToken?: CancelToken): Promise<ZEngineResponse<CategoryOutput[]>> {
         let url_ = this.baseUrl + "/api/ArticleCs/Categories";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1633,7 +1747,7 @@ export class ArticleCsServiceProxy {
         });
     }
 
-    protected processCategories(response: AxiosResponse): Promise<CategoryOutput[]> {
+    protected processCategories(response: AxiosResponse): Promise<ZEngineResponse<CategoryOutput[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1644,9 +1758,10 @@ export class ArticleCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -1655,13 +1770,15 @@ export class ArticleCsServiceProxy {
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<CategoryOutput[]>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<CategoryOutput[]>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<CategoryOutput[]>(null as any);
+        return Promise.resolve<ZEngineResponse<CategoryOutput[]>>(null as any);
     }
 
     /**
@@ -1669,7 +1786,7 @@ export class ArticleCsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getList(body: ArticleListQueryInput | undefined, cancelToken?: CancelToken | undefined): Promise<ArticleOutputPageResult> {
+    getList(body: ArticleListQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<ArticleOutputPageResult>> {
         let url_ = this.baseUrl + "/api/ArticleCs/GetList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1697,7 +1814,7 @@ export class ArticleCsServiceProxy {
         });
     }
 
-    protected processGetList(response: AxiosResponse): Promise<ArticleOutputPageResult> {
+    protected processGetList(response: AxiosResponse): Promise<ZEngineResponse<ArticleOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1708,17 +1825,20 @@ export class ArticleCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ArticleOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<ArticleOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ArticleOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ArticleOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<ArticleOutputPageResult>>(null as any);
     }
 
     /**
@@ -1726,7 +1846,7 @@ export class ArticleCsServiceProxy {
      * @param id (optional) 文章ID
      * @return Success
      */
-    info(id: string | undefined, cancelToken?: CancelToken | undefined): Promise<ArticleInfoOutput> {
+    info(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<ArticleInfoOutput>> {
         let url_ = this.baseUrl + "/api/ArticleCs/Info?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -1754,7 +1874,7 @@ export class ArticleCsServiceProxy {
         });
     }
 
-    protected processInfo(response: AxiosResponse): Promise<ArticleInfoOutput> {
+    protected processInfo(response: AxiosResponse): Promise<ZEngineResponse<ArticleInfoOutput>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1765,24 +1885,27 @@ export class ArticleCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ArticleInfoOutput.fromJS(resultData200);
-            return Promise.resolve<ArticleInfoOutput>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ArticleInfoOutput>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ArticleInfoOutput>(null as any);
+        return Promise.resolve<ZEngineResponse<ArticleInfoOutput>>(null as any);
     }
 
     /**
      * 最新5片文章
      * @return Success
      */
-    latest( cancelToken?: CancelToken | undefined): Promise<ArticleBasicsOutput[]> {
+    latest( cancelToken?: CancelToken): Promise<ZEngineResponse<ArticleBasicsOutput[]>> {
         let url_ = this.baseUrl + "/api/ArticleCs/Latest";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1806,7 +1929,7 @@ export class ArticleCsServiceProxy {
         });
     }
 
-    protected processLatest(response: AxiosResponse): Promise<ArticleBasicsOutput[]> {
+    protected processLatest(response: AxiosResponse): Promise<ZEngineResponse<ArticleBasicsOutput[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1817,9 +1940,10 @@ export class ArticleCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -1828,20 +1952,22 @@ export class ArticleCsServiceProxy {
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<ArticleBasicsOutput[]>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ArticleBasicsOutput[]>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ArticleBasicsOutput[]>(null as any);
+        return Promise.resolve<ZEngineResponse<ArticleBasicsOutput[]>>(null as any);
     }
 
     /**
      * 文章信息统计
      * @return Success
      */
-    reportStatistics( cancelToken?: CancelToken | undefined): Promise<ArticleReportOutput> {
+    reportStatistics( cancelToken?: CancelToken): Promise<ZEngineResponse<ArticleReportOutput>> {
         let url_ = this.baseUrl + "/api/ArticleCs/ReportStatistics";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1865,7 +1991,7 @@ export class ArticleCsServiceProxy {
         });
     }
 
-    protected processReportStatistics(response: AxiosResponse): Promise<ArticleReportOutput> {
+    protected processReportStatistics(response: AxiosResponse): Promise<ZEngineResponse<ArticleReportOutput>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1876,24 +2002,27 @@ export class ArticleCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = ArticleReportOutput.fromJS(resultData200);
-            return Promise.resolve<ArticleReportOutput>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ArticleReportOutput>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ArticleReportOutput>(null as any);
+        return Promise.resolve<ZEngineResponse<ArticleReportOutput>>(null as any);
     }
 
     /**
      * 标签列表
      * @return Success
      */
-    tags( cancelToken?: CancelToken | undefined): Promise<TagsOutput[]> {
+    tags( cancelToken?: CancelToken): Promise<ZEngineResponse<TagsOutput[]>> {
         let url_ = this.baseUrl + "/api/ArticleCs/Tags";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1917,7 +2046,7 @@ export class ArticleCsServiceProxy {
         });
     }
 
-    protected processTags(response: AxiosResponse): Promise<TagsOutput[]> {
+    protected processTags(response: AxiosResponse): Promise<ZEngineResponse<TagsOutput[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1928,9 +2057,10 @@ export class ArticleCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -1939,26 +2069,28 @@ export class ArticleCsServiceProxy {
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<TagsOutput[]>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TagsOutput[]>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<TagsOutput[]>(null as any);
+        return Promise.resolve<ZEngineResponse<TagsOutput[]>>(null as any);
     }
 }
 
 export class ArticleCategorysServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -1967,7 +2099,7 @@ export class ArticleCategorysServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    create(body: CreateOrUpdateArticleCategoryDto | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    create(body: CreateOrUpdateArticleCategoryDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/ArticleCategorys/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1994,7 +2126,7 @@ export class ArticleCategorysServiceProxy {
         });
     }
 
-    protected processCreate(response: AxiosResponse): Promise<void> {
+    protected processCreate(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2005,14 +2137,14 @@ export class ArticleCategorysServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -2020,7 +2152,7 @@ export class ArticleCategorysServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    update(body: CreateOrUpdateArticleCategoryDto | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    update(body: CreateOrUpdateArticleCategoryDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/ArticleCategorys/Update";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2047,7 +2179,7 @@ export class ArticleCategorysServiceProxy {
         });
     }
 
-    protected processUpdate(response: AxiosResponse): Promise<void> {
+    protected processUpdate(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2058,27 +2190,27 @@ export class ArticleCategorysServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 }
 
 export class AlbumsSsServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -2087,7 +2219,7 @@ export class AlbumsSsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    createOrUpdate(body: CreateOrUpdateAlbumsInput | undefined, cancelToken?: CancelToken | undefined): Promise<void> {
+    createOrUpdate(body: CreateOrUpdateAlbumsInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/AlbumsSs/CreateOrUpdate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2114,7 +2246,7 @@ export class AlbumsSsServiceProxy {
         });
     }
 
-    protected processCreateOrUpdate(response: AxiosResponse): Promise<void> {
+    protected processCreateOrUpdate(response: AxiosResponse): Promise<ZEngineResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2125,14 +2257,14 @@ export class AlbumsSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
-            return Promise.resolve<void>(null as any);
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 
     /**
@@ -2140,7 +2272,7 @@ export class AlbumsSsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getPage(body: AlbumsPageQueryInput | undefined, cancelToken?: CancelToken | undefined): Promise<AlbumsPageOutputPageResult> {
+    getPage(body: AlbumsPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<AlbumsPageOutputPageResult>> {
         let url_ = this.baseUrl + "/api/AlbumsSs/GetPage";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2168,7 +2300,7 @@ export class AlbumsSsServiceProxy {
         });
     }
 
-    protected processGetPage(response: AxiosResponse): Promise<AlbumsPageOutputPageResult> {
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<AlbumsPageOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2179,30 +2311,33 @@ export class AlbumsSsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = AlbumsPageOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<AlbumsPageOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<AlbumsPageOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<AlbumsPageOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<AlbumsPageOutputPageResult>>(null as any);
     }
 }
 
 export class AlbumsCsServiceProxy {
-    private instance: AxiosInstance;
-    private baseUrl: string;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-        this.instance = instance ? instance : axios.create();
+        this.instance = instance || axios.create();
 
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl ?? "";
 
     }
 
@@ -2211,7 +2346,7 @@ export class AlbumsCsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    getList(body: Pagination | undefined, cancelToken?: CancelToken | undefined): Promise<AlbumsOutputPageResult> {
+    getList(body: Pagination | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<AlbumsOutputPageResult>> {
         let url_ = this.baseUrl + "/api/AlbumsCs/GetList";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2239,7 +2374,7 @@ export class AlbumsCsServiceProxy {
         });
     }
 
-    protected processGetList(response: AxiosResponse): Promise<AlbumsOutputPageResult> {
+    protected processGetList(response: AxiosResponse): Promise<ZEngineResponse<AlbumsOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2250,17 +2385,20 @@ export class AlbumsCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = AlbumsOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<AlbumsOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<AlbumsOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<AlbumsOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<AlbumsOutputPageResult>>(null as any);
     }
 
     /**
@@ -2270,7 +2408,7 @@ export class AlbumsCsServiceProxy {
      * @param pageSize (optional) 
      * @return Success
      */
-    pictures(albumId: string | undefined, pageNo: number | undefined, pageSize: number | undefined, cancelToken?: CancelToken | undefined): Promise<PictureOutputPageResult> {
+    pictures(albumId: string | undefined, pageNo: number | undefined, pageSize: number | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<PictureOutputPageResult>> {
         let url_ = this.baseUrl + "/api/AlbumsCs/Pictures?";
         if (albumId === null)
             throw new Error("The parameter 'albumId' cannot be null.");
@@ -2306,7 +2444,7 @@ export class AlbumsCsServiceProxy {
         });
     }
 
-    protected processPictures(response: AxiosResponse): Promise<PictureOutputPageResult> {
+    protected processPictures(response: AxiosResponse): Promise<ZEngineResponse<PictureOutputPageResult>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2317,17 +2455,20 @@ export class AlbumsCsServiceProxy {
             }
         }
         if (status === 200) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200  = _responseText;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
             result200 = PictureOutputPageResult.fromJS(resultData200);
-            return Promise.resolve<PictureOutputPageResult>(result200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<PictureOutputPageResult>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data.result;
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<PictureOutputPageResult>(null as any);
+        return Promise.resolve<ZEngineResponse<PictureOutputPageResult>>(null as any);
     }
 }
 

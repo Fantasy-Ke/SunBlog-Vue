@@ -1,17 +1,17 @@
 <template>
   <div>
   <!-- banner -->
-  <div class="banner" :style="cover">
-    <h1 class="banner-title">{{ photos.photoAlbumName }}</h1>
+  <div class="banner" :style="state.cover">
+    <h1 class="banner-title">{{ state.name }}</h1>
   </div>
   <!-- 相册列表 -->
   <v-card class="blog-container">
     <div class="photo-wrap" id="photos">
       <img
-        v-for="(item, index) of photos.photoList"
+        v-for="(item, index) of state.photos"
         class="photo"
         :key="index"
-        :src="item"
+        :src="item.url!"
       />
     </div>
     <!-- 无限加载 -->
@@ -25,12 +25,43 @@
 
 <script setup lang="ts">
 import { photos } from "../../api/data";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, inject, nextTick, onMounted, onUnmounted, reactive, ref } from "vue";
 import Viewer from "viewerjs";
 import "viewerjs/dist/viewer.css";
+import { AlbumsCsServiceProxy, PictureOutput } from "@/shared/service-proxies";
+import { useRoute } from "vue-router";
+const _albumsCService = new AlbumsCsServiceProxy(inject('$baseurl'),inject('$api'));
+const route = useRoute();
+const state = reactive({
+  photos: [] as PictureOutput[],
+  cover: "",
+  name: "",
+  query: {
+    pageNo: 1,
+    pageSize: 1000,
+    albumId: route.params.id as never,
+  },
+});
 const viewer = ref<Viewer | null>(null);
 onMounted(() => {
   viewer.value = new Viewer(document.getElementById("photos") as HTMLElement);
+});
+onMounted(async () => {
+ await _albumsCService.pictures(state.query.albumId,state.query.pageNo,state.query.pageSize)
+ .then((res)=>{
+  if(res.result){
+    let data = res.result;
+    state.photos = data?.rows ?? [];
+    let extras = res.extras;
+    state.cover =
+      "background: url(" + extras?.cover + ") center center / cover no-repeat";
+    state.name = extras?.name;
+    nextTick(() => {
+      viewer.value = new Viewer(document.getElementById("photos") as HTMLElement);
+    });
+  }
+ });
+  
 });
 
 onUnmounted(() => {

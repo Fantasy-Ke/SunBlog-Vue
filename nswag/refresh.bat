@@ -1,1 +1,1 @@
-"..\node_modules\.bin\nswag" run & pwsh .\refresh.ps1
+"..\node_modules\.bin\nswag" run && pwsh .\refresh.ps1

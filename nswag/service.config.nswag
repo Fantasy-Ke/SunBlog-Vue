@@ -31,7 +31,7 @@
       "wrapResponses": false,
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
-      "responseClass": "SwaggerResponse",
+      "responseClass": "ZEngineResponse",
       "protectedMethods": [],
       "configurationClass": null,
       "useTransformOptionsMethod": false,
