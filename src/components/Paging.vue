@@ -107,7 +107,7 @@ import { ref, computed } from "vue";
 const props = defineProps<{
   totalPage: number;
   index: number;
-  commentId: number;
+  commentId: string;
 }>();
 
 const emit = defineEmits<{
@@ -115,7 +115,7 @@ const emit = defineEmits<{
     e: "changeReplyCurrent",
     current: number,
     index: number,
-    commentId: number
+    commentId: string
   ): void;
 }>();
 

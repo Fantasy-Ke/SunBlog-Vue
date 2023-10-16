@@ -35,17 +35,22 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import Emoji from "./Emoji.vue";
-import EmojiList from "../assets/emoji";
-const props = defineProps<{
-  type: number;
+interface ReplyInfo {
+  index: number;
+  chooseEmoji: boolean;
+  parentId?: string;
+  rootId?: string;
+  replyAccountId?: string;
+  nickname?: string;
+  commentContent?: string;
+  visible: boolean;
+}
+const emit = defineEmits<{
+  (e: "submit", index: number): void;
 }>();
-const replay = reactive({
+const replay = reactive<ReplyInfo>({
   index: 0,
   chooseEmoji: false,
-  nickname: "",
-  replyUserId: null,
-  parentId: null,
-  commentContent: "",
   visible: false,
 });
 
@@ -55,18 +60,20 @@ const cancleReply = () => {
 };
 
 const insertReply = () => {
+  replay.commentContent = replay.commentContent?.replace(/<[^<>]*>/g, "");
   //解析表情
-  var reg = /\[.+?\]/g;
-  replay.commentContent = replay.commentContent.replace(
-    reg,
-    function (str: string) {
-      return (
-        "<img src= '" +
-        EmojiList[str] +
-        "' width='24'height='24' style='margin: 0 1px;vertical-align: text-bottom'/>"
-      );
-    }
-  );
+  // var reg = /\[.+?\]/g;
+  // replay.commentContent = replay.commentContent?.replace(
+  //   reg,
+  //   function (str: string) {
+  //     return (
+  //       "<img src= '" +
+  //       EmojiList[str] +
+  //       "' width='24'height='24' style='margin: 0 1px;vertical-align: text-bottom'/>"
+  //     );
+  //   }
+  // );
+  emit("submit", replay.index);
 };
 
 const addEmoji = (text: string) => {
@@ -74,8 +81,8 @@ const addEmoji = (text: string) => {
 };
 
 defineExpose({
-    replay
-})
+  replay,
+});
 </script>
 
 <style scoped>

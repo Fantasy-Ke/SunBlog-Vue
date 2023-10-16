@@ -1,6 +1,6 @@
 <template>
-  <!-- 搜索框 -->
-  <v-dialog
+ <!-- 搜索框 -->
+ <v-dialog
     v-bind:model-value="isShow"
     @update:model-value="handlerUpdateValue"
     max-width="600"
@@ -28,11 +28,11 @@
             :key="item.id"
           >
             <!-- 文章标题 -->
-            <a @click="goTo(item.id)" v-html="item.articleTitle" />
+            <a @click="goTo(item.id)" v-html="item.title" />
             <!-- 文章内容 -->
             <p
               class="search-reslut-content text-justify"
-              v-html="item.articleContent"
+              v-html="item.summary"
             />
           </li>
         </ul>
@@ -49,12 +49,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, reactive } from "vue";
+import { computed, ref, watch, reactive, inject } from "vue";
 import { useRouter } from "vue-router";
 import { articles } from "../api/data";
+import { ArticleCsServiceProxy, ArticleListQueryInput } from "@/shared/service-proxies";
+const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
 
-
-const props = defineProps<{
+defineProps<{
   isShow: boolean;
 }>();
 // const visible = ref(props.isShow);
@@ -87,13 +88,20 @@ const isMobile = computed(() => {
   }
   return true;
 });
-watch(keywords, (val) => {
+watch(keywords, async (val: string) => {
   if (val.trim().length === 0) {
-    articleList.list = articles;
+    articleList.list = [];
   } else {
-    articleList.list = articleList.list.filter((item) =>
-      item.articleTitle.includes(val)
-    );
+    await _articleCService.getList({
+      keyword: val,
+      pageNo: 1,
+      pageSize: 10,
+    } as ArticleListQueryInput).then(res=>{
+      if(res.success){
+        articleList.list = res.result?.rows ?? [];
+      }
+    });
+    
   }
 });
 watch(isMobile, () => {

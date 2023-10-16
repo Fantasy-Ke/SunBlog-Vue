@@ -8,7 +8,7 @@
         <div class="comment-input">
           <textarea
             class="comment-textarea"
-            v-model="data.commentContent"
+            v-model="state.commentContent"
             placeholder="留下点什么吧..."
             auto-grow
             dense
@@ -17,8 +17,8 @@
         <!-- 操作按钮 -->
         <div class="emoji-container">
           <span
-            :class="data.chooseEmoji ? 'emoji-btn-active' : 'emoji-btn'"
-            @click="data.chooseEmoji = !data.chooseEmoji"
+            :class="state.chooseEmoji ? 'emoji-btn-active' : 'emoji-btn'"
+            @click="state.chooseEmoji = !state.chooseEmoji"
           >
             <i class="iconfont iconbiaoqing" />
           </span>
@@ -31,96 +31,111 @@
           </button>
         </div>
         <!-- 表情框 -->
-        <emoji @addEmoji="addEmoji" :chooseEmoji="data.chooseEmoji" />
+        <emoji @addEmoji="addEmoji" :chooseEmoji="state.chooseEmoji" />
       </div>
     </div>
   </div>
   <!-- 评论详情 -->
-  <div v-if="data.count > 0 && data.reFresh">
+  <div v-if="state.count > 0">
     <!-- 评论数量 -->
-    <div class="count">{{ data.count }} 评论</div>
+    <div class="count">{{ state.count }} 评论</div>
     <!-- 评论列表 -->
     <div
       style="display: flex"
       class="pt-5"
-      v-for="(item, index) of data.commentList"
+      v-for="(item, index) of state.commentList"
       :key="item.id"
     >
       <!-- 头像 -->
-      <v-avatar size="40" class="comment-avatar" :image="item.avatar" />
+      <v-avatar size="40" class="comment-avatar" :image="item.avatar!" />
       <div class="comment-meta">
         <!-- 用户名 -->
         <div class="comment-user">
-          <span v-if="!item.webSite">{{ item.nickname }}</span>
+          <span>{{ item.nickName }}</span>
+          <!-- <span v-if="!item.webSite">{{ item.nickname }}</span>
           <a v-else :href="item.webSite" target="_blank">
             {{ item.nickname }}
-          </a>
-          <span class="blogger-tag" v-if="item.userId == 1">博主</span>
+          </a> -->
+          <span class="blogger-tag" v-if="item.isBlogger">博主</span>
         </div>
         <!-- 信息 -->
         <div class="comment-info">
           <!-- 楼层 -->
-          <span style="margin-right: 10px">{{ data.count - index }}楼</span>
+          <span style="margin-right: 10px">{{ state.count - index }}楼</span>
           <!-- 发表时间 -->
-          <span style="margin-right: 10px">{{ item.createTime }}</span>
+          <span style="margin-right: 10px">{{ moment(item.createdTime).format("YYYY-MM-DD HH:mm:ss") }}</span>
           <!-- 点赞 -->
           <span
             :class="
-              (index % 2 === 0 ? 'like-active' : 'like') /**模拟点赞 */ +
+              (item.isPraise ? 'like-active' : 'like') /**模拟点赞 */ +
               ' iconfont icondianzan'
             "
+            @click="onPraise(item)"
           />
-          <span v-show="item.likeCount > 0"> {{ item.likeCount }}</span>
+          <span v-show="(item.praiseTotal ?? 0) > 0">
+            {{ item.praiseTotal }}</span
+          >
           <!-- 回复 -->
-          <span class="reply-btn" @click="replyComment(index, item)">
+          <span class="reply-btn" @click="replyComment(index, item, item.id)">
             回复
           </span>
         </div>
         <!-- 评论内容 -->
-        <p v-html="item.commentContent" class="comment-content"></p>
+        <p
+          v-html="formatContent(item.content ?? '', true)"
+          class="comment-content"
+        ></p>
         <!-- 回复人 -->
         <div
           style="display: flex"
-          v-for="reply of item.replyDTOList"
+          v-for="reply of item.replyList?.rows ?? []"
           :key="reply.id"
         >
           <!-- 头像 -->
           <v-avatar size="36" class="comment-avatar">
-            <img :src="reply.avatar" />
+            <img :src="reply.avatar!" />
           </v-avatar>
           <div class="reply-meta">
             <!-- 用户名 -->
             <div class="comment-user">
-              <span v-if="!reply.webSite">{{ reply.nickname }}</span>
+              <span>{{ reply.nickName }}</span>
+              <!-- <span v-if="!reply.webSite">{{ reply.nickname }}</span>
               <a v-else :href="reply.webSite" target="_blank">
                 {{ reply.nickname }}
-              </a>
-              <span class="blogger-tag" v-if="reply.userId == 1">博主</span>
+              </a> -->
+              <span class="blogger-tag" v-if="reply.isBlogger">博主</span>
             </div>
             <!-- 信息 -->
             <div class="comment-info">
               <!-- 发表时间 -->
               <span style="margin-right: 10px">
-                {{ $formatDate(reply.createTime) }}
+                {{ moment(reply.createdTime).format("YYYY-MM-DD HH:mm:ss") }}
               </span>
               <!-- 点赞 -->
               <span
                 :class="
-                  (index % 2 === 0 ? 'like-active' : 'like') /**模拟点赞 */ +
+                  (reply.isPraise ? 'like-active' : 'like') +
                   ' iconfont icondianzan'
                 "
+                @click="onPraise(reply)"
               />
-              <span v-show="reply.likeCount > 0"> {{ reply.likeCount }}</span>
+              <span v-show="(reply.praiseTotal ?? 0) > 0">
+                {{ reply.praiseTotal }}</span
+              >
               <!-- 回复 -->
-              <span class="reply-btn" @click="replyComment(index, reply)">
+              <span
+                class="reply-btn"
+                @click="replyComment(index, reply, item.id)"
+              >
                 回复
               </span>
             </div>
             <!-- 回复内容 -->
             <p class="comment-content">
               <!-- 回复用户名 -->
-              <template v-if="reply.replyUserId != item.userId">
-                <span v-if="!reply.replyWebSite" class="ml-1">
+              <template v-if="reply.replyAccountId === item.accountId">
+                <span>{{ reply.relyNickName }}</span>
+                <!-- <span v-if="!reply.replyWebSite" class="ml-1">
                   @{{ reply.replyNickname }}
                 </span>
                 <a
@@ -130,10 +145,10 @@
                   class="comment-nickname ml-1"
                 >
                   @{{ reply.replyNickname }}
-                </a>
+                </a> -->
                 ，
               </template>
-              <span v-html="reply.commentContent" />
+              <span v-html="formatContent(reply.content ?? '', true)" />
             </p>
           </div>
         </div>
@@ -141,42 +156,45 @@
         <div
           class="mb-3"
           style="font-size: 0.75rem; color: #6d757a"
-          v-show="item.replyCount > 3"
+          v-show="(item.replyCount ?? 0) > 0 && item.replyList?.pageNo === 0"
           ref="check"
         >
           共
           <b>{{ item.replyCount }}</b>
           条回复，
-          <span style="color: #00a1d6; cursor: pointer"> 点击查看 </span>
+          <span
+            style="color: #00a1d6; cursor: pointer"
+            @click="changeReplyCurrent(1, index, item.id!)"
+          >
+            点击查看
+          </span>
         </div>
         <!-- 回复分页 -->
         <div
           class="mb-3"
-          style="font-size: 0.75rem; color: #222; display: none"
+          style="font-size: 0.75rem; color: #222"
           ref="paging"
+          v-if="(item.replyList?.pages ?? 0) > 1"
         >
           <span style="padding-right: 10px">
-            共{{ Math.ceil(item.replyCount / 5) }}页
+            共{{ item.replyList?.pages }}页
           </span>
           <paging
             ref="page"
-            :totalPage="Math.ceil(item.replyCount / 5)"
+            :totalPage="item.replyList?.pages ?? 0"
             :index="index"
-            :commentId="item.id"
+            :commentId="item.id!"
             @changeReplyCurrent="changeReplyCurrent"
+            style="display: inline-block"
           />
         </div>
         <!-- 回复框 -->
-        <Reply :type="type" ref="reply" @reloadReply="reloadReply" />
+        <Reply ref="reply" @submit="reloadReply" />
       </div>
     </div>
     <!-- 加载按钮 -->
     <div class="load-wrapper">
-      <v-btn
-        outlined
-        v-if="data.count > data.commentList.length"
-        @click="listComments"
-      >
+      <v-btn outlined v-if="state.pages > state.current" @click="onMore">
         加载更多...
       </v-btn>
     </div>
@@ -186,103 +204,180 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, nextTick } from "vue";
+import { ref, reactive, onMounted, watch, inject } from "vue";
 import img from "../assets/images/1.jpg";
 import Emoji from "./Emoji.vue";
 import Reply from "./Replay.vue";
 import Paging from "./Paging.vue";
+import moment from "moment";
 import EmojiList from "../assets/emoji";
-import { comments } from "../api/data";
+import { AddCommentInput, CommentOutput, CommentPageQueryInput, CommentsCsServiceProxy, KeyDto, ReplyOutput } from "@/shared/service-proxies";
+import { useToast } from "@/stores/toast";
+const _commentsCService = new CommentsCsServiceProxy(inject('$baseurl'),inject('$api'));
+const toast = useToast();
 const props = defineProps<{
-  type: string;
+  type: any;
 }>();
 
 const emit = defineEmits<{
   (e: "getCommentCount", count: number): void;
 }>();
 
-const data = reactive({
+const state = reactive({
   reFresh: true,
   commentContent: "",
   chooseEmoji: false,
   current: 1,
-  commentList: [] as Array<any>,
+  commentList: [] as Array<CommentOutput>,
   count: 0,
+  pages: 0,
 });
 
 const reply = ref<Array<InstanceType<typeof Reply>>>([]);
 
-onMounted(() => {
-  //模拟加载数据
-  listComments();
-});
+const loadData = async () => {
+  let input = new CommentPageQueryInput();
+  input.pageNo = state.current;
+  input.id = props.type;
 
-//监听数据变化
-watch(
-  () => data.commentList,
-  () => {
-    data.reFresh = false;
-    nextTick(() => {
-      data.reFresh = true;
-    });
-  }
-);
+  await _commentsCService.getList(input).then((res)=>{
+    let data = res.result;
+    if(data){
+      if (state.current === 1) {
+        state.commentList = data?.rows ?? [];
+      } else {
+        state.commentList.push(...(data?.rows ?? []));
+      }
+      state.count = data?.total ?? 0;
+      state.pages = data?.pages ?? 0;
+    }
+  })
+  
+  emit("getCommentCount", state.count);
+};
 
-const changeReplyCurrent = (
+const onMore = async () => {
+  state.current++;
+  await loadData();
+};
+
+const changeReplyCurrent = async (
   current: number,
   index: number,
-  commentId: number
-): void => {
-  console.log("查看下一条回复");
+  commentId: string
+) => {
+  const item = state.commentList.find((item) => item.id == commentId);
+  item!.replyList!.pageNo = current;
+  await _commentsCService.replyList({
+    id: commentId,
+    pageNo: current,
+    pageSize: 5,
+  } as CommentPageQueryInput)
+  .then(res=>{
+      if (res.success) {
+        item!.replyList = res.result;
+      }
+  })
+  
 };
 
 const addEmoji = (key: string): void => {
-  data.commentContent += key;
+  state.commentContent += key;
 };
 
 //提交评论
-const insertComment = (): void => {
-  const reg: RegExp = /\[.+?\]/g;
-  data.commentContent = data.commentContent.replace(
-    reg,
-    function (str: string) {
-      return (
-        "<img src= '" +
-        EmojiList[str] +
-        "' width='24'height='24' style='margin: 0 1px;vertical-align: text-bottom'/>"
-      );
-    }
-  );
+const insertComment = async () => {
+  //删除html标签
+  const content = formatContent(state.commentContent);
+  if (content.length === 0) {
+    toast.error("请输入评论内容");
+    return;
+  }
+  await _commentsCService.add({
+    moduleId: props.type as string,
+    content ,
+  } as AddCommentInput).then( async res=>{
+      state.commentContent = "";
+      state.current = 1;
+      await loadData();
+  })
 };
 
-const replyComment = (index: number, item: any): void => {
+// 点赞或取消点赞
+const onPraise = async (item) => {
+  await _commentsCService.praise({ id:item.id!} as KeyDto)
+  .then(res=>{
+    if (res.success) {
+      item.isPraise = res.result;
+      item.praiseTotal = res.result ? item.praiseTotal! + 1 : item.praiseTotal! - 1;
+    }
+  })
+  
+};
+
+const replyComment = (
+  index: number,
+  item: any,
+  rootId?: string
+): void => {
   reply.value[index].replay.commentContent = "";
-  reply.value[index].replay.nickname = item.nickname;
-  reply.value[index].replay.replyUserId = item.replyUserId;
-  reply.value[index].replay.parentId = data.commentList[index].id;
+  reply.value[index].replay.nickname = item.nickName!;
+  reply.value[index].replay.parentId = item.id!;
+  reply.value[index].replay.rootId = rootId;
+  reply.value[index].replay.replyAccountId = item.accountId;
   reply.value[index].replay.chooseEmoji = false;
   reply.value[index].replay.index = index;
   reply.value[index].replay.visible = true;
 };
 
-const reloadReply = (): void => {
-  console.log("加载回复");
+const reloadReply = async (index: number) => {
+  const item = reply.value[index].replay;
+  const content = formatContent(item.commentContent ?? "");
+  if (content.length === 0) {
+    toast.success("请输入评论内容");
+    return;
+  }
+
+  await _commentsCService.add({
+    content: content ?? "",
+    parentId: item.parentId,
+    moduleId: props.type as string,
+    rootId: item.rootId,
+    replyAccountId: item.replyAccountId,
+  } as AddCommentInput).then(res=>{
+    if (res.success) {
+      item.commentContent = "";
+      reply.value[index].replay.visible = false;
+      changeReplyCurrent(1, index, item.rootId!);
+    }
+  })
+  
 };
 
-const listComments = () => {
-  switch (props.type) {
-    case 1:
-      data.commentList = comments[0].recordList;
-      break;
-    case 2:
-      data.commentList = comments[1].recordList;
-      break;
-    case 3:
-      data.commentList = comments[2].recordList;
-      break;
+watch(
+  () => props.type,
+  async () => {
+    await loadData();
   }
-  data.count = comments[0].count as number;
-  emit("getCommentCount", data.count);
+);
+
+onMounted(async () => {
+  await loadData();
+});
+// 格式化评论内容
+const formatContent = (content: string, isHandleEmoji: boolean = false) => {
+  content = content.replace(/<[^<>]*>/g, "");
+  if (!isHandleEmoji) {
+    return content;
+  }
+  const reg: RegExp = /\[.+?\]/g;
+  return content.replace(reg, function (str: string) {
+    return (
+      "<img src= '" +
+      EmojiList[str] +
+      "' width='24'height='24' style='margin: 0 1px;vertical-align: text-bottom'/>"
+    );
+  });
 };
 </script>
 

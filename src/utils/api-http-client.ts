@@ -65,7 +65,7 @@ readonly apiHttpClient: AxiosInstance;
   baseConfig: AxiosRequestConfig = {
     baseURL: window.configs.remoteServiceBaseUrl, //import.meta.env.VITE_API_URL,
     headers: { "Content-Type": "application/json" },
-    timeout: 30000,
+    timeout: 300000,
   };
   constructor(config?: AxiosRequestConfig) {
   this.apiHttpClient = axios.create(Object.assign(this.baseConfig, config));

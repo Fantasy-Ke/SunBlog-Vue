@@ -5,34 +5,35 @@
   </div>
   <!-- 说说内容 -->
   <v-card class="blog-container">
-    <div class="talk-item" v-for="item of talkList" :key="item.id">
+    <div class="talk-item" v-for="item of state.talks" :key="item.id">
       <router-link :to="'/talks/' + item.id">
         <!-- 用户信息 -->
         <div class="user-info-wrapper">
-          <v-avatar size="36" class="user-avatar" :image="item.avatar">
+          <v-avatar size="36" class="user-avatar" image="https://oss.okay123.top/oss//2023/07/13/J4BNXmqq2y.jpg">
           </v-avatar>
           <div class="user-detail-wrapper">
             <div class="user-nickname">
-              {{ item.nickname }}
+              <!-- {{ item.nikeName }} -->
+              游客
               <v-icon class="user-sign" size="20" color="#ffa51e">
                 mdi-check-decagram
               </v-icon>
             </div>
             <!-- 发表时间 -->
             <div class="time">
-              {{ item.createTime }}
-              <span class="top" v-if="item.isTop == 1">
+              {{ moment(item.createdTime).format("YYYY-MM-DD HH:mm:ss") }}
+              <span class="top" v-if="item.isTop">
                 <i class="iconfont iconzhiding" /> 置顶
               </span>
             </div>
             <!-- 说说信息 -->
             <div class="talk-content" v-html="item.content" />
             <!-- 图片列表 -->
-            <v-row class="talk-images" v-if="item.imgList">
+            <v-row class="talk-images" v-if="item.images">
               <v-col
                 :md="4"
                 :cols="6"
-                v-for="(img, index) of item.imgList"
+                v-for="(img, index) of item.images.split(',')"
                 :key="index"
               >
                 <v-img
@@ -47,15 +48,20 @@
             <!-- 说说操作 -->
             <div class="talk-operation">
               <div class="talk-operation-item">
-                <v-icon size="16" class="like-btn"> mdi-thumb-up </v-icon>
+                <v-icon
+                  size="16"
+                  :class="item.isPraise ? 'like-btn-active' : 'like-btn'"
+                >
+                  mdi-thumb-up
+                </v-icon>
                 <div class="operation-count">
-                  {{ item.likeCount == null ? 0 : item.likeCount }}
+                  {{ item.upvote }}
                 </div>
               </div>
               <div class="talk-operation-item">
                 <v-icon size="16" color="#999">mdi-chat</v-icon>
                 <div class="operation-count">
-                  {{ item.commentCount == null ? 0 : item.commentCount }}
+                  {{ item.comments }}
                 </div>
               </div>
             </div>
@@ -64,18 +70,39 @@
       </router-link>
     </div>
     <div class="load-wrapper">
-      <v-btn outlined> 加载更多... </v-btn>
+      <div class="load-wrapper">
+      <v-pagination
+        v-if="state.pages > 1"
+        v-model="state.query.pageNo"
+        size="x-small"
+        :length="state.pages"
+        active-color="#00C4B6"
+        :total-visible="3"
+        variant="elevated"
+      ></v-pagination>
+      <!-- <v-btn outlined> 加载更多... </v-btn> -->
+    </div>
+      <!-- <v-btn outlined> 加载更多... </v-btn> -->
     </div>
   </v-card>
 </template>
 
 <script setup lang="ts">
 import { images, talks as talkList } from "../api/data";
-import { computed } from "vue";
+import { computed, inject, onMounted, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import Viewer from "viewerjs";
 import "viewerjs/dist/viewer.css";
+import { Pagination, TalksCsServiceProxy, TalksOutput } from "@/shared/service-proxies";
+import moment from "moment";
+const _talksCService = new TalksCsServiceProxy(inject('$baseurl'),inject('$api'));
 const route = useRoute();
+
+const state = reactive({
+  query: {} as Pagination,
+  talks: [] as TalksOutput[],
+  pages: 0,
+});
 
 const previewImg = (e: Event): void => {
   const viewer = new Viewer(e.target as HTMLElement,{
@@ -86,11 +113,33 @@ const previewImg = (e: Event): void => {
   viewer.show();
 };
 
+// 监听页面变化时重新加载数据
+watch(
+  () => state.query.pageNo,
+  async () => {
+    await loadData();
+  }
+);
+
+// 分页请求说说
+const loadData = async () => {
+  await _talksCService.getList(state.query).then(res=>{
+    if (res.success) {
+      state.talks = res.result?.rows ?? [];
+      state.pages = res.result?.pages ?? 0;
+    }
+  });
+};
+
 const cover = computed(() => {
   let cover: string = images.find(
     (item) => item.pageLabel === route.name
   )?.pageCover;
   return "background: url(" + cover + ") center center / cover no-repeat";
+});
+
+onMounted(async () => {
+  await loadData();
 });
 </script>
 
