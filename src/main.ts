@@ -16,7 +16,6 @@ import "vue-toastification/dist/index.css";
 import "vue3-cute-component/dist/style.css";
 import InfiniteLoading from "vue-infinite-loading";
 import Toast, { PluginOptions } from "vue-toastification";
-import formatDateTime from "@/plugins/formatDateTime";
 import { AppPreBootstrap } from "./AppPreBootstrap";
 
 
@@ -26,7 +25,7 @@ async function start() {
   const options: PluginOptions = {
     // You can set your default options here
   };
-  app.use(InfiniteLoading).use(Toast, options).use(formatDateTime)
+  app.use(InfiniteLoading).use(Toast, options)
   app.use(ElementPlus);
   // app.mixin(messageComponent);
   // app.mixin(SharedComponents);

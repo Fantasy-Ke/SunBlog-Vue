@@ -194,7 +194,7 @@ import Paging from "./Paging.vue";
 import EmojiList from "../assets/emoji";
 import { comments } from "../api/data";
 const props = defineProps<{
-  type: number;
+  type: string;
 }>();
 
 const emit = defineEmits<{

@@ -3,53 +3,59 @@
   <div class="banner" :style="cover">
     <div class="article-info-container">
       <!-- 文章标题 -->
-      <div class="article-title">{{ article.articleTitle }}</div>
+      <div class="article-title">{{ state.info.title }}</div>
       <div class="article-info">
         <div class="first-line">
           <!-- 发表时间 -->
           <span>
             <i class="iconfont iconrili" />
-            发表于 {{ $formatDate(article.createTime) }}
+            发表于 {{  moment(state.info.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
           </span>
           <span class="separator">|</span>
           <!-- 发表时间 -->
           <span>
             <i class="iconfont icongengxinshijian" />
             更新于
-            <template v-if="article.updateTime">
-              {{ $formatDate(article.updateTime) }}
-            </template>
-            <template v-else>
-              {{ $formatDate(article.createTime) }}
-            </template>
+            {{moment(state.info.updatedTime
+                ? state.info.updatedTime
+                : state.info.publishTime).format("YYYY-MM-DD HH:mm:ss")
+            }}
           </span>
-          <span class="separator">|</span>
-          <!-- 文章分类 -->
-          <span class="article-category">
-            <i class="iconfont iconfenlei1" />
-            <router-link :to="'/categories/' + article.categoryId">
-              {{ article.categoryName }}
-            </router-link>
-          </span>
+          <template v-if="state.info.categoryId">
+            <span class="separator">|</span>
+            <!-- 文章分类 -->
+            <span class="article-category">
+              <i class="iconfont iconfenlei1" />
+              <router-link :to="'/categories/' + state.info.categoryId">
+                {{ state.info.categoryName }}
+              </router-link>
+            </span>
+          </template>
         </div>
         <div class="second-line">
           <!-- 字数统计 -->
           <span>
             <i class="iconfont iconzishu" />
-            字数统计: 331616
+            字数统计:
+            {{
+              textTotal > 1000
+                ? (textTotal / 1000).toString().match(/^\d+(?:\.\d{0,1})?/) +
+                  "k"
+                : textTotal.toString()
+            }}
           </span>
           <span class="separator">|</span>
           <!-- 阅读时长 -->
           <span>
             <i class="iconfont iconshijian" />
-            阅读时长: 35
+            阅读时长: {{ Math.ceil(textTotal / 300) + "分钟" }}
           </span>
         </div>
         <div class="third-line">
           <span class="separator">|</span>
           <!-- 阅读量 -->
           <span>
-            <i class="iconfont iconliulan" /> 阅读量: {{ article.viewsCount }}
+            <i class="iconfont iconliulan" /> 阅读量: {{ state.info.views }}
           </span>
           <span class="separator">|</span>
           <!-- 评论量 -->
@@ -67,20 +73,24 @@
         <div
           id="write"
           class="article-content markdown-body"
-          v-html="markdownToHtml(article.articleContent)"
+          v-html="
+            state.info.isHtml
+              ? state.info.content
+              : markdownToHtml(state.info.content ?? '')
+          "
           ref="detail"
         />
         <!-- 版权声明 -->
         <div class="aritcle-copyright">
           <div>
             <span>文章作者：</span>
-            <router-link to="/">
-              {{ blogInfo.websiteConfig.websiteAuthor }}
-            </router-link>
+            <a>
+              {{ state.info.author }}
+            </a>
           </div>
           <div>
             <span>文章链接：</span>
-            <a href="#" target="_blank">https://www.baidu.com</a>
+            <a :href="link!" target="_blank">{{ link }}</a>
           </div>
           <div>
             <span>版权声明：</span>本博客所有文章除特别声明外，均采用
@@ -95,13 +105,13 @@
         </div>
         <!-- 转发 -->
         <div class="article-operation">
-          <div class="tag-container">
+          <div class="tag-container" v-if="state.info.tags">
             <router-link
-              v-for="item of article.tagDTOList"
+              v-for="item of state.info.tags"
               :key="item.id"
               :to="'/tags/' + item.id"
             >
-              {{ item.tagName }}
+              {{ item.name }}
             </router-link>
           </div>
           <Share
@@ -118,10 +128,15 @@
         <!-- 点赞打赏等 -->
         <div class="article-reward">
           <!-- 点赞按钮 -->
-          <a class="like-btn-active">
+          <a
+            :class="state.info.isPraise ? 'like-btn-active' : 'like-btn'"
+            @click="onPraise"
+          >
             <!-- <i class="iconfont mdi-thumb-up"></i> -->
             <v-icon size="14" color="#fff" icon="mdi-thumb-up" /> 点赞
-            <span v-show="article.likeCount > 0">{{ article.likeCount }}</span>
+            <span v-show="state.info.praiseTotal ?? 0 > 0">{{
+              state.info.praiseTotal
+            }}</span>
           </a>
           <a class="reward-btn" v-if="blogInfo.websiteConfig.isReward == 1">
             <!-- 打赏按钮 -->
@@ -149,31 +164,25 @@
         </div>
         <div class="pagination-post">
           <!-- 上一篇 -->
-          <div
-            :class="isFull(article.lastArticle.id)"
-            v-if="article.lastArticle.id"
-          >
-            <router-link :to="'/articles/' + article.lastArticle.id">
-              <img class="post-cover" :src="article.lastArticle.articleCover" />
+          <div :class="isFull(state.info.prev.id)" v-if="state.info.prev">
+            <router-link :to="'/articles/' + state.info.prev.id">
+              <img class="post-cover" :src="state.info.prev.cover!" />
               <div class="post-info">
                 <div class="label">上一篇</div>
                 <div class="post-title">
-                  {{ article.lastArticle.articleTitle }}
+                  {{ state.info.prev.title }}
                 </div>
               </div>
             </router-link>
           </div>
           <!-- 下一篇 -->
-          <div
-            :class="isFull(article.nextArticle.id)"
-            v-if="article.nextArticle.id"
-          >
-            <router-link :to="'/articles/' + article.nextArticle.id">
-              <img class="post-cover" :src="article.nextArticle.articleCover" />
+          <div :class="isFull(state.info.next.id)" v-if="state.info.next">
+            <router-link :to="'/articles/' + state.info.next.id">
+              <img class="post-cover" :src="state.info.next.cover!" />
               <div class="post-info" style="text-align: right">
                 <div class="label">下一篇</div>
                 <div class="post-title">
-                  {{ article.nextArticle.articleTitle }}
+                  {{ state.info.next.title }}
                 </div>
               </div>
             </router-link>
@@ -182,25 +191,25 @@
         <!-- 推荐文章 -->
         <div
           class="recommend-container"
-          v-if="article.recommendArticleList.length"
+          v-if="(state.info.random?.length ?? 0) > 0"
         >
-          <div class="recommend-title">
+          <div class="recommend-title" v-if="state.info.random">
             <v-icon size="20" color="#4c4948">mdi-thumb-up</v-icon> 相关推荐
           </div>
-          <div class="recommend-list">
+          <div class="recommend-list" v-if="state.info.random">
             <div
               class="recommend-item"
-              v-for="item of article.recommendArticleList"
+              v-for="item of state.info.random"
               :key="item.id"
             >
               <router-link :to="'/articles/' + item.id">
-                <img class="recommend-cover" :src="item.articleCover" />
+                <img class="recommend-cover" :src="item.cover!" />
                 <div class="recommend-info">
                   <div class="recommend-date">
                     <i class="iconfont iconrili" />
-                    {{ $formatDate(item.createTime, "YYYY-MM-DD") }}
+                    {{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss")}}
                   </div>
-                  <div>{{ item.articleTitle }}</div>
+                  <div>{{ item.title }}</div>
                 </div>
               </router-link>
             </div>
@@ -209,7 +218,11 @@
         <!-- 分割线 -->
         <hr />
         <!-- 评论 -->
-        <Comment :type="1" @getCommentCount="getCommentCount" />
+        <Comment
+          :type="state.id"
+          @getCommentCount="getCommentCount"
+          v-if="state.info.isAllowComments"
+        />
       </v-card>
     </v-col>
     <!-- 侧边功能 -->
@@ -234,20 +247,35 @@
           <div class="article-list">
             <div
               class="article-item"
-              v-for="item of article.newestArticleList"
+              v-for="item of state.latest"
               :key="item.id"
             >
-              <router-link :to="'/articles/' + item.id" class="content-cover">
-                <img :src="item.articleCover" />
+              <router-link
+                :to="{
+                  name: 'detail',
+                  params: {
+                    id: item.id,
+                  },
+                }"
+                class="content-cover"
+              >
+                <img :src="item.cover!" />
               </router-link>
               <div class="content">
                 <div class="content-title">
-                  <router-link :to="'/articles/' + item.id">
-                    {{ item.articleTitle }}
+                  <router-link
+                    :to="{
+                      name: 'detail',
+                      params: {
+                        id: item.id,
+                      },
+                    }"
+                  >
+                    {{ item.title }}
                   </router-link>
                 </div>
                 <div class="content-time">
-                  {{ $formatDate(item.createTime, "YYYY-MM-DD") }}
+                  {{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
                 </div>
               </div>
             </div>
@@ -260,7 +288,7 @@
 <script setup lang="ts">
 // import "https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js";
 import Comment from "../../components/Comment.vue";
-import { computed, ref, onMounted, onUnmounted, nextTick } from "vue";
+import { computed, ref, onMounted, onUnmounted, nextTick, reactive, inject } from "vue";
 import { images, article, blogInfo } from "../../api/data";
 import markdownToHtml from "../../utils/markdown";
 import Clipboard from "clipboard";
@@ -270,60 +298,27 @@ import { useToast, POSITION } from "vue-toastification";
 import "viewerjs/dist/viewer.css";
 import Share from "../../components/Share/Index.vue";
 import { ShareType } from "../../components/Share/ShareType";
+import { ArticleBasicsOutput, ArticleCsServiceProxy, ArticleInfoOutput, CommentsCsServiceProxy, KeyDto } from "@/shared/service-proxies";
+import { useRoute } from "vue-router";
+import hljs from "highlight.js";
+import { storeToRefs } from "pinia";
+import moment from "moment";
+
+const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+const _commentsCService = new CommentsCsServiceProxy(inject('$baseurl'),inject('$api'));
 const detail = ref<HTMLElement | null>(null);
+
 let clipboard: Clipboard | null = null; //ref<Clipboard>();
 let viewer: Viewer | null = null;
 
-onMounted(() => {
-  nextTick(() => {
-    //复制代码
-    clipboard = new Clipboard(".copy-btn");
-    clipboard.on("success", (): void => {
-      //复制成功
-      const p = POSITION;
-      useToast().success("复制成功", {
-        position: p.TOP_CENTER,
-        timeout: 3000,
-        hideProgressBar: true,
-        closeButton: false,
-      });
-    });
-
-    // //为标题标签设置ID
-    let nodes = detail.value!.children;
-    if (nodes.length) {
-      for (let i = 0; i < nodes.length; i++) {
-        let node: Element = nodes[i];
-        let reg: RegExp = /^H[1-4]{1}$/;
-        if (reg.exec(node.tagName)) {
-          node.id = "h-" + i.toString();
-        }
-      }
-    }
-    //生成目录
-    tocbot.init({
-      tocSelector: "#toc", //要把目录添加元素位置，支持选择器
-      contentSelector: ".article-content", //获取html的元素
-      headingSelector: "h1, h2, h3", //要显示的id的目录
-      hasInnerContainers: true,
-      onClick: function (e: Event) {
-        e.preventDefault();
-      },
-    });
-
-    //图片预览
-    const bodyHtml = document.getElementById("write")!;
-    if (bodyHtml.querySelectorAll("img").length > 0) {
-      viewer = new Viewer(bodyHtml);
-    }
-    // isShow.value = true;
-  });
-});
-
-onUnmounted(() => {
-  clipboard?.destroy();
-  viewer?.destroy();
-  // tocbot.destroy();
+//const appStore = useApp();
+//const { blogSetting } = storeToRefs(appStore);
+const toastStore = useToast();
+const route = useRoute();
+const state = reactive({
+  id: '',
+  info: {} as ArticleInfoOutput,
+  latest: [] as ArticleBasicsOutput[],
 });
 
 const cover = computed(() => {
@@ -338,8 +333,98 @@ const getCommentCount = (count: number) => {
 };
 
 const isFull = computed(() => {
-  return (id: number) => (id ? "post full" : "post");
+  return (id: string) => (id ? "post full" : "post");
 });
+
+// 字数统计
+const textTotal = computed(() => {
+  const text = (
+    state.info.isHtml
+      ? state.info.content ?? ""
+      : markdownToHtml(state.info.content ?? "")
+  ).replaceAll("/<[^>]+>/g, ''", "");
+  const total = text.match(/[w+]|[\u4e00-\u9fa5]|\d/g)?.length ?? 0;
+  return total;
+});
+
+// 文章链接
+const link = computed(() => {
+  return state.info.creationType === 0 ? location.href : state.info.link;
+});
+// 点赞
+const onPraise = async () => {
+  let keyDto = {} as KeyDto;
+  keyDto.id = state.info.id!;
+  await _commentsCService.praise(keyDto).then((res)=>{
+    let data = res.result;
+      state.info.isPraise = data;
+      state.info.praiseTotal = data
+        ? state.info.praiseTotal! + 1
+        : state.info.praiseTotal! - 1;
+  });
+  
+};
+
+onMounted(async () => {
+  state.id = route.params.id as string;
+  await _articleCService.info(state.id).then((res)=>{
+    if(res.result){
+      state.info = res.result ?? {} as ArticleInfoOutput;
+    }
+   
+  });
+  await _articleCService.latest().then((res)=>{
+    if(res.result){
+      state.latest = res.result ?? {} as ArticleBasicsOutput[];
+    }
+  })
+  nextTick(() => {
+    //复制代码
+    clipboard = new Clipboard(".copy-btn");
+    clipboard.on("success", (): void => {
+      //复制成功
+      toastStore.success("复制成功");
+    });
+    //生成目录
+    tocbot.init({
+      tocSelector: "#toc", //要把目录添加元素位置，支持选择器
+      contentSelector: ".article-content", //获取html的元素
+      headingSelector: "h1, h2, h3", //要显示的id的目录
+      hasInnerContainers: true,
+      onClick: function (e: Event) {
+        e.preventDefault();
+      },
+    });
+
+    if (state.info.isHtml) {
+      hljs.highlightAll();
+    }
+    // //为标题标签设置ID
+    // let nodes = detail.value!.children;
+    // if (nodes.length) {
+    //   for (let i = 0; i < nodes.length; i++) {
+    //     let node: any = nodes[i];
+    //     let reg: RegExp = /^H[1-4]{1}$/;
+    //     if (reg.exec(node.tagName)) {
+    //       node.id = "h-" + i.toString();
+    //     }
+    //   }
+    //}
+    //图片预览
+    const bodyHtml = document.getElementById("write")!;
+    if (bodyHtml.querySelectorAll("img").length > 0) {
+      viewer = new Viewer(bodyHtml);
+    }
+    // isShow.value = true;
+  });
+});
+
+onUnmounted(() => {
+  clipboard?.destroy();
+  viewer?.destroy();
+  tocbot.destroy();
+});
+
 
 // const isLike = () => {
 //   return new Date().getTime() % 2 === 0 ? "like-btn-active" : "like-btn";

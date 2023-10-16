@@ -11,21 +11,24 @@
         :style="{ transform }"
         :class="{ rollScreen_list_unanim: num === 0 }"
       >
-        <li
+        <!-- <li
           class="rollScreen_once"
           v-for="(item, index) in list"
           :key="index"
           :style="{ height: height + 'px' }"
         >
-          <span class="item" v-html="item" />
-        </li>
+        <span
+            class="item"
+            v-html="item.content?.replace(/<\s?img[^>]*>/gi, '')"
+          />
+        </li> -->
         <li
           class="rollScreen_once"
           v-for="(item, index) in list"
           :key="'k' + index"
           :style="{ height: height + 'px' }"
         >
-          <span class="item" v-html="item" />
+          <span class="item" v-html="item.content" />
         </li>
       </ul>
     </div>
@@ -36,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import { TalksOutput } from "@/shared/service-proxies";
 import { ref, computed, onMounted } from "vue";
 const props = defineProps({
   height: {
@@ -47,8 +51,8 @@ const props = defineProps({
     type: Number,
   },
   list: {
-    type: Array<string>,
-    default: [],
+    type: Array<TalksOutput>,
+    default: [] as TalksOutput[],
   },
 });
 const num = ref(0);

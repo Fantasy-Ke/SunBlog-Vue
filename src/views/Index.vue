@@ -6,17 +6,25 @@
       <h1 class="blog-title animated zoomIn">Fantasy-Ke</h1>
       <!-- 一言 -->
       <div class="blog-intro">
-        {{ obj.output }} <span class="typed-cursor">|</span>
+        {{ state.print.output }} <span class="typed-cursor">|</span>
       </div>
       <!-- 联系方式 -->
       <div class="blog-contact">
         <a
           class="mr-5 iconfont iconqq"
           target="_blank"
-          :href="'http://wpa.qq.com/msgrd?v=3&uin=5215155151&site=qq&menu=yes'"
+          :href="`http://wpa.qq.com/msgrd?v=3&uin=qq&site=qq&menu=yes`"
         />
-        <a target="_blank" href="#" class="mr-5 iconfont icongithub" />
-        <a target="_blank" href="#" class="iconfont icongitee-fill-round" />
+        <a
+          target="_blank"
+          href="#"
+          class="mr-5 iconfont icongithub"
+        />
+        <a
+          target="_blank"
+          href="#"
+          class="iconfont icongitee-fill-round"
+        />
       </div>
     </div>
     <!-- 向下滚动 -->
@@ -30,13 +38,13 @@
   <v-row class="home-container">
     <v-col md="9" cols="12">
       <!-- 说说轮播 -->
-      <v-card class="animated zoomIn" v-if="talkList.length > 0">
-        <Swiper :list="talkList" />
+      <v-card class="animated zoomIn" v-if="state.talks.length > 0">
+        <Swiper :list="state.talks" />
       </v-card>
       <v-card
         class="animated zoomIn article-card"
         :style="{ 'border-radius': '12px 8px 8px 12px' }"
-        v-for="(item, index) of page.articles"
+        v-for="(item, index) of state.article.items"
         :key="item.id"
       >
         <!-- 文章封面图 -->
@@ -46,7 +54,7 @@
               class="on-hover"
               width="100%"
               height="100%"
-              :src="item.articleCover"
+              :src="item.cover!"
               :cover="true"
             />
           </router-link>
@@ -55,12 +63,12 @@
         <div class="article-wrapper">
           <div style="line-height: 1.4">
             <router-link :to="'/articles/' + item.id">
-              {{ item.articleTitle }}
+              {{ item.title }}
             </router-link>
           </div>
           <div class="article-info">
             <!-- 是否置顶 -->
-            <span v-if="item.isTop == 1">
+            <span v-if="item.isTop">
               <span style="color: #ff7242">
                 <i class="iconfont iconzhiding" /> 置顶
               </span>
@@ -68,7 +76,7 @@
             </span>
             <!-- 发表时间 -->
             <v-icon size="14">mdi-calendar-month-outline</v-icon>
-            {{ $formatDate(item.createTime, "YYYY-MM-DD HH:mm:ss") }}
+            {{ moment(item.publishTime).format("YYYY-MM-DD") }}
             <span class="separator">|</span>
             <!-- 文章分类 -->
             <router-link :to="'/categories/' + item.categoryId">
@@ -81,22 +89,24 @@
               :style="{ display: 'inline-block' }"
               :to="'/tags/' + tag.id"
               class="mr-1"
-              v-for="tag of item.tagDTOList"
+              v-for="tag of item.tags"
               :key="tag.id"
             >
-              <v-icon size="14">mdi-tag-multiple</v-icon>{{ tag.tagName }}
+              <v-icon size="14">mdi-tag-multiple</v-icon>{{ tag.name }}
             </router-link>
           </div>
           <!-- 文章内容 -->
           <div class="article-content">
-            {{ item.articleContent }}
+            {{ item.summary }}
           </div>
         </div>
       </v-card>
       <v-pagination
+        v-if="state.article.totalPage > 1"
+        v-model="state.article.page"
         style="margin: 20px 0"
         size="x-small"
-        :length="10"
+        :length="state.article.totalPage"
         active-color="#00C4B6"
         :total-visible="3"
         variant="elevated"
@@ -185,38 +195,45 @@
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import MarkdownIt from "markdown-it";
-import { ref, reactive, onMounted, computed, inject } from "vue";
+import { ref, reactive, onMounted, computed, inject, watch } from "vue";
 import EasyTyper from "easy-typer-js/src/ts";
 import Swiper from "../components/Swiper.vue";
 import { talkList as talks, articles, images } from "../api/data";
 import img from "../assets/images/1.jpg";
 import { useToast } from "@/stores/toast";
-import {AlbumsCsServiceProxy, AlbumsOutput, Pagination} from "@/shared/service-proxies"
+import moment from "moment";
+import {ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput, Pagination, TalksCsServiceProxy, TalksOutput} from "@/shared/service-proxies"
 const route = useRoute();
-const _albumsCService = new AlbumsCsServiceProxy('',inject('$api'));
-
+const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+const _talksCService = new TalksCsServiceProxy(inject('$baseurl'),inject('$api'));
 // 打字机配置
-const obj = reactive({
-  output: "",
-  isEnd: false,
-  speed: 300,
-  singleBack: false,
-  sleep: 0,
-  type: "rollback",
-  backSpeed: 40,
-  sentencePause: true,
+const state = reactive({
+  talks: [] as TalksOutput[], // 说说
+  print: {
+    output: "",
+    isEnd: false,
+    speed: 300,
+    singleBack: false,
+    sleep: 0,
+    type: "rollback",
+    backSpeed: 40,
+    sentencePause: true,
+  },
+  runTime: "", // 运行时长
+  article: {
+    page: 1,
+    pageSize: 10,
+    total: 0,
+    totalPage: 0,
+    items: [] as ArticleOutput[], //文章列表
+  },
 });
 // 运行时长
 const time = ref<string>("");
-//提示
-const tip = ref<boolean>(false);
 
 const page = reactive({
   articles: [] as Array<any>,
 });
-//滚动通知
-const talkList = reactive(talks);
 
 const runTime = (): void => {
   const timespan: number = new Date().getTime() - new Date(2020, 12).getTime();
@@ -230,49 +247,47 @@ const runTime = (): void => {
   str += day.getSeconds() + "秒";
   time.value = str;
 };
-const state = reactive({
-  query: {
-    pageNo: 1,
-    pageSize: 6,
-  } as Pagination,
-  pages: 0,
-  albums: [] as AlbumsOutput[],
-});
-onMounted(() => {
- _albumsCService.getList(state.query).then((res)=>{
-  console.log(res,1222);
-    if (res) {
-  }
-  }).catch((c)=>{
-    console.log(c,4444);
+
+const articlePage = async () => {
+  await _articleCService.getList({
+    pageNo: state.article.page,
+    pageSize: state.article.pageSize,
+    keyword: "",
+  } as ArticleListQueryInput).then((res)=>{
+    let data = res.result;
+    if (data) {
+      state.article.items = data?.rows ?? [];
+      state.article.total = data?.total ?? 0;
+      state.article.totalPage = data?.pages ?? 0;
+    }
     
   });
-  // _testservice.getUser().then((ccc)=>{
-  //   console.log(123456);
-  // }).catch((res)=>{
-  //   console.log(res);
-  //   useToast().error(res.error.message);
-  // });
+};
+
+onMounted(() => {
   new EasyTyper(
-    obj,
+    state.print,
     "为遇一人而入红尘，人去我亦去，此生不留尘。 --魔道祖师",
     () => {},
     () => {}
   );
+  
+  _talksCService.getList({ pageNo: 1, pageSize: 10 } as Pagination).then((res)=>{
+    let data = res.result;
+    if (data) {
+      state.talks = data!.rows!;
+      articlePage()
+    }
+  });
+  page.articles = articles;
   setInterval(() => {
     runTime();
   }, 1000);
-  const md = new MarkdownIt();
-  articles.forEach((item) => {
-    item.articleContent = md
-      .render(item.articleContent)
-      .replace(/<\/?[^>]*>/g, "")
-      .replace(/[|]*\n/, "")
-      .replace(/&npsp;/gi, "");
-  });
-  page.articles = articles;
 });
-const scrollDown = (): void => {
+/**
+ * 滚动条
+ */
+ const scrollDown = (): void => {
   window.scrollTo({
     behavior: "smooth",
     top: document.documentElement.clientHeight,
@@ -290,12 +305,17 @@ const cover = computed(() => {
   )?.pageCover;
   return "background: url(" + cover + ") center center / cover no-repeat";
 });
-// const infiniteHandler = ($state: any): void => {
-//   // $state.loaded();
-//   //请求更多进行分页
-//   //请求数据
-//   // $state.complete();
-// };
+
+
+// 监听页码发生改变
+watch(
+  () => state.article.page,
+  async () => {
+    scrollDown();
+    await articlePage();
+  }
+);
+
 </script>
 <style scoped lang="scss">
 .typed-cursor {

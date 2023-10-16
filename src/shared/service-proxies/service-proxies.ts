@@ -1357,7 +1357,7 @@ export class CommentsCsServiceProxy {
      * @param body (optional) 对象ID
      * @return Success
      */
-    praise(body: KeyDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+    praise(body: KeyDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<boolean>> {
         let url_ = this.baseUrl + "/api/CommentsCs/Praise";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1369,6 +1369,7 @@ export class CommentsCsServiceProxy {
             url: url_,
             headers: {
                 "Content-Type": "application/json",
+                "Accept": "text/plain"
             },
             cancelToken
         };
@@ -1384,7 +1385,7 @@ export class CommentsCsServiceProxy {
         });
     }
 
-    protected processPraise(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+    protected processPraise(response: AxiosResponse): Promise<ZEngineResponse<boolean>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1396,13 +1397,20 @@ export class CommentsCsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<boolean>>(result200Data);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ZEngineResponse<void>>(null as any);
+        return Promise.resolve<ZEngineResponse<boolean>>(null as any);
     }
 
     /**
