@@ -32,7 +32,7 @@
             <div style="margin-top: 0.375rem">
               <!-- 发表时间 -->
               <v-icon size="20">mdi-clock-outline</v-icon>
-              {{ item.publishTime }}
+              {{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
               <!-- 文章分类 -->
               <router-link
                 :to="'/categories/' + item.categoryId"
@@ -80,6 +80,7 @@ import { computed, inject, onMounted, reactive, watch } from "vue";
 import { articles, images } from "../../api/data";
 import { useRoute } from "vue-router";
 import { ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput } from "@/shared/service-proxies";
+import moment from "moment";
 const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
 const cover = computed(() => {
   let cover: string = images[1]?.pageCover;
