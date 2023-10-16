@@ -54,7 +54,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     name: "tagsList",
-    path: "/tags/:id",
+    path: "/tags/:tid",
     component: () => import("../views/article/CategoryList.vue"),
     meta: {
       title: "分类",
