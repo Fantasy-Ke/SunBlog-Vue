@@ -5,7 +5,13 @@
 
 #### 该项目已通过阿里云仓库、GithubAction持续集成与部署（[Fantasy-Ke博客地址](http://124.71.15.19:5100/)）
 
-**项目用 Vue3 + TypeScript + Vite4 + Vuex4 + Vue-Router4 + element-plus ！**
+**项目用 Vue3 + TypeScript + Vite4 + Vuex4 + Vue-Router4 + element-plus + Vue-Toastification2 ！**
+
+### 环境
+
+-  node 16+  
+-  pwsh core  
+-  yarn
 
 <!-- ## 功能
 
@@ -69,6 +75,13 @@ yarn run dev
 # Compiles and minifies for production
 yarn run build
 ```
+
+## 前端代理类生成
+
+- cd到目录nswag目录
+- 调整codeGenerators后端api地址
+  ![image](https://github.com/Fantasy-Ke/SunBlog-Vue/assets/85232349/ffe453ac-c45d-43eb-8643-a8f06bca3bc5)
+- 双击refresh.bat 执行 
 
 
 ## 项目地址
