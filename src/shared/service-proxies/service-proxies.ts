@@ -71,6 +71,7 @@ class ZEngineResponse<T = any> extends ZResponseBase{
     result: T;
 }
 
+
 export class TestServiceProxy {
     protected instance: AxiosInstance;
     protected baseUrl: string;
@@ -600,7 +601,7 @@ export class UsersServiceProxy {
     }
 
     /**
-     * 查询一个用�?
+     * 查询一个用户
      * @return Success
      */
     getFrist( cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfoDto[]>> {
@@ -1239,7 +1240,7 @@ export class CommentsCsServiceProxy {
     }
 
     /**
-     * 评论、回�?
+     * 评论、回复
      * @param body (optional) 
      * @return Success
      */
@@ -1781,7 +1782,7 @@ export class ArticleCsServiceProxy {
     }
 
     /**
-     * 文章表查�?
+     * 文章表查询
      * @param body (optional) 
      * @return Success
      */
@@ -1901,7 +1902,7 @@ export class ArticleCsServiceProxy {
     }
 
     /**
-     * 最�?片文�?
+     * 最新5片文章
      * @return Success
      */
     latest( cancelToken?: CancelToken): Promise<ZEngineResponse<ArticleBasicsOutput[]>> {
@@ -2094,7 +2095,7 @@ export class ArticleCategorysServiceProxy {
     }
 
     /**
-     * 添加文章所属栏�?
+     * 添加文章所属栏目
      * @param body (optional) 
      * @return Success
      */
@@ -2147,7 +2148,7 @@ export class ArticleCategorysServiceProxy {
     }
 
     /**
-     * 更新文章所属栏�?
+     * 更新文章所属栏目
      * @param body (optional) 
      * @return Success
      */
@@ -2472,7 +2473,7 @@ export class AlbumsCsServiceProxy {
 }
 
 export class AddCommentInput implements IAddCommentInput {
-    /** 对应模块ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID（null表留言，0代表友链的评论） */
     moduleId: number | undefined;
     /** 顶级楼层评论ID */
     rootId: number | undefined;
@@ -2528,7 +2529,7 @@ export class AddCommentInput implements IAddCommentInput {
 }
 
 export interface IAddCommentInput {
-    /** 对应模块ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID（null表留言，0代表友链的评论） */
     moduleId: number | undefined;
     /** 顶级楼层评论ID */
     rootId: number | undefined;
@@ -2892,7 +2893,7 @@ export interface IAlbumsPageQueryInput {
 export class ArticleBasicsOutput implements IArticleBasicsOutput {
     /** 文章ID */
     id: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 类型 */
     type: number;
@@ -2948,7 +2949,7 @@ export class ArticleBasicsOutput implements IArticleBasicsOutput {
 export interface IArticleBasicsOutput {
     /** 文章ID */
     id: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 类型 */
     type: number;
@@ -2963,7 +2964,7 @@ export class ArticleDetailOutput implements IArticleDetailOutput {
     id: string;
     /** 标题 */
     title: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
     /** 封面 */
     cover: string | undefined;
@@ -2974,7 +2975,7 @@ export class ArticleDetailOutput implements IArticleDetailOutput {
     isTop: boolean;
     /** 排序 */
     sort: number;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
     /** 文章内容 */
     content: string | undefined;
@@ -3073,7 +3074,7 @@ export interface IArticleDetailOutput {
     id: string;
     /** 标题 */
     title: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
     /** 封面 */
     cover: string | undefined;
@@ -3084,7 +3085,7 @@ export interface IArticleDetailOutput {
     isTop: boolean;
     /** 排序 */
     sort: number;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
     /** 文章内容 */
     content: string | undefined;
@@ -3110,15 +3111,15 @@ export class ArticleInfoOutput implements IArticleInfoOutput {
     title: string | undefined;
     /** 文章内容 */
     content: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
-    /** 浏览�?*/
+    /** 浏览量 */
     views: number;
     creationType: CreationType;
     /** 是否允许评论 */
@@ -3131,13 +3132,13 @@ export class ArticleInfoOutput implements IArticleInfoOutput {
     link: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 当前用户是否已点�?*/
+    /** 当前用户是否已点赞 */
     isPraise: boolean;
     /** 栏目Id */
     categoryId: string;
     /** 栏目名称 */
     categoryName: string | undefined;
-    /** 最后更新时�?*/
+    /** 最后更新时间 */
     updatedTime: moment.Moment | undefined;
     prev: ArticleBasicsOutput;
     next: ArticleBasicsOutput;
@@ -3247,15 +3248,15 @@ export interface IArticleInfoOutput {
     title: string | undefined;
     /** 文章内容 */
     content: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
-    /** 浏览�?*/
+    /** 浏览量 */
     views: number;
     creationType: CreationType;
     /** 是否允许评论 */
@@ -3268,13 +3269,13 @@ export interface IArticleInfoOutput {
     link: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 当前用户是否已点�?*/
+    /** 当前用户是否已点赞 */
     isPraise: boolean;
     /** 栏目Id */
     categoryId: string;
     /** 栏目名称 */
     categoryName: string | undefined;
-    /** 最后更新时�?*/
+    /** 最后更新时间 */
     updatedTime: moment.Moment | undefined;
     prev: ArticleBasicsOutput;
     next: ArticleBasicsOutput;
@@ -3291,7 +3292,7 @@ export class ArticleListQueryInput implements IArticleListQueryInput {
     tagId: string | undefined;
     /** 栏目ID */
     categoryId: string | undefined;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
 
     constructor(data?: IArticleListQueryInput) {
@@ -3345,7 +3346,7 @@ export interface IArticleListQueryInput {
     tagId: string | undefined;
     /** 栏目ID */
     categoryId: string | undefined;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
 }
 
@@ -3361,9 +3362,9 @@ export class ArticleOutput implements IArticleOutput {
     /** 是否置顶 */
     isTop: boolean;
     creationType: CreationType;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
@@ -3444,9 +3445,9 @@ export interface IArticleOutput {
     /** 是否置顶 */
     isTop: boolean;
     creationType: CreationType;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
@@ -3755,7 +3756,7 @@ export class ArticleReportOutput implements IArticleReportOutput {
     tagCount: number;
     /** 栏目数量 */
     categoryCount: number;
-    /** 用户�?*/
+    /** 用户量 */
     userCount: number;
     /** 友链数量 */
     linkCount: number;
@@ -3811,7 +3812,7 @@ export interface IArticleReportOutput {
     tagCount: number;
     /** 栏目数量 */
     categoryCount: number;
-    /** 用户�?*/
+    /** 用户量 */
     userCount: number;
     /** 友链数量 */
     linkCount: number;
@@ -3910,11 +3911,11 @@ export class CommentOutput implements ICommentOutput {
     replyCount: number;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip地址 */
     ip: string | undefined;
-    /** Ip归属�?*/
+    /** Ip归属地 */
     geolocation: string | undefined;
     /** 评论时间 */
     createdTime: moment.Moment | undefined;
@@ -4001,11 +4002,11 @@ export interface ICommentOutput {
     replyCount: number;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip地址 */
     ip: string | undefined;
-    /** Ip归属�?*/
+    /** Ip归属地 */
     geolocation: string | undefined;
     /** 评论时间 */
     createdTime: moment.Moment | undefined;
@@ -4082,7 +4083,7 @@ export interface ICommentOutputPageResult {
 export class CommentPageQueryInput implements ICommentPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 对应模块ID或评论ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID或评论ID（null表留言，0代表友链的评论） */
     id: string | undefined;
 
     constructor(data?: ICommentPageQueryInput) {
@@ -4128,7 +4129,7 @@ export class CommentPageQueryInput implements ICommentPageQueryInput {
 export interface ICommentPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 对应模块ID或评论ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID或评论ID（null表留言，0代表友链的评论） */
     id: string | undefined;
 }
 
@@ -4151,11 +4152,11 @@ export class CreateOrUpdateAlbumsInput implements ICreateOrUpdateAlbumsInput {
     id: string | undefined;
     /** 相册名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     type: CoverType;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4216,11 +4217,11 @@ export interface ICreateOrUpdateAlbumsInput {
     id: string | undefined;
     /** 相册名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     type: CoverType;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4280,23 +4281,23 @@ export class CreateOrUpdateArticleInput implements ICreateOrUpdateArticleInput {
     title: string;
     /** 概要 */
     summary: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 是否置顶 */
     isTop: boolean;
-    /** 作�?*/
+    /** 作者 */
     author: string;
     /** 原文地址 */
     link: string | undefined;
     creationType: CreationType;
-    /** 文章正文（Html或markdown�?*/
+    /** 文章正文（Html或markdown） */
     content: string;
     /** 文章正文是否为html代码 */
     isHtml: boolean;
     /** 发布时间 */
     publishTime: moment.Moment;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 是否允许评论 */
     isAllowComments: boolean;
@@ -4393,23 +4394,23 @@ export interface ICreateOrUpdateArticleInput {
     title: string;
     /** 概要 */
     summary: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 是否置顶 */
     isTop: boolean;
-    /** 作�?*/
+    /** 作者 */
     author: string;
     /** 原文地址 */
     link: string | undefined;
     creationType: CreationType;
-    /** 文章正文（Html或markdown�?*/
+    /** 文章正文（Html或markdown） */
     content: string;
     /** 文章正文是否为html代码 */
     isHtml: boolean;
     /** 发布时间 */
     publishTime: moment.Moment;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 是否允许评论 */
     isAllowComments: boolean;
@@ -4428,14 +4429,14 @@ export class CreateOrUpdateTagInput implements ICreateOrUpdateTagInput {
     id: string | undefined;
     /** 标签名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 标签颜色 */
     color: string | undefined;
     /** 标签图标 */
     icon: string | undefined;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4495,14 +4496,14 @@ export interface ICreateOrUpdateTagInput {
     id: string | undefined;
     /** 标签名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 标签颜色 */
     color: string | undefined;
     /** 标签图标 */
     icon: string | undefined;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4807,17 +4808,17 @@ export class ReplyOutput implements IReplyOutput {
     accountId: string | undefined;
     /** 回复人ID */
     replyAccountId: string | undefined;
-    /** 当前人昵�?*/
+    /** 当前人昵称 */
     nickName: string | undefined;
-    /** 回复人昵�?*/
+    /** 回复人昵称 */
     relyNickName: string | undefined;
-    /** 当前评论人头�?*/
+    /** 当前评论人头像 */
     avatar: string | undefined;
     /** Ip地址 */
     ip: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip所属地 */
     geolocation: string | undefined;
@@ -4903,17 +4904,17 @@ export interface IReplyOutput {
     accountId: string | undefined;
     /** 回复人ID */
     replyAccountId: string | undefined;
-    /** 当前人昵�?*/
+    /** 当前人昵称 */
     nickName: string | undefined;
-    /** 回复人昵�?*/
+    /** 回复人昵称 */
     relyNickName: string | undefined;
-    /** 当前评论人头�?*/
+    /** 当前评论人头像 */
     avatar: string | undefined;
     /** Ip地址 */
     ip: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip所属地 */
     geolocation: string | undefined;
@@ -5311,7 +5312,7 @@ export class TalkDetailOutput implements ITalkDetailOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5382,7 +5383,7 @@ export interface ITalkDetailOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5402,7 +5403,7 @@ export class TalksOutput implements ITalksOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5469,7 +5470,7 @@ export interface ITalksOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5556,7 +5557,7 @@ export class TalksPageOutput implements ITalksPageOutput {
     images: string | undefined;
     /** 是否允许评论 */
     isAllowComments: boolean;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 是否置顶 */
     isTop: boolean;
@@ -5623,7 +5624,7 @@ export interface ITalksPageOutput {
     images: string | undefined;
     /** 是否允许评论 */
     isAllowComments: boolean;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 是否置顶 */
     isTop: boolean;
@@ -5701,7 +5702,7 @@ export interface ITalksPageOutputPageResult {
 export class TalksPageQueryInput implements ITalksPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
 
     constructor(data?: ITalksPageQueryInput) {
@@ -5747,7 +5748,7 @@ export class TalksPageQueryInput implements ITalksPageQueryInput {
 export interface ITalksPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
 }
 

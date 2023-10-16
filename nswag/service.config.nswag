@@ -56,7 +56,7 @@
       "queryNullValue": "",
       "inlineNamedDictionaries": false,
       "inlineNamedAny": false,
-      "templateDirectory": "./",
+      "templateDirectory": "./liquid",
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,

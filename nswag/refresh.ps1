@@ -1,5 +1,4 @@
-Set-ExecutionPolicy  RemoteSigned
-$serviceResponse = (Get-Content -Raw -Path 'Response.ts' )
+$serviceResponse = (Get-Content -Raw -Path 'template-response.ts' )
 $importMoment = "import * as moment from 'moment';"
 Set-Location ../src/shared/service-proxies
 
