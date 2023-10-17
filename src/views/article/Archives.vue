@@ -12,7 +12,7 @@
       <timeline-item v-for="item of state.articles" :key="item.id">
         <v-card style="padding: 20px 20px">
           <!-- 日期 -->
-          <div class="time">{{ item.publishTime }}</div>
+          <div class="time">{{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss") }}</div>
           <!-- 文章标题 -->
           <router-link
             :to="'/articles/' + item.id"
@@ -40,6 +40,7 @@
 import { Timeline, TimelineTitle, TimelineItem } from "vue3-cute-component";
 import { ref, reactive, watch, onMounted, inject } from "vue";
 import { ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput } from "@/shared/service-proxies";
+import moment from "moment";
 const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
 const cover = ref(
   `background: url(https://xiaogerblog.oss-cn-chengdu.aliyuncs.com/config/c796ff3ca8e6a736cae59f8eda6d9948.jpg) center center / cover no-repeat`
