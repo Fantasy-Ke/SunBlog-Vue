@@ -5,33 +5,17 @@
       <!-- 联系方式 -->
       <h1 class="blog-title animated zoomIn">Fantasy-Ke</h1>
       <!-- 一言 -->
-      <div class="blog-intro">
-        {{ state.print.output }} <span class="typed-cursor">|</span>
-      </div>
+      <div class="blog-intro">{{ state.print.output }} <span class="typed-cursor">|</span></div>
       <!-- 联系方式 -->
       <div class="blog-contact">
-        <a
-          class="mr-5 iconfont iconqq"
-          target="_blank"
-          :href="`http://wpa.qq.com/msgrd?v=3&uin=qq&site=qq&menu=yes`"
-        />
-        <a
-          target="_blank"
-          href="#"
-          class="mr-5 iconfont icongithub"
-        />
-        <a
-          target="_blank"
-          href="#"
-          class="iconfont icongitee-fill-round"
-        />
+        <a class="mr-5 iconfont iconqq" target="_blank" :href="`http://wpa.qq.com/msgrd?v=3&uin=qq&site=qq&menu=yes`" />
+        <a target="_blank" href="#" class="mr-5 iconfont icongithub" />
+        <a target="_blank" href="#" class="iconfont icongitee-fill-round" />
       </div>
     </div>
     <!-- 向下滚动 -->
     <div class="scroll-down" @click="scrollDown">
-      <v-icon color="#fff" class="scroll-down-effects">
-        mdi-chevron-down
-      </v-icon>
+      <v-icon color="#fff" class="scroll-down-effects"> mdi-chevron-down </v-icon>
     </div>
   </div>
   <!-- 主页文章 -->
@@ -50,13 +34,7 @@
         <!-- 文章封面图 -->
         <div :class="isRight(index)">
           <router-link :to="'/articles/' + item.id">
-            <v-img
-              class="on-hover"
-              width="100%"
-              height="100%"
-              :src="item.cover!"
-              :cover="true"
-            />
+            <v-img class="on-hover" width="100%" height="100%" :src="item.cover!" :cover="true" />
           </router-link>
         </div>
         <!-- 文章信息 -->
@@ -69,9 +47,7 @@
           <div class="article-info">
             <!-- 是否置顶 -->
             <span v-if="item.isTop">
-              <span style="color: #ff7242">
-                <i class="iconfont iconzhiding" /> 置顶
-              </span>
+              <span style="color: #ff7242"> <i class="iconfont iconzhiding" /> 置顶 </span>
               <span class="separator">|</span>
             </span>
             <!-- 发表时间 -->
@@ -119,9 +95,7 @@
           <div class="author-wrapper">
             <!-- 博主头像 -->
             <v-avatar size="110" class="author-avatar" :image="img" />
-            <div style="font-size: 1.375rem; margin-top: 0.625rem">
-              Fantasy-Ke
-            </div>
+            <div style="font-size: 1.375rem; margin-top: 0.625rem">Fantasy-Ke</div>
             <div style="font-size: 0.875rem">凡是过往，皆为序章</div>
           </div>
           <!-- 博客信息 -->
@@ -152,11 +126,7 @@
           </a>
           <!-- 社交信息 -->
           <div class="card-info-social">
-            <a
-              class="mr-5 iconfont iconqq"
-              target="_blank"
-              :href="'http://wpa.qq.com/msgrd?v=3&uin=111514&ste=qq&menu=yes'"
-            />
+            <a class="mr-5 iconfont iconqq" target="_blank" :href="'http://wpa.qq.com/msgrd?v=3&uin=111514&ste=qq&menu=yes'" />
             <a target="_blank" href="" class="mr-5 iconfont icongithub" />
             <a target="_blank" class="iconfont icongitee-fill-round" />
           </div>
@@ -167,9 +137,7 @@
             <v-icon size="18">mdi-bell</v-icon>
             公告
           </div>
-          <div style="font-size: 0.875rem">
-            博客改版上线，项目源码在上方Github处，感谢大家支持。
-          </div>
+          <div style="font-size: 0.875rem">博客改版上线，项目源码在上方Github处，感谢大家支持。</div>
         </v-card>
         <!-- 网站信息 -->
         <v-card class="blog-card animated zoomIn mt-5">
@@ -202,10 +170,17 @@ import { talkList as talks, articles, images } from "../api/data";
 import img from "../assets/images/1.jpg";
 import { useToast } from "@/stores/toast";
 import moment from "moment";
-import {ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput, Pagination, TalksCsServiceProxy, TalksOutput} from "@/shared/service-proxies"
+import {
+  ArticleCsServiceProxy,
+  ArticleListQueryInput,
+  ArticleOutput,
+  Pagination,
+  TalksCsServiceProxy,
+  TalksOutput,
+} from "@/shared/service-proxies";
 const route = useRoute();
-const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
-const _talksCService = new TalksCsServiceProxy(inject('$baseurl'),inject('$api'));
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
+const _talksCService = new TalksCsServiceProxy(inject("$baseurl"), inject("$api"));
 // 打字机配置
 const state = reactive({
   talks: [] as TalksOutput[], // 说说
@@ -249,19 +224,20 @@ const runTime = (): void => {
 };
 
 const articlePage = async () => {
-  await _articleCService.getList({
-    pageNo: state.article.page,
-    pageSize: state.article.pageSize,
-    keyword: "",
-  } as ArticleListQueryInput).then((res)=>{
-    let data = res.result;
-    if (data) {
-      state.article.items = data?.rows ?? [];
-      state.article.total = data?.total ?? 0;
-      state.article.totalPage = data?.pages ?? 0;
-    }
-    
-  });
+  await _articleCService
+    .getList({
+      pageNo: state.article.page,
+      pageSize: state.article.pageSize,
+      keyword: "",
+    } as ArticleListQueryInput)
+    .then((res) => {
+      let data = res.result;
+      if (data) {
+        state.article.items = data?.rows ?? [];
+        state.article.total = data?.total ?? 0;
+        state.article.totalPage = data?.pages ?? 0;
+      }
+    });
 };
 
 onMounted(() => {
@@ -271,12 +247,12 @@ onMounted(() => {
     () => {},
     () => {}
   );
-  
-  _talksCService.getList({ pageNo: 1, pageSize: 10 } as Pagination).then((res)=>{
+
+  _talksCService.getList({ pageNo: 1, pageSize: 10 } as Pagination).then((res) => {
     let data = res.result;
     if (data) {
       state.talks = data!.rows!;
-      articlePage()
+      articlePage();
     }
   });
   page.articles = articles;
@@ -287,25 +263,20 @@ onMounted(() => {
 /**
  * 滚动条
  */
- const scrollDown = (): void => {
+const scrollDown = (): void => {
   window.scrollTo({
     behavior: "smooth",
     top: document.documentElement.clientHeight,
   });
 };
 const isRight = (index: number): string => {
-  return index % 2 === 0
-    ? "article-cover left-radius"
-    : "article-cover right-radius";
+  return index % 2 === 0 ? "article-cover left-radius" : "article-cover right-radius";
 };
 
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === route.name
-  )?.pageCover;
+  let cover: string = images.find((item) => item.pageLabel === route.name)?.pageCover;
   return "background: url(" + cover + ") center center / cover no-repeat";
 });
-
 
 // 监听页码发生改变
 watch(
@@ -315,7 +286,6 @@ watch(
     await articlePage();
   }
 );
-
 </script>
 <style scoped lang="scss">
 .typed-cursor {

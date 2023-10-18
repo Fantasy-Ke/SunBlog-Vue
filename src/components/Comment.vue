@@ -6,29 +6,14 @@
       <v-avatar size="40" :image="img" />
       <div style="width: 100%" class="ml-3">
         <div class="comment-input">
-          <textarea
-            class="comment-textarea"
-            v-model="state.commentContent"
-            placeholder="留下点什么吧..."
-            auto-grow
-            dense
-          />
+          <textarea class="comment-textarea" v-model="state.commentContent" placeholder="留下点什么吧..." auto-grow dense />
         </div>
         <!-- 操作按钮 -->
         <div class="emoji-container">
-          <span
-            :class="state.chooseEmoji ? 'emoji-btn-active' : 'emoji-btn'"
-            @click="state.chooseEmoji = !state.chooseEmoji"
-          >
+          <span :class="state.chooseEmoji ? 'emoji-btn-active' : 'emoji-btn'" @click="state.chooseEmoji = !state.chooseEmoji">
             <i class="iconfont iconbiaoqing" />
           </span>
-          <button
-            @click="insertComment"
-            class="upload-btn v-comment-btn"
-            style="margin-left: auto"
-          >
-            提交
-          </button>
+          <button @click="insertComment" class="upload-btn v-comment-btn" style="margin-left: auto">提交</button>
         </div>
         <!-- 表情框 -->
         <emoji @addEmoji="addEmoji" :chooseEmoji="state.chooseEmoji" />
@@ -40,12 +25,7 @@
     <!-- 评论数量 -->
     <div class="count">{{ state.count }} 评论</div>
     <!-- 评论列表 -->
-    <div
-      style="display: flex"
-      class="pt-5"
-      v-for="(item, index) of state.commentList"
-      :key="item.id"
-    >
+    <div style="display: flex" class="pt-5" v-for="(item, index) of state.commentList" :key="item.id">
       <!-- 头像 -->
       <v-avatar size="40" class="comment-avatar" :image="item.avatar!" />
       <div class="comment-meta">
@@ -66,31 +46,17 @@
           <span style="margin-right: 10px">{{ moment(item.createdTime).format("YYYY-MM-DD HH:mm:ss") }}</span>
           <!-- 点赞 -->
           <span
-            :class="
-              (item.isPraise ? 'like-active' : 'like') /**模拟点赞 */ +
-              ' iconfont icondianzan'
-            "
+            :class="(item.isPraise ? 'like-active' : 'like') /**模拟点赞 */ + ' iconfont icondianzan'"
             @click="onPraise(item)"
           />
-          <span v-show="(item.praiseTotal ?? 0) > 0">
-            {{ item.praiseTotal }}</span
-          >
+          <span v-show="(item.praiseTotal ?? 0) > 0"> {{ item.praiseTotal }}</span>
           <!-- 回复 -->
-          <span class="reply-btn" @click="replyComment(index, item, item.id)">
-            回复
-          </span>
+          <span class="reply-btn" @click="replyComment(index, item, item.id)"> 回复 </span>
         </div>
         <!-- 评论内容 -->
-        <p
-          v-html="formatContent(item.content ?? '', true)"
-          class="comment-content"
-        ></p>
+        <p v-html="formatContent(item.content ?? '', true)" class="comment-content"></p>
         <!-- 回复人 -->
-        <div
-          style="display: flex"
-          v-for="reply of item.replyList?.rows ?? []"
-          :key="reply.id"
-        >
+        <div style="display: flex" v-for="reply of item.replyList?.rows ?? []" :key="reply.id">
           <!-- 头像 -->
           <v-avatar size="36" class="comment-avatar">
             <img :src="reply.avatar!" />
@@ -112,23 +78,10 @@
                 {{ moment(reply.createdTime).format("YYYY-MM-DD HH:mm:ss") }}
               </span>
               <!-- 点赞 -->
-              <span
-                :class="
-                  (reply.isPraise ? 'like-active' : 'like') +
-                  ' iconfont icondianzan'
-                "
-                @click="onPraise(reply)"
-              />
-              <span v-show="(reply.praiseTotal ?? 0) > 0">
-                {{ reply.praiseTotal }}</span
-              >
+              <span :class="(reply.isPraise ? 'like-active' : 'like') + ' iconfont icondianzan'" @click="onPraise(reply)" />
+              <span v-show="(reply.praiseTotal ?? 0) > 0"> {{ reply.praiseTotal }}</span>
               <!-- 回复 -->
-              <span
-                class="reply-btn"
-                @click="replyComment(index, reply, item.id)"
-              >
-                回复
-              </span>
+              <span class="reply-btn" @click="replyComment(index, reply, item.id)"> 回复 </span>
             </div>
             <!-- 回复内容 -->
             <p class="comment-content">
@@ -162,23 +115,11 @@
           共
           <b>{{ item.replyCount }}</b>
           条回复，
-          <span
-            style="color: #00a1d6; cursor: pointer"
-            @click="changeReplyCurrent(1, index, item.id!)"
-          >
-            点击查看
-          </span>
+          <span style="color: #00a1d6; cursor: pointer" @click="changeReplyCurrent(1, index, item.id!)"> 点击查看 </span>
         </div>
         <!-- 回复分页 -->
-        <div
-          class="mb-3"
-          style="font-size: 0.75rem; color: #222"
-          ref="paging"
-          v-if="(item.replyList?.pages ?? 0) > 1"
-        >
-          <span style="padding-right: 10px">
-            共{{ item.replyList?.pages }}页
-          </span>
+        <div class="mb-3" style="font-size: 0.75rem; color: #222" ref="paging" v-if="(item.replyList?.pages ?? 0) > 1">
+          <span style="padding-right: 10px"> 共{{ item.replyList?.pages }}页 </span>
           <paging
             ref="page"
             :totalPage="item.replyList?.pages ?? 0"
@@ -194,9 +135,7 @@
     </div>
     <!-- 加载按钮 -->
     <div class="load-wrapper">
-      <v-btn outlined v-if="state.pages > state.current" @click="onMore">
-        加载更多...
-      </v-btn>
+      <v-btn outlined v-if="state.pages > state.current" @click="onMore"> 加载更多... </v-btn>
     </div>
   </div>
   <!-- 没有评论提示 -->
@@ -211,9 +150,16 @@ import Reply from "./Replay.vue";
 import Paging from "./Paging.vue";
 import moment from "moment";
 import EmojiList from "../assets/emoji";
-import { AddCommentInput, CommentOutput, CommentPageQueryInput, CommentsCsServiceProxy, KeyDto, ReplyOutput } from "@/shared/service-proxies";
+import {
+  AddCommentInput,
+  CommentOutput,
+  CommentPageQueryInput,
+  CommentsCsServiceProxy,
+  KeyDto,
+  ReplyOutput,
+} from "@/shared/service-proxies";
 import { useToast } from "@/stores/toast";
-const _commentsCService = new CommentsCsServiceProxy(inject('$baseurl'),inject('$api'));
+const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
 const toast = useToast();
 const props = defineProps<{
   type: any;
@@ -240,9 +186,9 @@ const loadData = async () => {
   input.pageNo = state.current;
   input.id = props.type;
 
-  await _commentsCService.getList(input).then((res)=>{
+  await _commentsCService.getList(input).then((res) => {
     let data = res.result;
-    if(data){
+    if (data) {
       if (state.current === 1) {
         state.commentList = data?.rows ?? [];
       } else {
@@ -251,8 +197,8 @@ const loadData = async () => {
       state.count = data?.total ?? 0;
       state.pages = data?.pages ?? 0;
     }
-  })
-  
+  });
+
   emit("getCommentCount", state.count);
 };
 
@@ -261,24 +207,20 @@ const onMore = async () => {
   await loadData();
 };
 
-const changeReplyCurrent = async (
-  current: number,
-  index: number,
-  commentId: string
-) => {
+const changeReplyCurrent = async (current: number, index: number, commentId: string) => {
   const item = state.commentList.find((item) => item.id == commentId);
   item!.replyList!.pageNo = current;
-  await _commentsCService.replyList({
-    id: commentId,
-    pageNo: current,
-    pageSize: 5,
-  } as CommentPageQueryInput)
-  .then(res=>{
+  await _commentsCService
+    .replyList({
+      id: commentId,
+      pageNo: current,
+      pageSize: 5,
+    } as CommentPageQueryInput)
+    .then((res) => {
       if (res.success) {
         item!.replyList = res.result;
       }
-  })
-  
+    });
 };
 
 const addEmoji = (key: string): void => {
@@ -293,33 +235,29 @@ const insertComment = async () => {
     toast.error("请输入评论内容");
     return;
   }
-  await _commentsCService.add({
-    moduleId: props.type as string,
-    content ,
-  } as AddCommentInput).then( async res=>{
+  await _commentsCService
+    .add({
+      moduleId: props.type as string,
+      content,
+    } as AddCommentInput)
+    .then(async (res) => {
       state.commentContent = "";
       state.current = 1;
       await loadData();
-  })
+    });
 };
 
 // 点赞或取消点赞
 const onPraise = async (item) => {
-  await _commentsCService.praise({ id:item.id!} as KeyDto)
-  .then(res=>{
+  await _commentsCService.praise({ id: item.id! } as KeyDto).then((res) => {
     if (res.success) {
       item.isPraise = res.result;
       item.praiseTotal = res.result ? item.praiseTotal! + 1 : item.praiseTotal! - 1;
     }
-  })
-  
+  });
 };
 
-const replyComment = (
-  index: number,
-  item: any,
-  rootId?: string
-): void => {
+const replyComment = (index: number, item: any, rootId?: string): void => {
   reply.value[index].replay.commentContent = "";
   reply.value[index].replay.nickname = item.nickName!;
   reply.value[index].replay.parentId = item.id!;
@@ -338,20 +276,21 @@ const reloadReply = async (index: number) => {
     return;
   }
 
-  await _commentsCService.add({
-    content: content ?? "",
-    parentId: item.parentId,
-    moduleId: props.type as string,
-    rootId: item.rootId,
-    replyAccountId: item.replyAccountId,
-  } as AddCommentInput).then(res=>{
-    if (res.success) {
-      item.commentContent = "";
-      reply.value[index].replay.visible = false;
-      changeReplyCurrent(1, index, item.rootId!);
-    }
-  })
-  
+  await _commentsCService
+    .add({
+      content: content ?? "",
+      parentId: item.parentId,
+      moduleId: props.type as string,
+      rootId: item.rootId,
+      replyAccountId: item.replyAccountId,
+    } as AddCommentInput)
+    .then((res) => {
+      if (res.success) {
+        item.commentContent = "";
+        reply.value[index].replay.visible = false;
+        changeReplyCurrent(1, index, item.rootId!);
+      }
+    });
 };
 
 watch(
@@ -372,11 +311,7 @@ const formatContent = (content: string, isHandleEmoji: boolean = false) => {
   }
   const reg: RegExp = /\[.+?\]/g;
   return content.replace(reg, function (str: string) {
-    return (
-      "<img src= '" +
-      EmojiList[str] +
-      "' width='24'height='24' style='margin: 0 1px;vertical-align: text-bottom'/>"
-    );
+    return "<img src= '" + EmojiList[str] + "' width='24'height='24' style='margin: 0 1px;vertical-align: text-bottom'/>";
   });
 };
 </script>

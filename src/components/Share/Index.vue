@@ -42,11 +42,10 @@ interface ShareOption {
 const props = withDefaults(defineProps<ShareOption>(), {
   url: location.href,
   origin: location.origin,
-  image: (document.images[0] || 0).src || "",
+  image: (document.images[0] || (0 as any)).src || "",
   weiboKey: "",
   wechatQrcodeTitle: "微信扫一扫：分享",
-  wechatQrcodeHelper:
-    "<p>微信里点“发现”，扫一下</p><p>二维码便可将本文分享至朋友圈。</p>",
+  wechatQrcodeHelper: "<p>微信里点“发现”，扫一下</p><p>二维码便可将本文分享至朋友圈。</p>",
   wechatQrcodeSize: 100,
   sites: () => [
     ShareType.weibo,
@@ -107,27 +106,19 @@ function formatUrl(name: string): string {
     qzone:
       "http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={{URL}}&title={{TITLE}}&desc={{DESCRIPTION}}&summary={{SUMMARY}}&site={{SOURCE}}&pics={{IMAGE}}",
     qq: 'http://connect.qq.com/widget/shareqq/index.html?url={{URL}}&title={{TITLE}}&source={{SOURCE}}&desc={{DESCRIPTION}}&pics={{IMAGE}}&summary="{{SUMMARY}}"',
-    weibo:
-      "https://service.weibo.com/share/share.php?url={{URL}}&title={{TITLE}}&pic={{IMAGE}}&appkey={{WEIBOKEY}}",
+    weibo: "https://service.weibo.com/share/share.php?url={{URL}}&title={{TITLE}}&pic={{IMAGE}}&appkey={{WEIBOKEY}}",
     wechat: "javascript:",
     douban:
       "http://shuo.douban.com/!service/share?href={{URL}}&name={{TITLE}}&text={{DESCRIPTION}}&image={{IMAGE}}&starid=0&aid=0&style=11",
     linkedin:
       "http://www.linkedin.com/shareArticle?mini=true&ro=true&title={{TITLE}}&url={{URL}}&summary={{SUMMARY}}&source={{SOURCE}}&armin=armin",
     facebook: "https://www.facebook.com/sharer/sharer.php?u={{URL}}",
-    twitter:
-      "https://twitter.com/intent/tweet?text={{TITLE}}&url={{URL}}&via={{ORIGIN}}",
+    twitter: "https://twitter.com/intent/tweet?text={{TITLE}}&url={{URL}}&via={{ORIGIN}}",
     google: "https://plus.google.com/share?url={{URL}}",
   };
   let data = { ...props } as { [key: string]: any };
-  data.title =
-    getMetaContentByName("title") ||
-    getMetaContentByName("Title") ||
-    document.title;
-  data.description =
-    getMetaContentByName("description") ||
-    getMetaContentByName("Description") ||
-    "";
+  data.title = getMetaContentByName("title") || getMetaContentByName("Title") || document.title;
+  data.description = getMetaContentByName("description") || getMetaContentByName("Description") || "";
   if (data.imageSelector) {
     data.image = Array.from(document.querySelectorAll(data.imageSelector))
       .map(function (item) {
@@ -136,18 +127,12 @@ function formatUrl(name: string): string {
       .join("||");
   } else {
     data.image =
-      (
-        Array.from(document.body.querySelectorAll("img")).filter(
-          (item) => (item as HTMLImageElement).src
-        )[0] || 0
-      ).src || "";
+      (Array.from(document.body.querySelectorAll("img")).filter((item) => (item as HTMLImageElement).src)[0] || 0).src || "";
   }
   return templates[name].replace(/\{\{(\w)(\w*)\}\}/g, function (m, fix, key) {
     var nameKey = name + fix + key.toLowerCase();
     key = (fix + key).toLowerCase();
-    return encodeURIComponent(
-      (data[nameKey] === undefined ? data[key] : data[nameKey]) || ""
-    );
+    return encodeURIComponent((data[nameKey] === undefined ? data[key] : data[nameKey]) || "");
   });
 }
 </script>

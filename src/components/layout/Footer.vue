@@ -3,10 +3,8 @@
   <div id="player"></div>
   <v-footer app absolute>
     <div class="footer-wrap">
-      <div>©2023 - 2026 By Fantasy-Ke</div>
-      <a href="https://beian.miit.gov.cn/" target="_blank">
-        粤ICP备还没有号
-      </a>
+      <div>{{ blogSetting.copyright }}</div>
+      <a href="https://beian.miit.gov.cn/" target="_blank"> {{ blogSetting.filing }} </a>
     </div>
   </v-footer>
 </template>
@@ -14,7 +12,11 @@
 <script lang="ts" setup>
 //import "APlayer/dist/APlayer.min.css";
 //import APlayer from "APlayer";
+import { useApp } from "@/stores/app";
+import { storeToRefs } from "pinia";
 import { onMounted } from "vue";
+const appStore = useApp();
+const { blogSetting } = storeToRefs(appStore);
 onMounted(() => {
   // 播放器文档api https://aplayer.js.org/#/zh-Hans/
   // const op = new APlayer({

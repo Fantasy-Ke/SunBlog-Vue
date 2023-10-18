@@ -18,9 +18,7 @@ import { useRoute } from "vue-router";
 import { images } from "../api/data";
 const route = useRoute();
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === route.name
-  )?.pageCover;
+  let cover: string = images.find((item) => item.pageLabel === route.name)?.pageCover;
   return "background: url(" + cover + ") center center / cover no-repeat";
 });
 </script>

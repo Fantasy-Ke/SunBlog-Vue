@@ -601,7 +601,7 @@ export class UsersServiceProxy {
     }
 
     /**
-     * 查询一个用�?
+     * 查询一个用户
      * @return Success
      */
     getFrist( cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfoDto[]>> {
@@ -1226,6 +1226,790 @@ export class TagssServiceProxy {
     }
 }
 
+export class OAuthsServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 获取授权地址
+     * @param type (optional) 
+     * @return Success
+     */
+    getIpAddress(type: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<string>> {
+        let url_ = this.baseUrl + "/api/OAuths/GetIpAddress?";
+        if (type === null)
+            throw new Error("The parameter 'type' cannot be null.");
+        else if (type !== undefined)
+            url_ += "type=" + encodeURIComponent("" + type) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetIpAddress(_response);
+        });
+    }
+
+    protected processGetIpAddress(response: AxiosResponse): Promise<ZEngineResponse<string>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<string>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<string>>(null as any);
+    }
+
+    /**
+     * 授权回调
+     * @param type (optional) 授权类型
+     * @param code (optional) 
+     * @param state (optional) 缓存唯一ID
+     * @return Success
+     */
+    callback(type: string | undefined, code: string | undefined, state: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/OAuths/Callback?";
+        if (type === null)
+            throw new Error("The parameter 'type' cannot be null.");
+        else if (type !== undefined)
+            url_ += "type=" + encodeURIComponent("" + type) + "&";
+        if (code === null)
+            throw new Error("The parameter 'code' cannot be null.");
+        else if (code !== undefined)
+            url_ += "code=" + encodeURIComponent("" + code) + "&";
+        if (state === null)
+            throw new Error("The parameter 'state' cannot be null.");
+        else if (state !== undefined)
+            url_ += "state=" + encodeURIComponent("" + state) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCallback(_response);
+        });
+    }
+
+    protected processCallback(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 登录
+     * @param code (optional) 
+     * @return Success
+     */
+    login(code: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<string>> {
+        let url_ = this.baseUrl + "/api/OAuths/Login?";
+        if (code === null)
+            throw new Error("The parameter 'code' cannot be null.");
+        else if (code !== undefined)
+            url_ += "code=" + encodeURIComponent("" + code) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLogin(_response);
+        });
+    }
+
+    protected processLogin(response: AxiosResponse): Promise<ZEngineResponse<string>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<string>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<string>>(null as any);
+    }
+
+    /**
+     * 获取用户信息
+     * @return Success
+     */
+    userInfo( cancelToken?: CancelToken): Promise<ZEngineResponse<OAuthAccountDetailOutput>> {
+        let url_ = this.baseUrl + "/api/OAuths/UserInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUserInfo(_response);
+        });
+    }
+
+    protected processUserInfo(response: AxiosResponse): Promise<ZEngineResponse<OAuthAccountDetailOutput>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = OAuthAccountDetailOutput.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<OAuthAccountDetailOutput>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<OAuthAccountDetailOutput>>(null as any);
+    }
+
+    /**
+     * 申请友链
+     * @param body (optional) 
+     * @return Success
+     */
+    addLink(body: AddLinkOutput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/OAuths/AddLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddLink(_response);
+        });
+    }
+
+    protected processAddLink(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 博客基本信息
+     * @return Success
+     */
+    info( cancelToken?: CancelToken): Promise<ZEngineResponse<BlogOutput>> {
+        let url_ = this.baseUrl + "/api/OAuths/Info";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processInfo(_response);
+        });
+    }
+
+    protected processInfo(response: AxiosResponse): Promise<ZEngineResponse<BlogOutput>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = BlogOutput.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<BlogOutput>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<BlogOutput>>(null as any);
+    }
+
+    /**
+     * 友情链接
+     * @return Success
+     */
+    links( cancelToken?: CancelToken): Promise<ZEngineResponse<FriendLinkOutput[]>> {
+        let url_ = this.baseUrl + "/api/OAuths/Links";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLinks(_response);
+        });
+    }
+
+    protected processLinks(response: AxiosResponse): Promise<ZEngineResponse<FriendLinkOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(FriendLinkOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<FriendLinkOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<FriendLinkOutput[]>>(null as any);
+    }
+}
+
+export class CustomConfigItemsServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 自定义配置项分页列表
+     * @param body (optional) 
+     * @return Success
+     */
+    getPage(body: CustomConfigItemQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<ObjectPageResult>> {
+        let url_ = this.baseUrl + "/api/CustomConfigItems/GetPage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPage(_response);
+        });
+    }
+
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<ObjectPageResult>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = ObjectPageResult.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ObjectPageResult>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<ObjectPageResult>>(null as any);
+    }
+
+    /**
+     * 添加自定义配置子项
+     * @param body (optional) 
+     * @return Success
+     */
+    addItem(body: AddCustomConfigItemInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/CustomConfigItems/AddItem";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddItem(_response);
+        });
+    }
+
+    protected processAddItem(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 修改自定义配置子项
+     * @param body (optional) 
+     * @return Success
+     */
+    updateItem(body: UpdateCustomConfigItemInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/CustomConfigItems/UpdateItem";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateItem(_response);
+        });
+    }
+
+    protected processUpdateItem(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+}
+
+export class FriendLinksServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 添加修改
+     * @param body (optional) 
+     * @return Success
+     */
+    createOrUpdate(body: CreateOrUpdateFriendInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/FriendLinks/CreateOrUpdate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCreateOrUpdate(_response);
+        });
+    }
+
+    protected processCreateOrUpdate(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 删除
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/FriendLinks/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 标签列表分页查询
+     * @param body (optional) 
+     * @return Success
+     */
+    getPage(body: FriendLinkPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<FriendLinkPageOutputPageResult>> {
+        let url_ = this.baseUrl + "/api/FriendLinks/GetPage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPage(_response);
+        });
+    }
+
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<FriendLinkPageOutputPageResult>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = FriendLinkPageOutputPageResult.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<FriendLinkPageOutputPageResult>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<FriendLinkPageOutputPageResult>>(null as any);
+    }
+}
+
 export class CommentsCsServiceProxy {
     protected instance: AxiosInstance;
     protected baseUrl: string;
@@ -1240,7 +2024,7 @@ export class CommentsCsServiceProxy {
     }
 
     /**
-     * 评论、回�?
+     * 评论、回复
      * @param body (optional) 
      * @return Success
      */
@@ -1790,7 +2574,7 @@ export class ArticleCsServiceProxy {
     }
 
     /**
-     * 文章表查�?
+     * 文章表查询
      * @param body (optional) 
      * @return Success
      */
@@ -1910,7 +2694,7 @@ export class ArticleCsServiceProxy {
     }
 
     /**
-     * 最�?片文�?
+     * 最新5片文章
      * @return Success
      */
     latest( cancelToken?: CancelToken): Promise<ZEngineResponse<ArticleBasicsOutput[]>> {
@@ -2103,7 +2887,7 @@ export class ArticleCategorysServiceProxy {
     }
 
     /**
-     * 添加文章所属栏�?
+     * 添加文章所属栏目
      * @param body (optional) 
      * @return Success
      */
@@ -2156,7 +2940,7 @@ export class ArticleCategorysServiceProxy {
     }
 
     /**
-     * 更新文章所属栏�?
+     * 更新文章所属栏目
      * @param body (optional) 
      * @return Success
      */
@@ -2481,7 +3265,7 @@ export class AlbumsCsServiceProxy {
 }
 
 export class AddCommentInput implements IAddCommentInput {
-    /** 对应模块ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID（null表留言，0代表友链的评论） */
     moduleId: string | undefined;
     /** 顶级楼层评论ID */
     rootId: string | undefined;
@@ -2537,7 +3321,7 @@ export class AddCommentInput implements IAddCommentInput {
 }
 
 export interface IAddCommentInput {
-    /** 对应模块ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID（null表留言，0代表友链的评论） */
     moduleId: string | undefined;
     /** 顶级楼层评论ID */
     rootId: string | undefined;
@@ -2547,6 +3331,126 @@ export interface IAddCommentInput {
     replyAccountId: string | undefined;
     /** 评论内容 */
     content: string;
+}
+
+export class AddCustomConfigItemInput implements IAddCustomConfigItemInput {
+    /** 自定义配置Id */
+    configId: string;
+    /** 配置 */
+    json: string;
+
+    constructor(data?: IAddCustomConfigItemInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.configId = _data["configId"];
+            this.json = _data["json"];
+        }
+    }
+
+    static fromJS(data: any): AddCustomConfigItemInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddCustomConfigItemInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["configId"] = this.configId;
+        data["json"] = this.json;
+        return data;
+    }
+
+    clone(): AddCustomConfigItemInput {
+        const json = this.toJSON();
+        let result = new AddCustomConfigItemInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddCustomConfigItemInput {
+    /** 自定义配置Id */
+    configId: string;
+    /** 配置 */
+    json: string;
+}
+
+export class AddLinkOutput implements IAddLinkOutput {
+    /** 网站名称 */
+    siteName: string;
+    /** 网站链接 */
+    link: string;
+    /** 网站logo */
+    logo: string;
+    /** 对方博客友链的地址 */
+    url: string;
+    /** 网站介绍 */
+    remark: string;
+
+    constructor(data?: IAddLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteName = _data["siteName"];
+            this.link = _data["link"];
+            this.logo = _data["logo"];
+            this.url = _data["url"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): AddLinkOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteName"] = this.siteName;
+        data["link"] = this.link;
+        data["logo"] = this.logo;
+        data["url"] = this.url;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): AddLinkOutput {
+        const json = this.toJSON();
+        let result = new AddLinkOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddLinkOutput {
+    /** 网站名称 */
+    siteName: string;
+    /** 网站链接 */
+    link: string;
+    /** 网站logo */
+    logo: string;
+    /** 对方博客友链的地址 */
+    url: string;
+    /** 网站介绍 */
+    remark: string;
 }
 
 export class AlbumsOutput implements IAlbumsOutput {
@@ -2901,7 +3805,7 @@ export interface IAlbumsPageQueryInput {
 export class ArticleBasicsOutput implements IArticleBasicsOutput {
     /** 文章ID */
     id: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 类型 */
     type: number;
@@ -2957,7 +3861,7 @@ export class ArticleBasicsOutput implements IArticleBasicsOutput {
 export interface IArticleBasicsOutput {
     /** 文章ID */
     id: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 类型 */
     type: number;
@@ -2972,7 +3876,7 @@ export class ArticleDetailOutput implements IArticleDetailOutput {
     id: string;
     /** 标题 */
     title: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
     /** 封面 */
     cover: string | undefined;
@@ -2983,7 +3887,7 @@ export class ArticleDetailOutput implements IArticleDetailOutput {
     isTop: boolean;
     /** 排序 */
     sort: number;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
     /** 文章内容 */
     content: string | undefined;
@@ -3082,7 +3986,7 @@ export interface IArticleDetailOutput {
     id: string;
     /** 标题 */
     title: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
     /** 封面 */
     cover: string | undefined;
@@ -3093,7 +3997,7 @@ export interface IArticleDetailOutput {
     isTop: boolean;
     /** 排序 */
     sort: number;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
     /** 文章内容 */
     content: string | undefined;
@@ -3119,15 +4023,15 @@ export class ArticleInfoOutput implements IArticleInfoOutput {
     title: string | undefined;
     /** 文章内容 */
     content: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
-    /** 浏览�?*/
+    /** 浏览量 */
     views: number;
     creationType: CreationType;
     /** 是否允许评论 */
@@ -3140,13 +4044,13 @@ export class ArticleInfoOutput implements IArticleInfoOutput {
     link: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 当前用户是否已点�?*/
+    /** 当前用户是否已点赞 */
     isPraise: boolean;
     /** 栏目Id */
     categoryId: string;
     /** 栏目名称 */
     categoryName: string | undefined;
-    /** 最后更新时�?*/
+    /** 最后更新时间 */
     updatedTime: moment.Moment | undefined;
     prev: ArticleBasicsOutput;
     next: ArticleBasicsOutput;
@@ -3256,15 +4160,15 @@ export interface IArticleInfoOutput {
     title: string | undefined;
     /** 文章内容 */
     content: string | undefined;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
-    /** 作�?*/
+    /** 作者 */
     author: string | undefined;
-    /** 浏览�?*/
+    /** 浏览量 */
     views: number;
     creationType: CreationType;
     /** 是否允许评论 */
@@ -3277,13 +4181,13 @@ export interface IArticleInfoOutput {
     link: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 当前用户是否已点�?*/
+    /** 当前用户是否已点赞 */
     isPraise: boolean;
     /** 栏目Id */
     categoryId: string;
     /** 栏目名称 */
     categoryName: string | undefined;
-    /** 最后更新时�?*/
+    /** 最后更新时间 */
     updatedTime: moment.Moment | undefined;
     prev: ArticleBasicsOutput;
     next: ArticleBasicsOutput;
@@ -3300,7 +4204,7 @@ export class ArticleListQueryInput implements IArticleListQueryInput {
     tagId: string | undefined;
     /** 栏目ID */
     categoryId: string | undefined;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
 
     constructor(data?: IArticleListQueryInput) {
@@ -3354,7 +4258,7 @@ export interface IArticleListQueryInput {
     tagId: string | undefined;
     /** 栏目ID */
     categoryId: string | undefined;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
 }
 
@@ -3370,9 +4274,9 @@ export class ArticleOutput implements IArticleOutput {
     /** 是否置顶 */
     isTop: boolean;
     creationType: CreationType;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
@@ -3453,9 +4357,9 @@ export interface IArticleOutput {
     /** 是否置顶 */
     isTop: boolean;
     creationType: CreationType;
-    /** 简�?*/
+    /** 简介 */
     summary: string | undefined;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string | undefined;
     /** 发布时间 */
     publishTime: moment.Moment;
@@ -3764,7 +4668,7 @@ export class ArticleReportOutput implements IArticleReportOutput {
     tagCount: number;
     /** 栏目数量 */
     categoryCount: number;
-    /** 用户�?*/
+    /** 用户量 */
     userCount: number;
     /** 友链数量 */
     linkCount: number;
@@ -3820,7 +4724,7 @@ export interface IArticleReportOutput {
     tagCount: number;
     /** 栏目数量 */
     categoryCount: number;
-    /** 用户�?*/
+    /** 用户量 */
     userCount: number;
     /** 友链数量 */
     linkCount: number;
@@ -3829,6 +4733,237 @@ export interface IArticleReportOutput {
 export enum AvailabilityStatus {
     _0 = 0,
     _1 = 1,
+}
+
+export class BloggerInfo implements IBloggerInfo {
+    avatar: string | undefined;
+    nikeName: string | undefined;
+    qq: string | undefined;
+    github: string | undefined;
+    gitee: string | undefined;
+    motto: string | undefined;
+    about: string | undefined;
+
+    constructor(data?: IBloggerInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.avatar = _data["avatar"];
+            this.nikeName = _data["nikeName"];
+            this.qq = _data["qq"];
+            this.github = _data["github"];
+            this.gitee = _data["gitee"];
+            this.motto = _data["motto"];
+            this.about = _data["about"];
+        }
+    }
+
+    static fromJS(data: any): BloggerInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new BloggerInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["avatar"] = this.avatar;
+        data["nikeName"] = this.nikeName;
+        data["qq"] = this.qq;
+        data["github"] = this.github;
+        data["gitee"] = this.gitee;
+        data["motto"] = this.motto;
+        data["about"] = this.about;
+        return data;
+    }
+
+    clone(): BloggerInfo {
+        const json = this.toJSON();
+        let result = new BloggerInfo();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBloggerInfo {
+    avatar: string | undefined;
+    nikeName: string | undefined;
+    qq: string | undefined;
+    github: string | undefined;
+    gitee: string | undefined;
+    motto: string | undefined;
+    about: string | undefined;
+}
+
+export class BlogOutput implements IBlogOutput {
+    site: BlogSetting;
+    info: BloggerInfo;
+    /** 各个页面封面图 */
+    covers: { [key: string]: string[]; } | undefined;
+
+    constructor(data?: IBlogOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.site = _data["site"] ? BlogSetting.fromJS(_data["site"]) : <any>undefined;
+            this.info = _data["info"] ? BloggerInfo.fromJS(_data["info"]) : <any>undefined;
+            if (_data["covers"]) {
+                this.covers = {} as any;
+                for (let key in _data["covers"]) {
+                    if (_data["covers"].hasOwnProperty(key))
+                        (<any>this.covers)[key] = _data["covers"][key] !== undefined ? _data["covers"][key] : [];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): BlogOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new BlogOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["site"] = this.site ? this.site.toJSON() : <any>undefined;
+        data["info"] = this.info ? this.info.toJSON() : <any>undefined;
+        if (this.covers) {
+            data["covers"] = {};
+            for (let key in this.covers) {
+                if (this.covers.hasOwnProperty(key))
+                    (<any>data["covers"])[key] = (<any>this.covers)[key];
+            }
+        }
+        return data;
+    }
+
+    clone(): BlogOutput {
+        const json = this.toJSON();
+        let result = new BlogOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBlogOutput {
+    site: BlogSetting;
+    info: BloggerInfo;
+    /** 各个页面封面图 */
+    covers: { [key: string]: string[]; } | undefined;
+}
+
+export class BlogSetting implements IBlogSetting {
+    logo: string | undefined;
+    favicon: string | undefined;
+    isRewards: boolean | undefined;
+    aliPay: string | undefined;
+    wxPay: string | undefined;
+    isAllowMessage: boolean | undefined;
+    isAllowComments: boolean | undefined;
+    announcement: string | undefined;
+    siteName: string | undefined;
+    motto: string | undefined;
+    runTime: moment.Moment;
+    copyright: string | undefined;
+    description: string | undefined;
+    keyword: string | undefined;
+    filing: string | undefined;
+
+    constructor(data?: IBlogSetting) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.logo = _data["logo"];
+            this.favicon = _data["favicon"];
+            this.isRewards = _data["isRewards"];
+            this.aliPay = _data["aliPay"];
+            this.wxPay = _data["wxPay"];
+            this.isAllowMessage = _data["isAllowMessage"];
+            this.isAllowComments = _data["isAllowComments"];
+            this.announcement = _data["announcement"];
+            this.siteName = _data["siteName"];
+            this.motto = _data["motto"];
+            this.runTime = _data["runTime"] ? moment(_data["runTime"].toString()) : <any>undefined;
+            this.copyright = _data["copyright"];
+            this.description = _data["description"];
+            this.keyword = _data["keyword"];
+            this.filing = _data["filing"];
+        }
+    }
+
+    static fromJS(data: any): BlogSetting {
+        data = typeof data === 'object' ? data : {};
+        let result = new BlogSetting();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["logo"] = this.logo;
+        data["favicon"] = this.favicon;
+        data["isRewards"] = this.isRewards;
+        data["aliPay"] = this.aliPay;
+        data["wxPay"] = this.wxPay;
+        data["isAllowMessage"] = this.isAllowMessage;
+        data["isAllowComments"] = this.isAllowComments;
+        data["announcement"] = this.announcement;
+        data["siteName"] = this.siteName;
+        data["motto"] = this.motto;
+        data["runTime"] = this.runTime ? this.runTime.toISOString() : <any>undefined;
+        data["copyright"] = this.copyright;
+        data["description"] = this.description;
+        data["keyword"] = this.keyword;
+        data["filing"] = this.filing;
+        return data;
+    }
+
+    clone(): BlogSetting {
+        const json = this.toJSON();
+        let result = new BlogSetting();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBlogSetting {
+    logo: string | undefined;
+    favicon: string | undefined;
+    isRewards: boolean | undefined;
+    aliPay: string | undefined;
+    wxPay: string | undefined;
+    isAllowMessage: boolean | undefined;
+    isAllowComments: boolean | undefined;
+    announcement: string | undefined;
+    siteName: string | undefined;
+    motto: string | undefined;
+    runTime: moment.Moment;
+    copyright: string | undefined;
+    description: string | undefined;
+    keyword: string | undefined;
+    filing: string | undefined;
 }
 
 export class CategoryOutput implements ICategoryOutput {
@@ -3919,11 +5054,11 @@ export class CommentOutput implements ICommentOutput {
     replyCount: number;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip地址 */
     ip: string | undefined;
-    /** Ip归属�?*/
+    /** Ip归属地 */
     geolocation: string | undefined;
     /** 评论时间 */
     createdTime: moment.Moment | undefined;
@@ -4010,11 +5145,11 @@ export interface ICommentOutput {
     replyCount: number;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip地址 */
     ip: string | undefined;
-    /** Ip归属�?*/
+    /** Ip归属地 */
     geolocation: string | undefined;
     /** 评论时间 */
     createdTime: moment.Moment | undefined;
@@ -4091,7 +5226,7 @@ export interface ICommentOutputPageResult {
 export class CommentPageQueryInput implements ICommentPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 对应模块ID或评论ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID或评论ID（null表留言，0代表友链的评论） */
     id: string | undefined;
 
     constructor(data?: ICommentPageQueryInput) {
@@ -4137,7 +5272,7 @@ export class CommentPageQueryInput implements ICommentPageQueryInput {
 export interface ICommentPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 对应模块ID或评论ID（null表留言�?代表友链的评论） */
+    /** 对应模块ID或评论ID（null表留言，0代表友链的评论） */
     id: string | undefined;
 }
 
@@ -4160,11 +5295,11 @@ export class CreateOrUpdateAlbumsInput implements ICreateOrUpdateAlbumsInput {
     id: string | undefined;
     /** 相册名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     type: CoverType;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4225,11 +5360,11 @@ export interface ICreateOrUpdateAlbumsInput {
     id: string | undefined;
     /** 相册名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     type: CoverType;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4289,23 +5424,23 @@ export class CreateOrUpdateArticleInput implements ICreateOrUpdateArticleInput {
     title: string;
     /** 概要 */
     summary: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 是否置顶 */
     isTop: boolean;
-    /** 作�?*/
+    /** 作者 */
     author: string;
     /** 原文地址 */
     link: string | undefined;
     creationType: CreationType;
-    /** 文章正文（Html或markdown�?*/
+    /** 文章正文（Html或markdown） */
     content: string;
     /** 文章正文是否为html代码 */
     isHtml: boolean;
     /** 发布时间 */
     publishTime: moment.Moment;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 是否允许评论 */
     isAllowComments: boolean;
@@ -4402,23 +5537,23 @@ export interface ICreateOrUpdateArticleInput {
     title: string;
     /** 概要 */
     summary: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 是否置顶 */
     isTop: boolean;
-    /** 作�?*/
+    /** 作者 */
     author: string;
     /** 原文地址 */
     link: string | undefined;
     creationType: CreationType;
-    /** 文章正文（Html或markdown�?*/
+    /** 文章正文（Html或markdown） */
     content: string;
     /** 文章正文是否为html代码 */
     isHtml: boolean;
     /** 发布时间 */
     publishTime: moment.Moment;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 是否允许评论 */
     isAllowComments: boolean;
@@ -4432,19 +5567,108 @@ export interface ICreateOrUpdateArticleInput {
     id: string | undefined;
 }
 
+export class CreateOrUpdateFriendInput implements ICreateOrUpdateFriendInput {
+    id: string | undefined;
+    /** 网站名称 */
+    siteName: string;
+    /** 网站链接 */
+    link: string;
+    /** 网站logo */
+    logo: string;
+    /** 对方博客友链的地址 */
+    url: string | undefined;
+    /** 是否忽略对方站点是否存在本站链接 */
+    isIgnoreCheck: boolean;
+    /** 备注 */
+    remark: string | undefined;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    status: AvailabilityStatus;
+
+    constructor(data?: ICreateOrUpdateFriendInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.siteName = _data["siteName"];
+            this.link = _data["link"];
+            this.logo = _data["logo"];
+            this.url = _data["url"];
+            this.isIgnoreCheck = _data["isIgnoreCheck"];
+            this.remark = _data["remark"];
+            this.sort = _data["sort"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateFriendInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateFriendInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["siteName"] = this.siteName;
+        data["link"] = this.link;
+        data["logo"] = this.logo;
+        data["url"] = this.url;
+        data["isIgnoreCheck"] = this.isIgnoreCheck;
+        data["remark"] = this.remark;
+        data["sort"] = this.sort;
+        data["status"] = this.status;
+        return data;
+    }
+
+    clone(): CreateOrUpdateFriendInput {
+        const json = this.toJSON();
+        let result = new CreateOrUpdateFriendInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICreateOrUpdateFriendInput {
+    id: string | undefined;
+    /** 网站名称 */
+    siteName: string;
+    /** 网站链接 */
+    link: string;
+    /** 网站logo */
+    logo: string;
+    /** 对方博客友链的地址 */
+    url: string | undefined;
+    /** 是否忽略对方站点是否存在本站链接 */
+    isIgnoreCheck: boolean;
+    /** 备注 */
+    remark: string | undefined;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    status: AvailabilityStatus;
+}
+
 export class CreateOrUpdateTagInput implements ICreateOrUpdateTagInput {
     /** 文章ID */
     id: string | undefined;
     /** 标签名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 标签颜色 */
     color: string | undefined;
     /** 标签图标 */
     icon: string | undefined;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4504,14 +5728,14 @@ export interface ICreateOrUpdateTagInput {
     id: string | undefined;
     /** 标签名称 */
     name: string;
-    /** 封面�?*/
+    /** 封面图 */
     cover: string;
     /** 标签颜色 */
     color: string | undefined;
     /** 标签图标 */
     icon: string | undefined;
     status: AvailabilityStatus;
-    /** 排序值（值越小越靠前�?*/
+    /** 排序值（值越小越靠前） */
     sort: number;
     /** 备注 */
     remark: string | undefined;
@@ -4593,6 +5817,345 @@ export enum CreationType {
     _1 = 1,
 }
 
+export class CustomConfigItemQueryInput implements ICustomConfigItemQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 配置ID */
+    id: string;
+
+    constructor(data?: ICustomConfigItemQueryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): CustomConfigItemQueryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CustomConfigItemQueryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): CustomConfigItemQueryInput {
+        const json = this.toJSON();
+        let result = new CustomConfigItemQueryInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICustomConfigItemQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 配置ID */
+    id: string;
+}
+
+export class FriendLinkOutput implements IFriendLinkOutput {
+    /** 友链ID */
+    id: string;
+    /** 友链 */
+    link: string | undefined;
+    /** logo */
+    logo: string | undefined;
+    /** 站点名称 */
+    siteName: string | undefined;
+    /** 网站描述 */
+    remark: string | undefined;
+
+    constructor(data?: IFriendLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.link = _data["link"];
+            this.logo = _data["logo"];
+            this.siteName = _data["siteName"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): FriendLinkOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new FriendLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["link"] = this.link;
+        data["logo"] = this.logo;
+        data["siteName"] = this.siteName;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): FriendLinkOutput {
+        const json = this.toJSON();
+        let result = new FriendLinkOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFriendLinkOutput {
+    /** 友链ID */
+    id: string;
+    /** 友链 */
+    link: string | undefined;
+    /** logo */
+    logo: string | undefined;
+    /** 站点名称 */
+    siteName: string | undefined;
+    /** 网站描述 */
+    remark: string | undefined;
+}
+
+export class FriendLinkPageOutput implements IFriendLinkPageOutput {
+    /** 友情链接主键 */
+    id: string;
+    status: AvailabilityStatus;
+    /** 站点名称 */
+    siteName: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    /** 忽略站点检查 */
+    isIgnoreCheck: boolean;
+    /** 友链 */
+    link: string | undefined;
+    /** Logo链接 */
+    logo: string | undefined;
+    /** 对方博客友情链接地址 */
+    url: string | undefined;
+    /** 排序 */
+    sort: number;
+    /** 描述 */
+    remark: string | undefined;
+
+    constructor(data?: IFriendLinkPageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.status = _data["status"];
+            this.siteName = _data["siteName"];
+            this.createdTime = _data["createdTime"] ? moment(_data["createdTime"].toString()) : <any>undefined;
+            this.isIgnoreCheck = _data["isIgnoreCheck"];
+            this.link = _data["link"];
+            this.logo = _data["logo"];
+            this.url = _data["url"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): FriendLinkPageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new FriendLinkPageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["status"] = this.status;
+        data["siteName"] = this.siteName;
+        data["createdTime"] = this.createdTime ? this.createdTime.toISOString() : <any>undefined;
+        data["isIgnoreCheck"] = this.isIgnoreCheck;
+        data["link"] = this.link;
+        data["logo"] = this.logo;
+        data["url"] = this.url;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): FriendLinkPageOutput {
+        const json = this.toJSON();
+        let result = new FriendLinkPageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFriendLinkPageOutput {
+    /** 友情链接主键 */
+    id: string;
+    status: AvailabilityStatus;
+    /** 站点名称 */
+    siteName: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    /** 忽略站点检查 */
+    isIgnoreCheck: boolean;
+    /** 友链 */
+    link: string | undefined;
+    /** Logo链接 */
+    logo: string | undefined;
+    /** 对方博客友情链接地址 */
+    url: string | undefined;
+    /** 排序 */
+    sort: number;
+    /** 描述 */
+    remark: string | undefined;
+}
+
+export class FriendLinkPageOutputPageResult implements IFriendLinkPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: FriendLinkPageOutput[] | undefined;
+
+    constructor(data?: IFriendLinkPageOutputPageResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.pages = _data["pages"];
+            this.total = _data["total"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows.push(FriendLinkPageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): FriendLinkPageOutputPageResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new FriendLinkPageOutputPageResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["pages"] = this.pages;
+        data["total"] = this.total;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): FriendLinkPageOutputPageResult {
+        const json = this.toJSON();
+        let result = new FriendLinkPageOutputPageResult();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFriendLinkPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: FriendLinkPageOutput[] | undefined;
+}
+
+export class FriendLinkPageQueryInput implements IFriendLinkPageQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 站点名称 */
+    siteName: string | undefined;
+
+    constructor(data?: IFriendLinkPageQueryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.siteName = _data["siteName"];
+        }
+    }
+
+    static fromJS(data: any): FriendLinkPageQueryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new FriendLinkPageQueryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["siteName"] = this.siteName;
+        return data;
+    }
+
+    clone(): FriendLinkPageQueryInput {
+        const json = this.toJSON();
+        let result = new FriendLinkPageQueryInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFriendLinkPageQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 站点名称 */
+    siteName: string | undefined;
+}
+
 export class KeyDto implements IKeyDto {
     id: string;
 
@@ -4634,6 +6197,164 @@ export class KeyDto implements IKeyDto {
 
 export interface IKeyDto {
     id: string;
+}
+
+export class OAuthAccountDetailOutput implements IOAuthAccountDetailOutput {
+    /** 用户ID */
+    id: string | undefined;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 头像 */
+    avatar: string | undefined;
+    status: AvailabilityStatus;
+    /** 网站链接 */
+    link: string | undefined;
+    /** logo */
+    logo: string | undefined;
+    /** 网站名称 */
+    siteName: string | undefined;
+    /** 对方博客友链地址 */
+    url: string | undefined;
+    /** 网站介绍 */
+    remark: string | undefined;
+
+    constructor(data?: IOAuthAccountDetailOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.nickName = _data["nickName"];
+            this.avatar = _data["avatar"];
+            this.status = _data["status"];
+            this.link = _data["link"];
+            this.logo = _data["logo"];
+            this.siteName = _data["siteName"];
+            this.url = _data["url"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): OAuthAccountDetailOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new OAuthAccountDetailOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["nickName"] = this.nickName;
+        data["avatar"] = this.avatar;
+        data["status"] = this.status;
+        data["link"] = this.link;
+        data["logo"] = this.logo;
+        data["siteName"] = this.siteName;
+        data["url"] = this.url;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): OAuthAccountDetailOutput {
+        const json = this.toJSON();
+        let result = new OAuthAccountDetailOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IOAuthAccountDetailOutput {
+    /** 用户ID */
+    id: string | undefined;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 头像 */
+    avatar: string | undefined;
+    status: AvailabilityStatus;
+    /** 网站链接 */
+    link: string | undefined;
+    /** logo */
+    logo: string | undefined;
+    /** 网站名称 */
+    siteName: string | undefined;
+    /** 对方博客友链地址 */
+    url: string | undefined;
+    /** 网站介绍 */
+    remark: string | undefined;
+}
+
+export class ObjectPageResult implements IObjectPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: any[] | undefined;
+
+    constructor(data?: IObjectPageResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.pages = _data["pages"];
+            this.total = _data["total"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): ObjectPageResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new ObjectPageResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["pages"] = this.pages;
+        data["total"] = this.total;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item);
+        }
+        return data;
+    }
+
+    clone(): ObjectPageResult {
+        const json = this.toJSON();
+        let result = new ObjectPageResult();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IObjectPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: any[] | undefined;
 }
 
 export class Pagination implements IPagination {
@@ -4816,17 +6537,17 @@ export class ReplyOutput implements IReplyOutput {
     accountId: string | undefined;
     /** 回复人ID */
     replyAccountId: string | undefined;
-    /** 当前人昵�?*/
+    /** 当前人昵称 */
     nickName: string | undefined;
-    /** 回复人昵�?*/
+    /** 回复人昵称 */
     relyNickName: string | undefined;
-    /** 当前评论人头�?*/
+    /** 当前评论人头像 */
     avatar: string | undefined;
     /** Ip地址 */
     ip: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip所属地 */
     geolocation: string | undefined;
@@ -4912,17 +6633,17 @@ export interface IReplyOutput {
     accountId: string | undefined;
     /** 回复人ID */
     replyAccountId: string | undefined;
-    /** 当前人昵�?*/
+    /** 当前人昵称 */
     nickName: string | undefined;
-    /** 回复人昵�?*/
+    /** 回复人昵称 */
     relyNickName: string | undefined;
-    /** 当前评论人头�?*/
+    /** 当前评论人头像 */
     avatar: string | undefined;
     /** Ip地址 */
     ip: string | undefined;
     /** 点赞数量 */
     praiseTotal: number;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** Ip所属地 */
     geolocation: string | undefined;
@@ -5320,7 +7041,7 @@ export class TalkDetailOutput implements ITalkDetailOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5391,7 +7112,7 @@ export interface ITalkDetailOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5411,7 +7132,7 @@ export class TalksOutput implements ITalksOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5478,7 +7199,7 @@ export interface ITalksOutput {
     content: string | undefined;
     /** 图片 */
     images: string | undefined;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 点赞数量 */
     upvote: number;
@@ -5565,7 +7286,7 @@ export class TalksPageOutput implements ITalksPageOutput {
     images: string | undefined;
     /** 是否允许评论 */
     isAllowComments: boolean;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 是否置顶 */
     isTop: boolean;
@@ -5632,7 +7353,7 @@ export interface ITalksPageOutput {
     images: string | undefined;
     /** 是否允许评论 */
     isAllowComments: boolean;
-    /** 是否已点�?*/
+    /** 是否已点赞 */
     isPraise: boolean;
     /** 是否置顶 */
     isTop: boolean;
@@ -5710,7 +7431,7 @@ export interface ITalksPageOutputPageResult {
 export class TalksPageQueryInput implements ITalksPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
 
     constructor(data?: ITalksPageQueryInput) {
@@ -5756,8 +7477,63 @@ export class TalksPageQueryInput implements ITalksPageQueryInput {
 export interface ITalksPageQueryInput {
     pageNo: number;
     pageSize: number;
-    /** 关键�?*/
+    /** 关键词 */
     keyword: string | undefined;
+}
+
+export class UpdateCustomConfigItemInput implements IUpdateCustomConfigItemInput {
+    /** 自定义配置Id */
+    configId: string;
+    /** 配置 */
+    json: string;
+    id: string;
+
+    constructor(data?: IUpdateCustomConfigItemInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.configId = _data["configId"];
+            this.json = _data["json"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCustomConfigItemInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCustomConfigItemInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["configId"] = this.configId;
+        data["json"] = this.json;
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): UpdateCustomConfigItemInput {
+        const json = this.toJSON();
+        let result = new UpdateCustomConfigItemInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUpdateCustomConfigItemInput {
+    /** 自定义配置Id */
+    configId: string;
+    /** 配置 */
+    json: string;
+    id: string;
 }
 
 export class ZUserInfo implements IZUserInfo {

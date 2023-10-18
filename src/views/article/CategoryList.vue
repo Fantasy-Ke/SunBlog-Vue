@@ -1,9 +1,7 @@
 <template>
   <!-- 标签或分类名 -->
   <div class="banner" :style="cover">
-    <h1 class="banner-title animated fadeInDown">
-      {{ state.query.categoryId ? "分类" : "标签" }} - {{ state.name }}
-    </h1>
+    <h1 class="banner-title animated fadeInDown">{{ state.query.categoryId ? "分类" : "标签" }} - {{ state.name }}</h1>
   </div>
   <div class="article-list-wrapper">
     <v-row>
@@ -13,13 +11,7 @@
           <div class="article-item-cover">
             <router-link :to="'/articles/' + item.id">
               <!-- 缩略图 -->
-              <v-img
-                class="on-hover"
-                width="100%"
-                height="100%"
-                :src="item.cover ?? ''"
-                :cover="true"
-              />
+              <v-img class="on-hover" width="100%" height="100%" :src="item.cover ?? ''" :cover="true" />
             </router-link>
           </div>
           <div class="article-item-info">
@@ -34,10 +26,7 @@
               <v-icon size="20">mdi-clock-outline</v-icon>
               {{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
               <!-- 文章分类 -->
-              <router-link
-                :to="'/categories/' + item.categoryId"
-                class="float-right"
-              >
+              <router-link :to="'/categories/' + item.categoryId" class="float-right">
                 <v-icon>mdi-bookmark</v-icon>{{ item.categoryName }}
               </router-link>
             </div>
@@ -46,12 +35,7 @@
           <v-divider></v-divider>
           <!-- 文章标签 -->
           <div class="tag-wrapper">
-            <router-link
-              :to="'/tags/' + tag.id"
-              class="tag-btn"
-              v-for="tag of item.tags ?? []"
-              :key="tag.id"
-            >
+            <router-link :to="'/tags/' + tag.id" class="tag-btn" v-for="tag of item.tags ?? []" :key="tag.id">
               {{ tag.name }}
             </router-link>
           </div>
@@ -81,7 +65,7 @@ import { articles, images } from "../../api/data";
 import { useRoute } from "vue-router";
 import { ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput } from "@/shared/service-proxies";
 import moment from "moment";
-const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
 const cover = computed(() => {
   let cover: string = images[1]?.pageCover;
   return "background: url(" + cover + ") center center / cover no-repeat";
@@ -94,7 +78,7 @@ const state = reactive({
     pageSize: 10,
     categoryId: route.params.id,
     tagId: route.params.tid,
-    keyword:""
+    keyword: "",
   } as ArticleListQueryInput,
   name: "", //标签名或栏目名称
   cover: "",
@@ -102,17 +86,15 @@ const state = reactive({
   articles: [] as ArticleOutput[],
 });
 const loadData = async () => {
-  await _articleCService.getList(state.query)
-  .then((res)=>{
+  await _articleCService.getList(state.query).then((res) => {
     let data = res.result;
     if (data) {
-    state.articles = data?.rows ?? [];
-    state.pages = data?.pages ?? 0;
-    state.name = res.extras.name;
-    state.cover = res.extras.cover;
-  }
+      state.articles = data?.rows ?? [];
+      state.pages = data?.pages ?? 0;
+      state.name = res.extras.name;
+      state.cover = res.extras.cover;
+    }
   });
-  
 };
 
 watch(

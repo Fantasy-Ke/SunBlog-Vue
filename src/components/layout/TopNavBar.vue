@@ -1,14 +1,9 @@
 <template>
-  <v-app-bar
-    :class="vm.navClass"
-    flat
-    :height="60"
-    :style="{ transform: `translateY(${vm.top}px)` }"
-  >
+  <v-app-bar :class="vm.navClass" flat :height="60" :style="{ transform: `translateY(${vm.top}px)` }">
     <!-- 手机端导航栏 -->
     <div class="d-md-none nav-mobile-container">
       <div style="font-size: 18px; font-weight: bold">
-        <router-link to="/"> Fantasy-Ke </router-link>
+        <router-link to="/"> 可乐不加冰 </router-link>
       </div>
       <div style="margin-left: auto">
         <a @click="searchModelHandel">
@@ -24,7 +19,7 @@
     <!-- 电脑导航栏 -->
     <div class="d-md-block d-none nav-container">
       <div class="float-left blog-title">
-        <router-link to="/"> Fantasy-Ke </router-link>
+        <router-link to="/"> 可乐不加冰 </router-link>
       </div>
       <div class="float-right nav-title">
         <div class="menus-item">
@@ -108,13 +103,7 @@
         <div class="menus-item">
           <router-link class="menu-btn" to="/about">
             <!-- <i class="iconfont iconzhifeiji" />  -->
-            <v-icon
-              size="small"
-              style="
-                transform: rotate(-45deg);
-                margin-bottom: 3px;
-                margin-right: 0px;
-              "
+            <v-icon size="small" style="transform: rotate(-45deg); margin-bottom: 3px; margin-right: 0px"
               >mdi mdi-send-variant</v-icon
             >
             关于
@@ -129,19 +118,14 @@
         </div>
         <div class="menus-item">
           <!-- <a class="menu-btn"> <i class="iconfont icondenglu" /> 登录 </a> -->
-          <a v-if="!vm.isLogin" @click="handleLogin" class="menu-btn">
+          <a v-if="!authStore.info" @click="handleLogin" class="menu-btn">
             <!-- <i class="iconfont iconqq" />  -->
             <v-icon size="small">mdi mdi-qqchat</v-icon>
             登录
           </a>
 
           <template v-else>
-            <img
-              class="user-avatar"
-              :src="require('../../assets/images/1.jpg')"
-              height="30"
-              width="30"
-            />
+            <img class="user-avatar" :src="info?.avatar!" height="30" width="30" />
             <ul class="menus-submenu">
               <li>
                 <router-link to="/user">
@@ -168,9 +152,13 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { onMounted, ref, watch, reactive } from "vue";
+import { onMounted, ref, watch, reactive, inject } from "vue";
 import { useDrawerSettingStore } from "../../stores/drawerSetting";
 import SearchModel from "../SearchModel.vue";
+import { OAuthsServiceProxy } from "@/shared/service-proxies";
+import { useAuth } from "@/stores/auth";
+const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), inject("$api"));
+const authStore = useAuth();
 const vm = reactive({
   scrollTop: 0,
   navClass: "nav",
@@ -180,6 +168,7 @@ const vm = reactive({
 });
 const store = useDrawerSettingStore();
 const { drawer } = storeToRefs(store);
+const { info } = storeToRefs(authStore);
 watch(
   () => vm.scrollTop,
   (n, o) => {
@@ -188,21 +177,20 @@ watch(
 );
 
 const scroll = (): void => {
-  vm.scrollTop =
-    window.pageYOffset ||
-    document.documentElement.scrollTop ||
-    document.body.scrollTop;
+  vm.scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
   vm.navClass = vm.scrollTop > 60 ? "nav-fixed" : "nav";
 };
 const searchModelHandel = () => {
   vm.isShow = true;
 };
 
-const handleLogin = () => {
-  vm.isLogin = true;
+const handleLogin = async () => {
+  await _oAuthCService.getIpAddress("qq").then((res) => {
+    location.href = res.result!;
+  });
 };
 const handleLoginOut = () => {
-  vm.isLogin = false;
+  authStore.logout();
 };
 onMounted(() => {
   window.addEventListener("scroll", scroll);

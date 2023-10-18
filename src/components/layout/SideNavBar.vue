@@ -10,27 +10,26 @@
   >
     <!-- 博主介绍 -->
     <div class="blogger-info">
-      <v-avatar size="110" :image="img" style="margin-bottom: 0.5rem">
-      </v-avatar>
+      <v-avatar size="110" :image="info.avatar!" style="margin-bottom: 0.5rem"> </v-avatar>
     </div>
     <!-- 博客信息 -->
     <div class="blog-info-wrapper">
       <div class="blog-info-data">
         <router-link to="/articles">
           <div style="font-size: 0.875rem">文章</div>
-          <div style="font-size: 1.125rem">150</div>
+          <div style="font-size: 1.125rem">{{ report.articleCount }}</div>
         </router-link>
       </div>
       <div class="blog-info-data">
-        <router-link to="/categories">
+        <router-link to="/category">
           <div style="font-size: 0.875rem">分类</div>
-          <div style="font-size: 1.125rem">13</div>
+          <div style="font-size: 1.125rem">{{ report.categoryCount }}</div>
         </router-link>
       </div>
       <div class="blog-info-data">
         <router-link to="/tags">
           <div style="font-size: 0.875rem">标签</div>
-          <div style="font-size: 1.125rem">68</div>
+          <div style="font-size: 1.125rem">{{ report.tagCount }}</div>
         </router-link>
       </div>
     </div>
@@ -89,26 +88,20 @@
       <div class="menus-item">
         <router-link to="/about">
           <!-- <i class="iconfont iconzhifeiji" />  -->
-          <v-icon
-              size="small"
-              style="
-                transform: rotate(-45deg);
-                margin-bottom: 3px;
-                margin-right: 0px;
-              "
-              >mdi mdi-send-variant</v-icon
-            >
+          <v-icon size="small" style="transform: rotate(-45deg); margin-bottom: 3px; margin-right: 1.5em"
+            >mdi mdi-send-variant</v-icon
+          >
           关于
         </router-link>
       </div>
-      <div class="menus-item">
+      <div class="menus-item" v-if="blogSetting.isAllowMessage">
         <router-link to="/message">
           <!-- <i class="iconfont iconpinglunzu" />  -->
           <v-icon size="small">mdi mdi-message-bulleted</v-icon>
           留言
         </router-link>
       </div>
-      <div v-if="!isLogin" class="menus-item">
+      <div v-if="!authStore.info" class="menus-item">
         <!-- <a><i class="iconfont icondenglu" /> 登录 </a> -->
         <a @click="handleLogin">
           <!-- <i class="iconfont iconqq" />  -->
@@ -116,38 +109,51 @@
           登录
         </a>
       </div>
-      <div v-else class="menus-item">
-        <router-link to="/user">
-          <!-- <i class="iconfont icongerenzhongxin" />  -->
-          <v-icon size="small">mdi mdi-account-circle</v-icon>
-          个人中心
-        </router-link>
-      </div>
-      <div class="menus-item">
-        <a @click="handleLoginOut">
-          <!-- <i class="iconfont icontuichu" />  -->
-          <v-icon size="small">mdi mdi-logout</v-icon>
-          退出</a
-        >
-      </div>
+      <template v-else>
+        <div class="menus-item">
+          <router-link to="/user">
+            <!-- <i class="iconfont icongerenzhongxin" />  -->
+            <v-icon size="small">mdi mdi-account-circle</v-icon>
+            个人中心
+          </router-link>
+        </div>
+        <div class="menus-item">
+          <a @click="handleLoginOut">
+            <!-- <i class="iconfont icontuichu" />  -->
+            <v-icon size="small">mdi mdi-logout</v-icon>
+            退出</a
+          >
+        </div>
+      </template>
     </div>
   </v-navigation-drawer>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useDrawerSettingStore } from "../../stores/drawerSetting";
 import img from "@/assets/images/1.jpg";
+import { useAuth } from "@/stores/auth";
+import { useApp } from "@/stores/app";
+import { OAuthsServiceProxy } from "@/shared/service-proxies";
 const isLogin = ref(false);
+const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), inject("$api"));
+const authStore = useAuth();
 const { drawer } = storeToRefs(useDrawerSettingStore());
-
-const handleLogin = () => {
-  isLogin.value = true;
+const appStore = useApp();
+const { blogSetting, info, report } = storeToRefs(appStore);
+const handleLogin = async () => {
+  const { result } = await _oAuthCService.getIpAddress("qq");
+  location.href = result!;
 };
 const handleLoginOut = () => {
-  isLogin.value = false;
+  authStore.logout();
 };
+
+onMounted(async () => {
+  await appStore.getSiteReport();
+});
 </script>
 
 <style scoped>
