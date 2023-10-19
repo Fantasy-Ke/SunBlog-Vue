@@ -42,6 +42,8 @@ export const useApp = defineStore("app", () => {
    * 初始化博客基本信息
    */
   const init = async () => {
+    console.log(123456);
+
     if (app.isInit) {
       return;
     }
@@ -55,7 +57,7 @@ export const useApp = defineStore("app", () => {
           nikeName: "可乐不加冰",
           motto: "凡是过往，皆为序章",
           qq: "823302316",
-          avatar: "/default.jpg",
+          avatar: "/logo.png",
         } as BloggerInfo);
       app.blogSetting =
         data!.site ??
@@ -72,18 +74,19 @@ export const useApp = defineStore("app", () => {
           keyword: "可乐不加冰的博客",
           visitorNumbers: 0,
         } as any);
-      app.covers.home = covers.home ?? ["/cover/default.jpg"];
-      app.covers.about = covers.about ?? ["/cover/about.jpg"];
-      app.covers.archives = covers.archives ?? ["/cover/archives.jpg"];
-      app.covers.category = covers.category ?? ["/cover/category.jpg"];
-      app.covers.tag = covers.tag ?? ["/cover/tag.png"];
-      app.covers.album = covers.album ?? ["/cover/album.jpg"];
-      app.covers.talk = covers.talk ?? ["/cover/talk.jpg"];
-      app.covers.message = covers.message ?? ["/cover/message.png"];
-      app.covers.user = covers.user ?? ["/cover/user.jpg"];
-      app.covers.link = covers.link ?? ["/cover/default.jpg"];
-      app.covers.tagList = covers.tagList ?? ["/cover/default.jpg"];
-      app.covers.categories = covers.categories ?? ["/cover/default.jpg"];
+
+      app.covers.home = covers.Home ?? ["/cover/default.jpg"];
+      app.covers.about = covers.About ?? ["/cover/about.jpg"];
+      app.covers.archives = covers.Archives ?? ["/cover/archives.jpg"];
+      app.covers.category = covers.Category ?? ["/cover/category.jpg"];
+      app.covers.tag = covers.Tag ?? ["/cover/tag.png"];
+      app.covers.album = covers.Album ?? ["/cover/album.jpg"];
+      app.covers.talk = covers.Talk ?? ["/cover/talk.jpg"];
+      app.covers.message = covers.Message ?? ["/cover/message.png"];
+      app.covers.user = covers.User ?? ["/cover/user.jpg"];
+      app.covers.link = covers.Link ?? ["/cover/default.jpg"];
+      app.covers.tagList = covers.TagList ?? ["/cover/default.jpg"];
+      app.covers.categories = covers.Categories ?? ["/cover/default.jpg"];
     });
   };
   /**
