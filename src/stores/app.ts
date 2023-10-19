@@ -54,7 +54,7 @@ export const useApp = defineStore("app", () => {
       app.info =
         data!.info ??
         ({
-          nikeName: "可乐不加冰",
+          nikeName: "Fantasy-Ke",
           motto: "凡是过往，皆为序章",
           qq: "823302316",
           avatar: "/logo.png",
@@ -62,16 +62,16 @@ export const useApp = defineStore("app", () => {
       app.blogSetting =
         data!.site ??
         ({
-          siteName: "可乐不加冰",
+          siteName: "Fantasy-Ke",
           motto: "凡是过往，皆为序章",
           isAllowComments: true,
           isAllowMessage: true,
           runTime: new Date("2023/06/01"),
-          copyright: "©2023 By 可乐不加冰",
-          description: "可乐不加冰的博客",
-          filing: "鄂ICP备2020020251号-2",
+          copyright: "©2023 By Fantasy-Ke",
+          description: "Fantasy-Ke的博客",
+          filing: "鄂ICP备没有号-2",
           favicon: "favicon.ico",
-          keyword: "可乐不加冰的博客",
+          keyword: "Fantasy-Ke的博客",
           visitorNumbers: 0,
         } as any);
 
