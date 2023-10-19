@@ -162,7 +162,7 @@ import { useToast } from "@/stores/toast";
 const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
 const toast = useToast();
 const props = defineProps<{
-  type: any;
+  type?: any;
 }>();
 
 const emit = defineEmits<{
