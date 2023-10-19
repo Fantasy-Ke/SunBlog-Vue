@@ -6,18 +6,13 @@
   <!-- 归档列表 -->
   <v-card class="blog-container">
     <timeline>
-      <timeline-title>
-        目前共计{{ state.total }}篇文章，继续加油
-      </timeline-title>
+      <timeline-title> 目前共计{{ state.total }}篇文章，继续加油 </timeline-title>
       <timeline-item v-for="item of state.articles" :key="item.id">
         <v-card style="padding: 20px 20px">
           <!-- 日期 -->
           <div class="time">{{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss") }}</div>
           <!-- 文章标题 -->
-          <router-link
-            :to="'/articles/' + item.id"
-            style="color: #666; text-decoration: none"
-          >
+          <router-link :to="'/articles/' + item.id" style="color: #666; text-decoration: none">
             {{ item.title }}
           </router-link>
         </v-card>
@@ -38,91 +33,33 @@
 
 <script setup lang="ts">
 import { Timeline, TimelineTitle, TimelineItem } from "vue3-cute-component";
-import { ref, reactive, watch, onMounted, inject } from "vue";
+import { ref, reactive, watch, onMounted, inject, computed } from "vue";
 import { ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput } from "@/shared/service-proxies";
 import moment from "moment";
-const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
-const cover = ref(
-  `background: url(https://xiaogerblog.oss-cn-chengdu.aliyuncs.com/config/c796ff3ca8e6a736cae59f8eda6d9948.jpg) center center / cover no-repeat`
-);
+import { useApp } from "@/stores/app";
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
+const appStore = useApp();
+const cover = computed(() => `background: url(${appStore.archivesCover()}) center center / cover no-repeat`);
 const state = reactive({
   query: {
     pageNo: 1,
     pageSize: 10,
-    keyword:""
+    keyword: "",
   } as ArticleListQueryInput,
   pages: 0,
   total: 0,
   articles: [] as ArticleOutput[],
 });
-const data = reactive({
-  recordList: [
-    {
-      id: 79,
-      articleTitle: "Redis哨兵模式",
-      createTime: "2023-02-16T15:02:56",
-    },
-    {
-      id: 78,
-      articleTitle: "Redis主从复制",
-      createTime: "2023-02-15T21:02:42",
-    },
-    {
-      id: 77,
-      articleTitle: "Redis持久化机制",
-      createTime: "2023-02-15T14:15:52",
-    },
-    {
-      id: 76,
-      articleTitle: "Redis6新数据类型",
-      createTime: "2023-02-14T21:25:21",
-    },
-    {
-      id: 75,
-      articleTitle: "Redis配置文件",
-      createTime: "2023-02-14T15:11:20",
-    },
-    {
-      id: 74,
-      articleTitle: "源码分析AbstractQueuedSynchronizer 加锁操作",
-      createTime: "2022-09-06T15:11:12",
-    },
-    {
-      id: 68,
-      articleTitle: "HashMap底层机制和源码分析",
-      createTime: "2022-07-18T21:43:06",
-    },
-    {
-      id: 65,
-      articleTitle: "HashMap的几种遍历方法",
-      createTime: "2022-07-17T21:07:28",
-    },
-    {
-      id: 64,
-      articleTitle: "nginx的基本应用",
-      createTime: "2022-05-29T21:19:18",
-    },
-    {
-      id: 63,
-      articleTitle: "全站https配置",
-      createTime: "2022-05-16T22:39:46",
-    },
-  ],
-  count: 14,
-});
-
 // 加载数据
 const loadData = async () => {
-  await _articleCService.getList(state.query)
-  .then((res)=>{
+  await _articleCService.getList(state.query).then((res) => {
     if (res.result) {
       let data = res.result;
       state.pages = data?.pages ?? 0;
       state.articles = data?.rows ?? [];
       state.total = data?.total ?? 0;
-  }
+    }
   });
-  
 };
 
 watch(
@@ -136,7 +73,6 @@ watch(
 onMounted(async () => {
   await loadData();
 });
-
 </script>
 
 <style scoped>

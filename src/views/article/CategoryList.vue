@@ -66,10 +66,6 @@ import { useRoute } from "vue-router";
 import { ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput } from "@/shared/service-proxies";
 import moment from "moment";
 const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
-const cover = computed(() => {
-  let cover: string = images[1]?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
-});
 
 const route = useRoute();
 const state = reactive({
@@ -96,6 +92,9 @@ const loadData = async () => {
     }
   });
 };
+const cover = computed(() => {
+  return "background: url(" + state.cover + ") center center / cover no-repeat";
+});
 
 watch(
   () => state.query.pageNo,

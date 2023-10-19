@@ -9,17 +9,14 @@
           <!-- 发表时间 -->
           <span>
             <i class="iconfont iconrili" />
-            发表于 {{  moment(state.info.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
+            发表于 {{ moment(state.info.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
           </span>
           <span class="separator">|</span>
           <!-- 发表时间 -->
           <span>
             <i class="iconfont icongengxinshijian" />
             更新于
-            {{moment(state.info.updatedTime
-                ? state.info.updatedTime
-                : state.info.publishTime).format("YYYY-MM-DD HH:mm:ss")
-            }}
+            {{ moment(state.info.updatedTime ? state.info.updatedTime : state.info.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
           </span>
           <template v-if="state.info.categoryId">
             <span class="separator">|</span>
@@ -37,12 +34,7 @@
           <span>
             <i class="iconfont iconzishu" />
             字数统计:
-            {{
-              textTotal > 1000
-                ? (textTotal / 1000).toString().match(/^\d+(?:\.\d{0,1})?/) +
-                  "k"
-                : textTotal.toString()
-            }}
+            {{ textTotal > 1000 ? (textTotal / 1000).toString().match(/^\d+(?:\.\d{0,1})?/) + "k" : textTotal.toString() }}
           </span>
           <span class="separator">|</span>
           <!-- 阅读时长 -->
@@ -54,14 +46,10 @@
         <div class="third-line">
           <span class="separator">|</span>
           <!-- 阅读量 -->
-          <span>
-            <i class="iconfont iconliulan" /> 阅读量: {{ state.info.views }}
-          </span>
+          <span> <i class="iconfont iconliulan" /> 阅读量: {{ state.info.views }} </span>
           <span class="separator">|</span>
           <!-- 评论量 -->
-          <span>
-            <i class="iconfont iconpinglunzu1" />评论数: {{ commentCount }}
-          </span>
+          <span> <i class="iconfont iconpinglunzu1" />评论数: {{ commentCount }} </span>
         </div>
       </div>
     </div>
@@ -73,11 +61,7 @@
         <div
           id="write"
           class="article-content markdown-body"
-          v-html="
-            state.info.isHtml
-              ? state.info.content
-              : markdownToHtml(state.info.content ?? '')
-          "
+          v-html="state.info.isHtml ? state.info.content : markdownToHtml(state.info.content ?? '')"
           ref="detail"
         />
         <!-- 版权声明 -->
@@ -94,68 +78,40 @@
           </div>
           <div>
             <span>版权声明：</span>本博客所有文章除特别声明外，均采用
-            <a
-              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
-              target="_blank"
-            >
-              CC BY-NC-SA 4.0
-            </a>
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank"> CC BY-NC-SA 4.0 </a>
             许可协议。转载请注明文章出处。
           </div>
         </div>
         <!-- 转发 -->
         <div class="article-operation">
           <div class="tag-container" v-if="state.info.tags">
-            <router-link
-              v-for="item of state.info.tags"
-              :key="item.id"
-              :to="'/tags/' + item.id"
-            >
+            <router-link v-for="item of state.info.tags" :key="item.id" :to="'/tags/' + item.id">
               {{ item.name }}
             </router-link>
           </div>
-          <Share
-            style="margin-left: auto"
-            :sites="[
-              ShareType.qq,
-              ShareType.wechat,
-              ShareType.qzone,
-              ShareType.weibo,
-            ]"
-          />
+          <Share style="margin-left: auto" :sites="[ShareType.qq, ShareType.wechat, ShareType.qzone, ShareType.weibo]" />
           <!-- <share style="margin-left: auto" :config="config" /> -->
         </div>
         <!-- 点赞打赏等 -->
         <div class="article-reward">
           <!-- 点赞按钮 -->
-          <a
-            :class="state.info.isPraise ? 'like-btn-active' : 'like-btn'"
-            @click="onPraise"
-          >
+          <a :class="state.info.isPraise ? 'like-btn-active' : 'like-btn'" @click="onPraise">
             <!-- <i class="iconfont mdi-thumb-up"></i> -->
             <v-icon size="14" color="#fff" icon="mdi-thumb-up" /> 点赞
-            <span v-show="state.info.praiseTotal ?? 0 > 0">{{
-              state.info.praiseTotal
-            }}</span>
+            <span v-show="state.info.praiseTotal ?? 0 > 0">{{ state.info.praiseTotal }}</span>
           </a>
-          <a class="reward-btn" v-if="blogInfo.websiteConfig.isReward == 1">
+          <a class="reward-btn" v-if="blogSetting.isRewards">
             <!-- 打赏按钮 -->
             <i class="iconfont iconerweima" /> 打赏
             <!-- 二维码 -->
             <div class="animated fadeInDown reward-main">
               <ul class="reward-all">
                 <li class="reward-item">
-                  <img
-                    class="reward-img"
-                    :src="blogInfo.websiteConfig.weiXinQRCode"
-                  />
+                  <img class="reward-img" :src="blogInfo.websiteConfig.weiXinQRCode" />
                   <div class="reward-desc">微信</div>
                 </li>
                 <li class="reward-item">
-                  <img
-                    class="reward-img"
-                    :src="blogInfo.websiteConfig.alipayQRCode"
-                  />
+                  <img class="reward-img" :src="blogInfo.websiteConfig.alipayQRCode" />
                   <div class="reward-desc">支付宝</div>
                 </li>
               </ul>
@@ -189,25 +145,18 @@
           </div>
         </div>
         <!-- 推荐文章 -->
-        <div
-          class="recommend-container"
-          v-if="(state.info.random?.length ?? 0) > 0"
-        >
+        <div class="recommend-container" v-if="(state.info.random?.length ?? 0) > 0">
           <div class="recommend-title" v-if="state.info.random">
             <v-icon size="20" color="#4c4948">mdi-thumb-up</v-icon> 相关推荐
           </div>
           <div class="recommend-list" v-if="state.info.random">
-            <div
-              class="recommend-item"
-              v-for="item of state.info.random"
-              :key="item.id"
-            >
+            <div class="recommend-item" v-for="item of state.info.random" :key="item.id">
               <router-link :to="'/articles/' + item.id">
                 <img class="recommend-cover" :src="item.cover!" />
                 <div class="recommend-info">
                   <div class="recommend-date">
                     <i class="iconfont iconrili" />
-                    {{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss")}}
+                    {{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
                   </div>
                   <div>{{ item.title }}</div>
                 </div>
@@ -221,7 +170,7 @@
         <Comment
           :type="state.id"
           @getCommentCount="getCommentCount"
-          v-if="state.info.isAllowComments"
+          v-if="state.info.isAllowComments && blogSetting.isAllowComments"
         />
       </v-card>
     </v-col>
@@ -245,11 +194,7 @@
             <span style="margin-left: 10px">最新文章</span>
           </div>
           <div class="article-list">
-            <div
-              class="article-item"
-              v-for="item of state.latest"
-              :key="item.id"
-            >
+            <div class="article-item" v-for="item of state.latest" :key="item.id">
               <router-link
                 :to="{
                   name: 'detail',
@@ -294,18 +239,26 @@ import markdownToHtml from "../../utils/markdown";
 import Clipboard from "clipboard";
 import Viewer from "viewerjs";
 import { useToast, POSITION } from "vue-toastification";
- import * as tocbot from "tocbot";
+import * as tocbot from "tocbot";
 import "viewerjs/dist/viewer.css";
 import Share from "../../components/Share/Index.vue";
 import { ShareType } from "../../components/Share/ShareType";
-import { ArticleBasicsOutput, ArticleCsServiceProxy, ArticleInfoOutput, CommentsCsServiceProxy, KeyDto } from "@/shared/service-proxies";
+import {
+  ArticleBasicsOutput,
+  ArticleCsServiceProxy,
+  ArticleInfoOutput,
+  CommentsCsServiceProxy,
+  KeyDto,
+} from "@/shared/service-proxies";
 import { useRoute } from "vue-router";
 import hljs from "highlight.js";
+const appStore = useApp();
 import { storeToRefs } from "pinia";
 import moment from "moment";
-
-const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
-const _commentsCService = new CommentsCsServiceProxy(inject('$baseurl'),inject('$api'));
+import { useApp } from "@/stores/app";
+const { blogSetting } = storeToRefs(appStore);
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
+const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
 const detail = ref<HTMLElement | null>(null);
 
 let clipboard: Clipboard | null = null; //ref<Clipboard>();
@@ -316,16 +269,13 @@ let viewer: Viewer | null = null;
 const toastStore = useToast();
 const route = useRoute();
 const state = reactive({
-  id: '',
+  id: "",
   info: {} as ArticleInfoOutput,
   latest: [] as ArticleBasicsOutput[],
 });
 
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === "archive"
-  )?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  return "background: url(" + state.info.cover + ") center center / cover no-repeat";
 });
 const commentCount = ref<number>(0);
 const getCommentCount = (count: number) => {
@@ -338,11 +288,10 @@ const isFull = computed(() => {
 
 // 字数统计
 const textTotal = computed(() => {
-  const text = (
-    state.info.isHtml
-      ? state.info.content ?? ""
-      : markdownToHtml(state.info.content ?? "")
-  ).replaceAll("/<[^>]+>/g, ''", "");
+  const text = (state.info.isHtml ? state.info.content ?? "" : markdownToHtml(state.info.content ?? "")).replaceAll(
+    "/<[^>]+>/g, ''",
+    ""
+  );
   const total = text.match(/[w+]|[\u4e00-\u9fa5]|\d/g)?.length ?? 0;
   return total;
 });
@@ -355,29 +304,25 @@ const link = computed(() => {
 const onPraise = async () => {
   let keyDto = {} as KeyDto;
   keyDto.id = state.info.id!;
-  await _commentsCService.praise(keyDto).then((res)=>{
+  await _commentsCService.praise(keyDto).then((res) => {
     let data = res.result;
-      state.info.isPraise = data;
-      state.info.praiseTotal = data
-        ? state.info.praiseTotal! + 1
-        : state.info.praiseTotal! - 1;
+    state.info.isPraise = data;
+    state.info.praiseTotal = data ? state.info.praiseTotal! + 1 : state.info.praiseTotal! - 1;
   });
-  
 };
 
 onMounted(async () => {
   state.id = route.params.id as string;
-  await _articleCService.info(state.id).then((res)=>{
-    if(res.result){
-      state.info = res.result ?? {} as ArticleInfoOutput;
+  await _articleCService.info(state.id).then((res) => {
+    if (res.result) {
+      state.info = res.result ?? ({} as ArticleInfoOutput);
     }
-   
   });
-  await _articleCService.latest().then((res)=>{
-    if(res.result){
-      state.latest = res.result ?? {} as ArticleBasicsOutput[];
+  await _articleCService.latest().then((res) => {
+    if (res.result) {
+      state.latest = res.result ?? ({} as ArticleBasicsOutput[]);
     }
-  })
+  });
   nextTick(() => {
     //复制代码
     clipboard = new Clipboard(".copy-btn");
@@ -424,7 +369,6 @@ onUnmounted(() => {
   viewer?.destroy();
   tocbot.destroy();
 });
-
 
 // const isLike = () => {
 //   return new Date().getTime() % 2 === 0 ? "like-btn-active" : "like-btn";

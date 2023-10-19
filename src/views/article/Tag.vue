@@ -24,27 +24,24 @@ import { computed, inject, onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { tagList, images } from "../../api/data";
 import { ArticleCsServiceProxy, TagsOutput } from "@/shared/service-proxies";
+import { useApp } from "@/stores/app";
 const route = useRoute();
-const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
+const appStore = useApp();
 const state = reactive({
   tags: [] as TagsOutput[],
 });
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === route.name
-  )?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  return "background: url(" + appStore.tagCover() + ") center center / cover no-repeat";
 });
 
 onMounted(async () => {
-   await _articleCService.tags().then((res)=>{
+  await _articleCService.tags().then((res) => {
     if (res.result) {
-    state.tags = res.result ?? [];
-  }
-   });
-  
+      state.tags = res.result ?? [];
+    }
+  });
 });
-
 </script>
 
 <style scoped lang="scss">

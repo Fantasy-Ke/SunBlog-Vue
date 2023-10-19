@@ -7,11 +7,7 @@
   <v-card class="blog-container">
     <div class="category-title">分类 - {{ state.report.categoryCount }}</div>
     <ul class="category-list">
-      <li
-        class="category-list-item"
-        v-for="item of state.categories"
-        :key="item.id"
-      >
+      <li class="category-list-item" v-for="item of state.categories" :key="item.id">
         <router-link :to="'/categories/' + item.id">
           {{ item.name }}
           <span class="category-count">({{ item.total }})</span>
@@ -27,33 +23,30 @@ import { useRoute } from "vue-router";
 import { images } from "../../api/data";
 import { categoryies } from "../../api/data";
 import { ArticleCsServiceProxy, ArticleReportOutput, CategoryOutput } from "@/shared/service-proxies";
+import { useApp } from "@/stores/app";
 const route = useRoute();
-const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+const appStore = useApp();
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
 const state = reactive({
   categories: [] as CategoryOutput[],
   report: {} as ArticleReportOutput,
 });
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === route.name
-  )?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  return "background: url(" + appStore.categoryCover() + ") center center / cover no-repeat";
 });
 onMounted(async () => {
-  _articleCService.categories().then((res)=>{
+  _articleCService.categories().then((res) => {
     state.categories = res.result ?? [];
   });
-  _articleCService.reportStatistics().then((res)=>{
-    state.report = res.result as any ?? {
-    articleCount: 0,
-    tagCount: 0,
-    categoryCount: 0,
-    linkCount: 0,
-    userCount: 0,
-  };
+  _articleCService.reportStatistics().then((res) => {
+    state.report = (res.result as any) ?? {
+      articleCount: 0,
+      tagCount: 0,
+      categoryCount: 0,
+      linkCount: 0,
+      userCount: 0,
+    };
   });
-  
-  
 });
 </script>
 
