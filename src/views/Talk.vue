@@ -8,14 +8,11 @@
     <div class="talk-wrapper">
       <!-- 用户信息 -->
       <div class="user-info-wrapper">
-        <v-avatar size="36" class="user-avatar" image="https://oss.okay123.top/oss//2023/07/13/J4BNXmqq2y.jpg" />
+        <v-avatar size="36" class="user-avatar" :image="info.avatar!" />
         <div class="user-detail-wrapper">
           <div class="user-nickname">
-            <!-- {{ info.nikeName }} -->
-            游客
-            <v-icon class="user-sign" size="20" color="#ffa51e">
-              mdi-check-decagram
-            </v-icon>
+            {{ info.nikeName }}
+            <v-icon class="user-sign" size="20" color="#ffa51e"> mdi-check-decagram </v-icon>
           </div>
           <!-- 发表时间 -->
           <div class="time">{{ state.talk.createdTime }}</div>
@@ -23,29 +20,14 @@
           <div class="talk-content" v-html="state.talk.content" />
           <!-- 图片列表 -->
           <v-row class="talk-images" v-if="state.talk.images">
-            <v-col
-              :md="4"
-              :cols="6"
-              v-for="(img, index) of state.talk.images.split(',')"
-              :key="index"
-            >
-              <v-img
-                class="images-items"
-                :src="img"
-                aspect-ratio="1"
-                max-height="200"
-                @click="previewImg"
-              />
+            <v-col :md="4" :cols="6" v-for="(img, index) of state.talk.images.split(',')" :key="index">
+              <v-img class="images-items" :src="img" aspect-ratio="1" max-height="200" @click="previewImg" />
             </v-col>
           </v-row>
           <!-- 说说操作 -->
           <div class="talk-operation">
             <div class="talk-operation-item">
-              <v-icon
-                size="16"
-                :class="state.talk.isPraise ? 'like-btn-active' : 'like-btn'"
-                @click.prevent="like"
-              >
+              <v-icon size="16" :class="state.talk.isPraise ? 'like-btn-active' : 'like-btn'" @click.prevent="like">
                 mdi-thumb-up
               </v-icon>
               <div class="operation-count">
@@ -63,11 +45,7 @@
       </div>
     </div>
     <!-- 评论 -->
-    <Comment
-      :type="state.id"
-      @getCommentCount="getCommentCount"
-      v-if="state.talk.isAllowComments"
-    />
+    <Comment :type="state.id" @getCommentCount="getCommentCount" v-if="state.talk.isAllowComments" />
   </v-card>
 </template>
 
@@ -79,20 +57,22 @@ import Viewer from "viewerjs";
 import "viewerjs/dist/viewer.css";
 import { images, talks as talkList, talks } from "../api/data";
 import { CommentsCsServiceProxy, KeyDto, TalkDetailOutput, TalksCsServiceProxy } from "@/shared/service-proxies";
-const _commentsCService = new CommentsCsServiceProxy(inject('$baseurl'),inject('$api'));
-const _talksCService = new TalksCsServiceProxy(inject('$baseurl'),inject('$api'));
+import { useApp } from "@/stores/app";
+import { storeToRefs } from "pinia";
+const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
+const _talksCService = new TalksCsServiceProxy(inject("$baseurl"), inject("$api"));
 const route = useRoute();
+const appStore = useApp();
+const { info } = storeToRefs(appStore);
 const state = reactive({
   commentCount: 0,
-  id: '',
+  id: "",
   talk: {} as TalkDetailOutput,
 });
-
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === route.name
-  )?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  console.log(appStore.tagListCover());
+
+  return "background: url(" + appStore.tagListCover() + ") center center / cover no-repeat";
 });
 
 const getCommentCount = (count: number) => {
@@ -108,25 +88,22 @@ const previewImg = (e: Event): void => {
 };
 
 const like = async () => {
-  await _commentsCService.praise({id:state.id} as KeyDto)
-  .then(res=>{
+  await _commentsCService.praise({ id: state.id } as KeyDto).then((res) => {
     if (res.success) {
       state.talk.isPraise = res.result;
       state.talk.upvote = res.result ? state.talk.upvote! + 1 : state.talk.upvote! - 1;
     }
-  })
+  });
 };
 
 onMounted(async () => {
   state.id = route.params.talkId as never as string;
-  await _talksCService.talkDetail(state.id)
-  .then(res=>{
+  await _talksCService.talkDetail(state.id).then((res) => {
     if (res.success) {
-      state.talk = res.result ?? {} as TalkDetailOutput;
+      state.talk = res.result ?? ({} as TalkDetailOutput);
     }
-  })
+  });
 });
-
 </script>
 
 <style scoped>

@@ -16,10 +16,11 @@ import img from "../assets/images/1.jpg";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { images } from "../api/data";
+import { useApp } from "@/stores/app";
 const route = useRoute();
+const appStore = useApp();
 const cover = computed(() => {
-  let cover: string = images.find((item) => item.pageLabel === route.name)?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  return "background: url(" + appStore.aboutCover() + ") center center / cover no-repeat";
 });
 </script>
 

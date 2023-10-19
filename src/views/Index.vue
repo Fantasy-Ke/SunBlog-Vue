@@ -3,14 +3,14 @@
   <div class="home-banner" :style="cover">
     <div class="banner-container">
       <!-- 联系方式 -->
-      <h1 class="blog-title animated zoomIn">Fantasy-Ke</h1>
+      <h1 class="blog-title animated zoomIn">{{ blogSetting.siteName }}</h1>
       <!-- 一言 -->
       <div class="blog-intro">{{ state.print.output }} <span class="typed-cursor">|</span></div>
       <!-- 联系方式 -->
       <div class="blog-contact">
-        <a class="mr-5 iconfont iconqq" target="_blank" :href="`http://wpa.qq.com/msgrd?v=3&uin=qq&site=qq&menu=yes`" />
-        <a target="_blank" href="#" class="mr-5 iconfont icongithub" />
-        <a target="_blank" href="#" class="iconfont icongitee-fill-round" />
+        <a class="mr-5 iconfont iconqq" target="_blank" :href="`http://wpa.qq.com/msgrd?v=3&uin=${info.qq}&site=qq&menu=yes`" />
+        <a target="_blank" :href="info.github ?? ''" class="mr-5 iconfont icongithub" />
+        <a target="_blank" :href="info.gitee ?? ''" class="iconfont icongitee-fill-round" />
       </div>
     </div>
     <!-- 向下滚动 -->
@@ -52,7 +52,7 @@
             </span>
             <!-- 发表时间 -->
             <v-icon size="14">mdi-calendar-month-outline</v-icon>
-            {{ moment(item.publishTime).format("YYYY-MM-DD") }}
+            {{ moment(item.publishTime).format("YYYY-MM-DD HH:mm:ss") }}
             <span class="separator">|</span>
             <!-- 文章分类 -->
             <router-link :to="'/categories/' + item.categoryId">
@@ -94,28 +94,36 @@
         <v-card class="animated zoomIn blog-card">
           <div class="author-wrapper">
             <!-- 博主头像 -->
-            <v-avatar size="110" class="author-avatar" :image="img" />
-            <div style="font-size: 1.375rem; margin-top: 0.625rem">Fantasy-Ke</div>
-            <div style="font-size: 0.875rem">凡是过往，皆为序章</div>
+            <v-avatar size="110" class="author-avatar" :image="info.avatar!" />
+            <div style="font-size: 1.375rem; margin-top: 0.625rem">
+              {{ info.nikeName }}
+            </div>
+            <div style="font-size: 0.875rem">{{ info.motto }}</div>
           </div>
           <!-- 博客信息 -->
           <div class="blog-info-wrapper">
             <div class="blog-info-data">
               <router-link to="/archives">
                 <div style="font-size: 0.875rem">文章</div>
-                <div style="font-size: 1.25rem">56</div>
+                <div style="font-size: 1.25rem">
+                  {{ report.articleCount }}
+                </div>
               </router-link>
             </div>
             <div class="blog-info-data">
-              <router-link to="/categories">
+              <router-link to="/category">
                 <div style="font-size: 0.875rem">分类</div>
-                <div style="font-size: 1.25rem">13</div>
+                <div style="font-size: 1.25rem">
+                  {{ report.categoryCount }}
+                </div>
               </router-link>
             </div>
             <div class="blog-info-data">
               <router-link to="/tags">
                 <div style="font-size: 0.875rem">标签</div>
-                <div style="font-size: 1.25rem">8</div>
+                <div style="font-size: 1.25rem">
+                  {{ report.tagCount }}
+                </div>
               </router-link>
             </div>
           </div>
@@ -126,18 +134,24 @@
           </a>
           <!-- 社交信息 -->
           <div class="card-info-social">
-            <a class="mr-5 iconfont iconqq" target="_blank" :href="'http://wpa.qq.com/msgrd?v=3&uin=111514&ste=qq&menu=yes'" />
-            <a target="_blank" href="" class="mr-5 iconfont icongithub" />
-            <a target="_blank" class="iconfont icongitee-fill-round" />
+            <a
+              class="mr-5 iconfont iconqq"
+              target="_blank"
+              :href="`http://wpa.qq.com/msgrd?v=3&uin=111514&ste=${info.qq}&menu=yes`"
+            />
+            <a target="_blank" :href="info.github ?? ''" class="mr-5 iconfont icongithub" />
+            <a target="_blank" :href="info.gitee ?? ''" class="iconfont icongitee-fill-round" />
           </div>
         </v-card>
         <!-- 网站信息 -->
-        <v-card class="blog-card animated zoomIn mt-5 big">
+        <v-card class="blog-card animated zoomIn mt-5 big" v-if="blogSetting.announcement">
           <div class="web-info-title">
             <v-icon size="18">mdi-bell</v-icon>
             公告
           </div>
-          <div style="font-size: 0.875rem">博客改版上线，项目源码在上方Github处，感谢大家支持。</div>
+          <div style="font-size: 0.875rem">
+            {{ blogSetting.announcement }}
+          </div>
         </v-card>
         <!-- 网站信息 -->
         <v-card class="blog-card animated zoomIn mt-5">
@@ -147,11 +161,16 @@
           </div>
           <div class="web-info">
             <div style="padding: 4px 0 0">
-              运行时间:<span class="float-right">{{ time }}</span>
+              运行时间:<span class="float-right">{{ state.runTime }}</span>
             </div>
             <div style="padding: 4px 0 0">
-              总访问量:<span class="float-right">
-                {{ 6086 }}
+              用户数量:<span class="float-right">
+                {{ report.userCount }}
+              </span>
+            </div>
+            <div style="padding: 4px 0 0">
+              友链数量:<span class="float-right">
+                {{ report.linkCount }}
               </span>
             </div>
           </div>
@@ -178,7 +197,11 @@ import {
   TalksCsServiceProxy,
   TalksOutput,
 } from "@/shared/service-proxies";
+import { useApp } from "@/stores/app";
+import { storeToRefs } from "pinia";
 const route = useRoute();
+const appStore = useApp();
+const { blogSetting, info, report } = storeToRefs(appStore);
 const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
 const _talksCService = new TalksCsServiceProxy(inject("$baseurl"), inject("$api"));
 // 打字机配置
@@ -243,7 +266,7 @@ const articlePage = async () => {
 onMounted(() => {
   new EasyTyper(
     state.print,
-    "为遇一人而入红尘，人去我亦去，此生不留尘。 --魔道祖师",
+    blogSetting.value.motto ?? "虽然人生在世有种种不如意，但你仍可以在幸福与不幸中做选择。-王小波",
     () => {},
     () => {}
   );
@@ -273,9 +296,9 @@ const isRight = (index: number): string => {
   return index % 2 === 0 ? "article-cover left-radius" : "article-cover right-radius";
 };
 
+// 封面图
 const cover = computed(() => {
-  let cover: string = images.find((item) => item.pageLabel === route.name)?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  return `background: url(${appStore.homeCover()}) center center / cover no-repeat`;
 });
 
 // 监听页码发生改变

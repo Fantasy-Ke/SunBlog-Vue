@@ -6,12 +6,7 @@
   <!-- 相册内容 -->
   <v-card class="blog-container">
     <v-row>
-      <v-col
-        :md="6"
-        v-for="item of state.albums"
-        :key="item.id"
-        style="flex-basis: auto"
-      >
+      <v-col :md="6" v-for="item of state.albums" :key="item.id" style="flex-basis: auto">
         <div class="album-item">
           <v-img class="album-cover" :src="item.cover" cover />
           <router-link :to="'/albums/' + item.id" class="album-wrapper">
@@ -38,14 +33,16 @@
 </template>
 
 <script setup lang="ts">
-import { AlbumsOutput, Pagination,AlbumsCsServiceProxy } from "@/shared/service-proxies";
+import { AlbumsOutput, Pagination, AlbumsCsServiceProxy } from "@/shared/service-proxies";
 import { images, albums } from "../../api/data";
 import { computed, inject, onMounted, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
+import { useApp } from "@/stores/app";
 
-const _albumsCService = new AlbumsCsServiceProxy(inject('$baseurl'),inject('$api'));
+const _albumsCService = new AlbumsCsServiceProxy(inject("$baseurl"), inject("$api"));
 
 const route = useRoute();
+const appStore = useApp();
 const state = reactive({
   query: {
     pageNo: 1,
@@ -55,22 +52,18 @@ const state = reactive({
   albums: [] as AlbumsOutput[],
 });
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === route.name
-  )?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  return "background: url(" + appStore.albumCover() + ") center center / cover no-repeat";
 });
 
 const loadData = async () => {
-  await _albumsCService.getList(state.query).then((res)=>{
+  await _albumsCService.getList(state.query).then((res) => {
     console.log(res);
     if (res.result) {
       let data = res.result;
-    state.albums = data?.rows ?? [];
-    state.pages = data?.pages ?? 0;
-  }
+      state.albums = data?.rows ?? [];
+      state.pages = data?.pages ?? 0;
+    }
   });
-  
 };
 watch(
   () => state.query.pageNo,

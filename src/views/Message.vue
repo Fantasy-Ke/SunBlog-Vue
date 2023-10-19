@@ -5,41 +5,18 @@
     <div class="message-container">
       <h1 class="message-title">留言板</h1>
       <div class="animated fadeInUp message-input-wrapper">
-        <input
-          v-model="messageContent"
-          @click="show = true"
-          @keyup.enter="addToList"
-          placeholder="说点什么吧"
-        />
-        <button
-          class="ml-3 animated bounceInLeft"
-          @click="addToList"
-          v-show="show"
-        >
-          发送
-        </button>
+        <input v-model="state.content" @click="state.show = true" @keyup.enter="addToList" placeholder="说点什么吧" />
+        <button class="ml-3 animated bounceInLeft" @click="addToList" v-show="state.show">发送</button>
       </div>
     </div>
     <!-- 弹幕列表 -->
     <div class="barrage-container">
-      <vue-danmaku
-        ref="danmaku"
-        v-model:danmus="danmus"
-        useSlot
-        loop
-        randomChannel
-        :speeds="150"
-      >
+      <vue-danmaku ref="danmaku" v-model:danmus="state.items" useSlot :loop="loop" randomChannel :speeds="150">
         <template v-slot:dm="{ index, danmu }">
           <span class="barrage-items" :key="index">
-            <img
-              :src="danmu.avatar"
-              width="30"
-              height="30"
-              style="border-radius: 50%"
-            />
-            <span class="ml-2">{{ danmu.nickname }} :</span>
-            <span class="ml-2">{{ danmu.messageContent }}</span>
+            <img :src="danmu.avatar" width="30" height="30" style="border-radius: 50%" />
+            <span class="ml-2">{{ danmu.nickName }} :</span>
+            <span class="ml-2">{{ danmu.content }}</span>
           </span>
         </template>
       </vue-danmaku>
@@ -49,27 +26,66 @@
 <script setup lang="ts">
 //弹幕开源地址：https://github.com/hellodigua/vue-danmaku/tree/vue3
 import vueDanmaku from "vue3-danmaku";
-import { computed, ref, reactive, onMounted } from "vue";
+import { computed, ref, reactive, onMounted, inject } from "vue";
 import { useRoute } from "vue-router";
 import { images, messageList } from "../api/data";
-const route = useRoute();
-const messageContent = ref<string>("");
-const show = ref<boolean>(false);
+import { useApp } from "@/stores/app";
+import { useAuth } from "@/stores/auth";
+import { useToast } from "@/stores/toast";
+import { storeToRefs } from "pinia";
+import { CommentOutput, CommentsCsServiceProxy } from "@/shared/service-proxies";
+const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
+const appStore = useApp();
+const authStore = useAuth();
+const toast = useToast();
+const { info } = storeToRefs(authStore);
+const state = reactive({
+  content: "",
+  items: [] as CommentOutput[],
+  show: false,
+});
+// 发送弹幕
+const addToList = async () => {
+  if (!state.content) {
+    toast.error("请输入内容");
+    return;
+  }
+  if (!info.value) {
+    toast.error("请登录后发表留言");
+    return;
+  }
+  const { success } = await _commentsCService.add({
+    content: state.content,
+  } as any);
+  if (success) {
+    state.items.push({
+      content: state.content,
+      avatar: authStore.info?.avatar,
+    } as any);
+    state.content = "";
+  }
+};
 
-const addToList = (): void => {};
-const barrageList = (): void => {};
-const danmaku = ref(null);
+// 弹幕实例
+const danmaku = ref<any>(null);
 
-const danmus = reactive(messageList);
 const cover = computed(() => {
-  let cover: string = images.find(
-    (item) => item.pageLabel === route.name
-  )?.pageCover;
-  return "background: url(" + cover + ") center center / cover no-repeat";
+  return "background: url(" + appStore.messageCover() + ") center center / cover no-repeat";
 });
 
-onMounted(() => {
-  (danmaku.value as any).play();
+// 循环播放
+const loop = computed(() => {
+  return state.items.length > 100;
+});
+
+onMounted(async () => {
+  const { result, success } = await _commentsCService.getList({
+    pageNo: 1,
+    pageSize: 1000,
+  } as any);
+  if (success && (result?.rows?.length ?? 0) > 0) {
+    state.items.push(...result!.rows!);
+  }
 });
 </script>
 
