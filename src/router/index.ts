@@ -2,7 +2,10 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import Index from "../views/Index.vue";
+import { useApp } from "@/stores/app";
+import pinia from "@/stores";
 
+const appStore = useApp(pinia);
 const routes: Array<RouteRecordRaw> = [
   {
     name: "home",
@@ -10,14 +13,6 @@ const routes: Array<RouteRecordRaw> = [
     component: Index,
     meta: {
       title: "首页",
-    },
-  },
-  {
-    name: "articles",
-    path: "/articles",
-    component: () => import("../views/article/List.vue"),
-    meta: {
-      title: "博文列表",
     },
   },
   {
@@ -140,8 +135,11 @@ const router = createRouter({
 });
 
 //路由器安置守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start();
+  if (!appStore.isInit) {
+    await appStore.init();
+  }
   if (to.meta.title) {
     document.title = to.meta.title as string;
   }
