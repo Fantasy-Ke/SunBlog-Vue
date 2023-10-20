@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive, computed, inject } from "vue";
 import { randomNumber } from "@/utils";
+import apiHttpClient from "../utils/api-http-client";
 import {
   ArticleCsServiceProxy,
   ArticleReportOutput,
@@ -9,8 +10,8 @@ import {
   OAuthsServiceProxy,
 } from "@/shared/service-proxies";
 
-const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
-const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), inject("$api"));
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), apiHttpClient as any);
+const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), apiHttpClient as any);
 
 export const useApp = defineStore("app", () => {
   const app = reactive({
