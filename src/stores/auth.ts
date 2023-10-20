@@ -2,7 +2,8 @@ import { OAuthAccountDetailOutput, OAuthsServiceProxy } from "@/shared/service-p
 import { Session } from "@/utils/storage";
 import { defineStore } from "pinia";
 import { reactive, computed, inject } from "vue";
-const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), inject("$api"));
+import apiHttpClient from "../utils/api-http-client";
+const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), apiHttpClient as any);
 interface OauthInfo {
   info?: OAuthAccountDetailOutput | null;
 }
