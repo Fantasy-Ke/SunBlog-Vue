@@ -103,7 +103,7 @@ return {{ Framework.RxJs.ObservableOfMethod }}<{{operation.ResultType}}>(null as
 {%             elsif Framework.IsAngularJS -%}
 return this.q.resolve<{{ operation.ResultType }}>(null as any);
 {%             elsif Framework.IsAxios -%}
-return Promise.resolve<ZEngineResponse<{{ operation.ResultType }}>>(null as any);
+return Promise.resolve<ZEngineResponse<{{ operation.ResultType }}>>(_responseText);
 {%             else -%}
 return{% if operation.HasResultType %} null{% endif %};
 {%             endif -%}
