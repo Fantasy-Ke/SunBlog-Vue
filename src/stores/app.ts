@@ -58,7 +58,7 @@ export const useApp = defineStore("app", () => {
           nikeName: "Fantasy-Ke",
           motto: "凡是过往，皆为序章",
           qq: "2246080525",
-          avatar: "/src/assets/images/1.jpg",
+          avatar: "/cover/login.jpg",
         } as BloggerInfo);
       app.blogSetting =
         data!.site ??
