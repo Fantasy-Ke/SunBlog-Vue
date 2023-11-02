@@ -5,8 +5,8 @@ import { createApp } from "vue";
 
 // Plugins
 import { registerPlugins, registerglobal } from "@/plugins";
-import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
 import "animate.css";
 import "./assets/css/index.css";
 import "./assets/css/iconfont.css";
@@ -18,24 +18,21 @@ import InfiniteLoading from "vue-infinite-loading";
 import Toast, { PluginOptions } from "vue-toastification";
 import { AppPreBootstrap } from "./AppPreBootstrap";
 
-
 async function start() {
-  const app = createApp(App)
+  const app = createApp(App);
   registerPlugins(app);
   const options: PluginOptions = {
     // You can set your default options here
   };
-  app.use(InfiniteLoading).use(Toast, options)
+  app.use(InfiniteLoading).use(Toast, options);
   app.use(ElementPlus);
   // app.mixin(messageComponent);
   // app.mixin(SharedComponents);
-  app.mount('#app');
-  registerglobal(app)
-  app.provide('$message',Toast)
-  
-  }
+  app.mount("#app");
+  registerglobal(app);
+  app.provide("$message", Toast);
+}
 
-  AppPreBootstrap.run(() => {
-    start().then(() => {});
-  });
-
+AppPreBootstrap.run(() => {
+  start().then(() => {});
+});

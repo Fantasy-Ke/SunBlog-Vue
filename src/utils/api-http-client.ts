@@ -18,34 +18,30 @@ export const clearAccessTokens = () => {
  * @param res 响应对象
  */
 export function checkAndStoreAuthentication(res: any): void {
-    // 读取响应报文头 token 信息
-    const accessToken = res.headers[accessTokenKey];
-    const refreshAccessToken = res.headers[refreshAccessTokenKey];
-  
-    // 判断是否是无效 token
-    if (accessToken === "invalid_token") {
-      clearAccessTokens();
-    }
-    // 判断是否存在刷新 token，如果存在则存储在本地
-    else if (
-      refreshAccessToken &&
-      accessToken &&
-      accessToken !== "invalid_token"
-    ) {
-      Session.set(accessTokenKey, accessToken);
-      Session.set(refreshAccessTokenKey, refreshAccessToken);
-    }
-  }
+  // 读取响应报文头 token 信息
+  const accessToken = res.headers[accessTokenKey];
+  const refreshAccessToken = res.headers[refreshAccessTokenKey];
 
-  /**
+  // 判断是否是无效 token
+  if (accessToken === "invalid_token") {
+    clearAccessTokens();
+  }
+  // 判断是否存在刷新 token，如果存在则存储在本地
+  else if (refreshAccessToken && accessToken && accessToken !== "invalid_token") {
+    Session.set(accessTokenKey, accessToken);
+    Session.set(refreshAccessTokenKey, refreshAccessToken);
+  }
+}
+
+/**
  * 解密 JWT token 的信息
  * @param token jwt token 字符串
  * @returns <any>object
  */
 export function decryptJWT(token: string): any {
-    token = token.replace(/_/g, "/").replace(/-/g, "+");
-    const json = decodeURIComponent(escape(window.atob(token.split(".")[1])));
-    return JSON.parse(json);
+  token = token.replace(/_/g, "/").replace(/-/g, "+");
+  const json = decodeURIComponent(escape(window.atob(token.split(".")[1])));
+  return JSON.parse(json);
 }
 
 /**
@@ -59,8 +55,8 @@ export function getJWTDate(timestamp: number): Date {
 }
 
 class Axios {
-// 创建 axios 实例
-readonly apiHttpClient: AxiosInstance;
+  // 创建 axios 实例
+  readonly apiHttpClient: AxiosInstance;
   // 基础配置，url和超时时间
   baseConfig: AxiosRequestConfig = {
     baseURL: window.configs.remoteServiceBaseUrl, //import.meta.env.VITE_API_URL,
@@ -68,50 +64,44 @@ readonly apiHttpClient: AxiosInstance;
     timeout: 300000,
   };
   constructor(config?: AxiosRequestConfig) {
-  this.apiHttpClient = axios.create(Object.assign(this.baseConfig, config));
-// request 拦截器 axios 的一些配置
-  this.apiHttpClient.interceptors.request.use(
+    this.apiHttpClient = axios.create(Object.assign(this.baseConfig, config));
+    // request 拦截器 axios 的一些配置
+    this.apiHttpClient.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-          const accessToken = Session.get<string>(accessTokenKey);
-          if (accessToken) {
-            // 将 token 添加到请求报文头中
-            config.headers!["Authorization"] = `Bearer ${accessToken}`;
-            // 判断 accessToken 是否过期
-            const jwt: any = decryptJWT(accessToken);
-            const exp = getJWTDate(jwt.exp as number);
-            //token已过期
-            if (new Date() >= exp) {
-              // 获取刷新 token
-              const refreshAccessToken = Session.get<string>(
-                refreshAccessTokenKey
-              );
-              // 携带刷新 token
-              if (refreshAccessToken) {
-                config.headers![
-                  "X-Authorization"
-                ] = `Bearer ${refreshAccessToken}`;
-              }
+        const accessToken = Session.getString(accessTokenKey);
+        if (accessToken) {
+          // 将 token 添加到请求报文头中
+          config.headers!["Authorization"] = `Bearer ${accessToken}`;
+          // 判断 accessToken 是否过期
+          const jwt: any = decryptJWT(accessToken);
+          const exp = getJWTDate(jwt.exp as number);
+          //token已过期
+          if (new Date() >= exp) {
+            // 获取刷新 token
+            const refreshAccessToken = Session.getString(refreshAccessTokenKey);
+            // 携带刷新 token
+            if (refreshAccessToken) {
+              config.headers!["X-Authorization"] = `Bearer ${refreshAccessToken}`;
             }
           }
-
-          return config;
-        },
-        (err: any) => {
-          return Promise.reject(err);
         }
-      );
 
-  // respone 拦截器 axios 的一些配置
-  this.apiHttpClient.interceptors.response.use(
+        return config;
+      },
+      (err: any) => {
+        return Promise.reject(err);
+      }
+    );
+
+    // respone 拦截器 axios 的一些配置
+    this.apiHttpClient.interceptors.response.use(
       async (res: AxiosResponse) => {
         // 检查并存储授权信息
         checkAndStoreAuthentication(res);
         const data = res.data;
-        if (
-          res.config.url?.toLocaleLowerCase() === "/file/upload".toLowerCase()
-        ) {
-          return res;
-        }
+        // if (res.config.url?.toLocaleLowerCase() === "/file/upload".toLowerCase()) {
+        //   return res;
+        // }
 
         // code为200 或 返回的是文件流 直接返回
         if (data.statusCode === 200 || res.config.responseType === "blob") {
@@ -182,7 +172,7 @@ readonly apiHttpClient: AxiosInstance;
               message = "HTTP版本不受支持(505)";
               break;
             default:
-              console.log(err,15212);
+              console.log(err, 15212);
               message = `连接出错(${err.response})!`;
           }
         }
@@ -196,17 +186,14 @@ readonly apiHttpClient: AxiosInstance;
         return Promise.reject(err.response.data);
       }
     );
-    }  
-
+  }
 
   /**
-     * request请求
-     * @param config 配置参数
-     * @returns
-     */
-  request = <T = any>(
-    config: AxiosRequestConfig<T>
-    ): Promise<ZResponseBase<T>> =>{
+   * request请求
+   * @param config 配置参数
+   * @returns
+   */
+  request = <T = any>(config: AxiosRequestConfig<T>): Promise<ZResponseBase<T>> => {
     return this.apiHttpClient.request(config);
   };
 
@@ -216,10 +203,7 @@ readonly apiHttpClient: AxiosInstance;
    * @param config 配置参数
    * @returns
    */
-  get = <T = any>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ZResponseBase<T>> => {
+  get = <T = any>(url: string, config?: AxiosRequestConfig): Promise<ZResponseBase<T>> => {
     return this.apiHttpClient.get(url, config);
   };
 
@@ -230,11 +214,7 @@ readonly apiHttpClient: AxiosInstance;
    * @param config 配置参数
    * @returns
    */
-  post = <T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): Promise<ZResponseBase<T>> => {
+  post = <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ZResponseBase<T>> => {
     return this.apiHttpClient.post(url, data, config);
   };
 
@@ -245,11 +225,7 @@ readonly apiHttpClient: AxiosInstance;
    * @param config 配置参数
    * @returns
    */
-  put = <T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): Promise<ZResponseBase<T>> => {
+  put = <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ZResponseBase<T>> => {
     return this.apiHttpClient.put(url, data, config);
   };
 
@@ -260,11 +236,7 @@ readonly apiHttpClient: AxiosInstance;
    * @param config 配置参数
    * @returns
    */
-  patch = <T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): Promise<ZResponseBase<T>> => {
+  patch = <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ZResponseBase<T>> => {
     return this.apiHttpClient.patch(url, data, config);
   };
 
@@ -274,10 +246,7 @@ readonly apiHttpClient: AxiosInstance;
    * @param config 配置参数
    * @returns
    */
-  delete = <T = any>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ZResponseBase<T>> => {
+  delete = <T = any>(url: string, config?: AxiosRequestConfig): Promise<ZResponseBase<T>> => {
     return this.apiHttpClient.delete(url, config);
   };
   /**

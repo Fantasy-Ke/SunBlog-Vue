@@ -139,8 +139,16 @@
               target="_blank"
               :href="`http://wpa.qq.com/msgrd?v=3&uin=111514&ste=${info.qq}&menu=yes`"
             />
-            <a target="_blank" :href="info.github ?? ''" class="mr-5 iconfont icongithub" />
-            <a target="_blank" :href="info.gitee ?? ''" class="iconfont icongitee-fill-round" />
+            <a
+              target="_blank"
+              :href="info.github ?? 'https://github.com/Fantasy-Ke/SunBlog-Vue'"
+              class="mr-5 iconfont icongithub"
+            />
+            <a
+              target="_blank"
+              :href="info.gitee ?? 'https://gitee.com/Zhou_210/SunBlog-Vue'"
+              class="iconfont icongitee-fill-round"
+            />
           </div>
         </v-card>
         <!-- 网站信息 -->

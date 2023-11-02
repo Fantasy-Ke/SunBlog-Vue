@@ -52,6 +52,10 @@ export const Session = {
     }
     return v;
   },
+  getString(key: string) {
+    const v = Cookies.get(key);
+    return v;
+  },
   // 移除临时缓存
   remove(key: string) {
     return Cookies.remove(key);
