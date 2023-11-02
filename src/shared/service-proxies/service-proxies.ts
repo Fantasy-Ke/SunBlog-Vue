@@ -304,7 +304,7 @@ export class TestServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status === 401) {
             const _responseText = response.data;
@@ -530,6 +530,59 @@ export class ServiceProxy {
         }
         return Promise.resolve<ZEngineResponse<string>>(null as any);
     }
+
+    /**
+     * 系统用户修改自己的信息
+     * @param body (optional) 
+     * @return Success
+     */
+    updateCurrentUser(body: UpdateCurrentUserInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/updateCurrentUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PATCH",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateCurrentUser(_response);
+        });
+    }
+
+    protected processUpdateCurrentUser(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
 }
 
 export class UsersServiceProxy {
@@ -721,6 +774,166 @@ export class UsersServiceProxy {
         }
         return Promise.resolve<ZEngineResponse<ZUserInfoDto>>(null as any);
     }
+
+    /**
+     * 系统用户登录
+     * @param body (optional) 
+     * @return Success
+     */
+    signIn(body: ZUserInfoDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Users/SignIn";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSignIn(_response);
+        });
+    }
+
+    protected processSignIn(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 获取验证码
+     * @param id (optional) 验证码唯一id
+     * @return Success
+     */
+    captcha(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Users/Captcha?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCaptcha(_response);
+        });
+    }
+
+    protected processCaptcha(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    currentUserInfo( cancelToken?: CancelToken): Promise<ZEngineResponse<ZUserInfoOutput>> {
+        let url_ = this.baseUrl + "/api/Users/CurrentUserInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCurrentUserInfo(_response);
+        });
+    }
+
+    protected processCurrentUserInfo(response: AxiosResponse): Promise<ZEngineResponse<ZUserInfoOutput>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = ZUserInfoOutput.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<ZUserInfoOutput>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<ZUserInfoOutput>>(null as any);
+    }
 }
 
 export class TalksSsServiceProxy {
@@ -780,7 +993,7 @@ export class TalksSsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -847,6 +1060,59 @@ export class TalksSsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<ZEngineResponse<TalksPageOutputPageResult>>(null as any);
+    }
+
+    /**
+     * 删除
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/TalksSs/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 }
 
@@ -1041,7 +1307,7 @@ export class TagssServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1094,7 +1360,7 @@ export class TagssServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1226,6 +1492,1588 @@ export class TagssServiceProxy {
     }
 }
 
+export class UserSyssServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 系统用户分页查询
+     * @param body (optional) 
+     * @return Success
+     */
+    pageData(body: QueryUserInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<UserPageOutputPageResult>> {
+        let url_ = this.baseUrl + "/api/UserSyss/PageData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processPageData(_response);
+        });
+    }
+
+    protected processPageData(response: AxiosResponse): Promise<ZEngineResponse<UserPageOutputPageResult>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = UserPageOutputPageResult.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<UserPageOutputPageResult>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<UserPageOutputPageResult>>(null as any);
+    }
+
+    /**
+     * 添加系统用户
+     * @param body (optional) 
+     * @return Success
+     */
+    addUser(body: AddUserInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/UserSyss/AddUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddUser(_response);
+        });
+    }
+
+    protected processAddUser(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 更新系统用户信息
+     * @param body (optional) 
+     * @return Success
+     */
+    updateUser(body: UpdateUserInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/UserSyss/UpdateUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateUser(_response);
+        });
+    }
+
+    protected processUpdateUser(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 系统用户详情
+     * @param id (optional) 
+     * @return Success
+     */
+    detail(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<UpdateUserInput>> {
+        let url_ = this.baseUrl + "/api/UserSyss/Detail?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDetail(_response);
+        });
+    }
+
+    protected processDetail(response: AxiosResponse): Promise<ZEngineResponse<UpdateUserInput>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = UpdateUserInput.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<UpdateUserInput>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<UpdateUserInput>>(null as any);
+    }
+
+    /**
+     * 重置系统用户密码
+     * @param body (optional) 
+     * @return Success
+     */
+    reset(body: ResetPasswordInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/UserSyss/Reset";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PATCH",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processReset(_response);
+        });
+    }
+
+    protected processReset(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 获取当前登录用户的信息
+     * @return Success
+     */
+    currentUserInfo( cancelToken?: CancelToken): Promise<ZEngineResponse<UserInfoOutput>> {
+        let url_ = this.baseUrl + "/api/UserSyss/CurrentUserInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCurrentUserInfo(_response);
+        });
+    }
+
+    protected processCurrentUserInfo(response: AxiosResponse): Promise<ZEngineResponse<UserInfoOutput>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = UserInfoOutput.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<UserInfoOutput>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<UserInfoOutput>>(null as any);
+    }
+
+    /**
+     * 用户修改账户密码
+     * @param body (optional) 
+     * @return Success
+     */
+    changePassword(body: ChangePasswordOutput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/UserSyss/ChangePassword";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PATCH",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processChangePassword(_response);
+        });
+    }
+
+    protected processChangePassword(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 用户修改头像
+     * @param body (optional) 
+     * @return Success
+     */
+    uploadAvatar(body: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/UserSyss/UploadAvatar";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PATCH",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUploadAvatar(_response);
+        });
+    }
+
+    protected processUploadAvatar(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/UserSyss/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+}
+
+export class RoleSyssServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 角色分页查询
+     * @param body (optional) 
+     * @return Success
+     */
+    getPage(body: RoleQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<RolePageOutputPageResult>> {
+        let url_ = this.baseUrl + "/api/RoleSyss/GetPage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPage(_response);
+        });
+    }
+
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<RolePageOutputPageResult>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = RolePageOutputPageResult.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<RolePageOutputPageResult>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<RolePageOutputPageResult>>(null as any);
+    }
+
+    /**
+     * 添加角色
+     * @param body (optional) 
+     * @return Success
+     */
+    addRole(body: AddRoleInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/RoleSyss/AddRole";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddRole(_response);
+        });
+    }
+
+    protected processAddRole(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 更新角色
+     * @param body (optional) 
+     * @return Success
+     */
+    updateRole(body: UpdateSysRoleInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/RoleSyss/UpdateRole";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateRole(_response);
+        });
+    }
+
+    protected processUpdateRole(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 获取角色可访问的菜单和按钮id
+     * @param id (optional) 角色id
+     * @return Success
+     */
+    getRuleMenu(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<string[]>> {
+        let url_ = this.baseUrl + "/api/RoleSyss/GetRuleMenu?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetRuleMenu(_response);
+        });
+    }
+
+    protected processGetRuleMenu(response: AxiosResponse): Promise<ZEngineResponse<string[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<string[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<string[]>>(null as any);
+    }
+
+    /**
+     * 修改角色状态
+     * @param body (optional) 
+     * @return Success
+     */
+    setStatus(body: AvailabilityDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/RoleSyss/SetStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSetStatus(_response);
+        });
+    }
+
+    protected processSetStatus(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 删除角色
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/RoleSyss/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 角色下拉选项
+     * @return Success
+     */
+    roleSelect( cancelToken?: CancelToken): Promise<ZEngineResponse<SelectOutput[]>> {
+        let url_ = this.baseUrl + "/api/RoleSyss/RoleSelect";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRoleSelect(_response);
+        });
+    }
+
+    protected processRoleSelect(response: AxiosResponse): Promise<ZEngineResponse<SelectOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(SelectOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<SelectOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<SelectOutput[]>>(null as any);
+    }
+}
+
+export class OrganizationSyssServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 组织机构列表查询
+     * @param body (optional) 
+     * @return Success
+     */
+    getPage(body: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<SysOrgPageOutput[]>> {
+        let url_ = this.baseUrl + "/api/OrganizationSyss/GetPage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPage(_response);
+        });
+    }
+
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<SysOrgPageOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(SysOrgPageOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<SysOrgPageOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<SysOrgPageOutput[]>>(null as any);
+    }
+
+    /**
+     * 添加组织机构
+     * @param body (optional) 
+     * @return Success
+     */
+    addOrg(body: AddOrgInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/OrganizationSyss/AddOrg";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddOrg(_response);
+        });
+    }
+
+    protected processAddOrg(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 更新组织机构
+     * @param body (optional) 
+     * @return Success
+     */
+    updateOrg(body: UpdateOrgInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/OrganizationSyss/UpdateOrg";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateOrg(_response);
+        });
+    }
+
+    protected processUpdateOrg(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 获取机构下拉选项
+     * @return Success
+     */
+    treeSelect( cancelToken?: CancelToken): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        let url_ = this.baseUrl + "/api/OrganizationSyss/TreeSelect";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processTreeSelect(_response);
+        });
+    }
+
+    protected processTreeSelect(response: AxiosResponse): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(TreeSelectOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(null as any);
+    }
+
+    /**
+     * 删除菜单/按钮
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/OrganizationSyss/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+}
+
+export class PictureSsServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 上传图片到相册
+     * @param body (optional) 
+     * @return Success
+     */
+    addPictures(body: AddPictureInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/PictureSs/AddPictures";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddPictures(_response);
+        });
+    }
+
+    protected processAddPictures(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/PictureSs/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 删除上册图片
+     * @param body (optional) 
+     * @return Success
+     */
+    getPage(body: PicturesPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<PicturesPageOutputPageResult>> {
+        let url_ = this.baseUrl + "/api/PictureSs/GetPage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "DELETE",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPage(_response);
+        });
+    }
+
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<PicturesPageOutputPageResult>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = PicturesPageOutputPageResult.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<PicturesPageOutputPageResult>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<PicturesPageOutputPageResult>>(null as any);
+    }
+}
+
+export class AuthAccountsServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 博客授权用户列表
+     * @param body (optional) 
+     * @return Success
+     */
+    getList(body: AuthAccountPageQueryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<AuthAccountPageOutputPageResult>> {
+        let url_ = this.baseUrl + "/api/AuthAccounts/GetList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetList(_response);
+        });
+    }
+
+    protected processGetList(response: AxiosResponse): Promise<ZEngineResponse<AuthAccountPageOutputPageResult>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = AuthAccountPageOutputPageResult.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<AuthAccountPageOutputPageResult>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<AuthAccountPageOutputPageResult>>(null as any);
+    }
+
+    /**
+     * 设置博主
+     * @param id (optional) 
+     * @return Success
+     */
+    setBlogger(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/AuthAccounts/SetBlogger?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "PATCH",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSetBlogger(_response);
+        });
+    }
+
+    protected processSetBlogger(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 删除博客用户
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/AuthAccounts/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+}
+
 export class OAuthsServiceProxy {
     protected instance: AxiosInstance;
     protected baseUrl: string;
@@ -1354,7 +3202,7 @@ export class OAuthsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1523,7 +3371,7 @@ export class OAuthsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1650,6 +3498,740 @@ export class OAuthsServiceProxy {
     }
 }
 
+export class MenusServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 菜单列表查询
+     * @param name (optional) 
+     * @return Success
+     */
+    getPage(name: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<MenuPageOutput[]>> {
+        let url_ = this.baseUrl + "/api/Menus/GetPage?";
+        if (name === null)
+            throw new Error("The parameter 'name' cannot be null.");
+        else if (name !== undefined)
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPage(_response);
+        });
+    }
+
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<MenuPageOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(MenuPageOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<MenuPageOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<MenuPageOutput[]>>(null as any);
+    }
+
+    /**
+     * 添加菜单/按钮
+     * @param body (optional) 
+     * @return Success
+     */
+    addMenu(body: AddSysMenuInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Menus/AddMenu";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddMenu(_response);
+        });
+    }
+
+    protected processAddMenu(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 修改菜单/按钮
+     * @param body (optional) 
+     * @return Success
+     */
+    updateMenu(body: UpdateSysMenuInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Menus/UpdateMenu";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateMenu(_response);
+        });
+    }
+
+    protected processUpdateMenu(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 根据菜单Id获取系统菜单详情
+     * @param id (optional) 
+     * @return Success
+     */
+    detail(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<MenuDetailOutput>> {
+        let url_ = this.baseUrl + "/api/Menus/Detail?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDetail(_response);
+        });
+    }
+
+    protected processDetail(response: AxiosResponse): Promise<ZEngineResponse<MenuDetailOutput>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            result200 = MenuDetailOutput.fromJS(resultData200);
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<MenuDetailOutput>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<MenuDetailOutput>>(null as any);
+    }
+
+    /**
+     * 菜单下拉树
+     * @return Success
+     */
+    treeSelect( cancelToken?: CancelToken): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        let url_ = this.baseUrl + "/api/Menus/TreeSelect";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processTreeSelect(_response);
+        });
+    }
+
+    protected processTreeSelect(response: AxiosResponse): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(TreeSelectOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(null as any);
+    }
+
+    /**
+     * 删除菜单/按钮
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Menus/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 修改菜单/按钮状态
+     * @param body (optional) 
+     * @return Success
+     */
+    setStatus(body: AvailabilityDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Menus/SetStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSetStatus(_response);
+        });
+    }
+
+    protected processSetStatus(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 获取当前登录用户可用菜单
+     * @return Success
+     */
+    permissionMenus( cancelToken?: CancelToken): Promise<ZEngineResponse<RouterOutput[]>> {
+        let url_ = this.baseUrl + "/api/Menus/PermissionMenus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processPermissionMenus(_response);
+        });
+    }
+
+    protected processPermissionMenus(response: AxiosResponse): Promise<ZEngineResponse<RouterOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(RouterOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<RouterOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<RouterOutput[]>>(null as any);
+    }
+
+    /**
+     * 菜单按钮树
+     * @return Success
+     */
+    treeMenuButton( cancelToken?: CancelToken): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        let url_ = this.baseUrl + "/api/Menus/TreeMenuButton";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processTreeMenuButton(_response);
+        });
+    }
+
+    protected processTreeMenuButton(response: AxiosResponse): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(TreeSelectOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(null as any);
+    }
+
+    /**
+     * 移除菜单中的按钮
+     * @param menus (optional) 
+     * @return Success
+     */
+    removeButton(menus: Menu[] | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Menus/RemoveButton?";
+        if (menus === null)
+            throw new Error("The parameter 'menus' cannot be null.");
+        else if (menus !== undefined)
+            menus && menus.forEach((item, index) => {
+                for (let attr in item)
+        			if (item.hasOwnProperty(attr)) {
+        				url_ += "menus[" + index + "]." + attr + "=" + encodeURIComponent("" + (item as any)[attr]) + "&";
+        			}
+            });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRemoveButton(_response);
+        });
+    }
+
+    protected processRemoveButton(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+}
+
+export class FilesServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 上传附件
+     * @param file (optional) 
+     * @return Success
+     */
+    uploadFile(file: FileParameter | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<UploadFileOutput[]>> {
+        let url_ = this.baseUrl + "/api/Files/UploadFile";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (file === null || file === undefined)
+            throw new Error("The parameter 'file' cannot be null.");
+        else
+            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUploadFile(_response);
+        });
+    }
+
+    protected processUploadFile(response: AxiosResponse): Promise<ZEngineResponse<UploadFileOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(UploadFileOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<UploadFileOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<UploadFileOutput[]>>(null as any);
+    }
+
+    /**
+     * 获取文件
+     * @param fileUrl (optional) 
+     * @return Success
+     */
+    getFile(fileUrl: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/Files/GetFile?";
+        if (fileUrl === null)
+            throw new Error("The parameter 'fileUrl' cannot be null.");
+        else if (fileUrl !== undefined)
+            url_ += "fileUrl=" + encodeURIComponent("" + fileUrl) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetFile(_response);
+        });
+    }
+
+    protected processGetFile(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+}
+
 export class CustomConfigItemsServiceProxy {
     protected instance: AxiosInstance;
     protected baseUrl: string;
@@ -1767,7 +4349,7 @@ export class CustomConfigItemsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1820,7 +4402,7 @@ export class CustomConfigItemsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1887,7 +4469,7 @@ export class FriendLinksServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1940,7 +4522,7 @@ export class FriendLinksServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -2067,7 +4649,7 @@ export class CommentsCsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -2258,6 +4840,308 @@ export class CommentsCsServiceProxy {
     }
 }
 
+export class CategorySsServiceProxy {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * 添加文章栏目
+     * @param body (optional) 
+     * @return Success
+     */
+    addCategory(body: AddCategoryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/CategorySs/AddCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddCategory(_response);
+        });
+    }
+
+    protected processAddCategory(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 删除
+     * @param body (optional) 
+     * @return Success
+     */
+    delete(body: KeyDto | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/CategorySs/Delete";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+
+    /**
+     * 文章栏目列表
+     * @param name (optional) 
+     * @return Success
+     */
+    getPage(name: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<CategoryPageOutput[]>> {
+        let url_ = this.baseUrl + "/api/CategorySs/GetPage?";
+        if (name === null)
+            throw new Error("The parameter 'name' cannot be null.");
+        else if (name !== undefined)
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPage(_response);
+        });
+    }
+
+    protected processGetPage(response: AxiosResponse): Promise<ZEngineResponse<CategoryPageOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(CategoryPageOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<CategoryPageOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<CategoryPageOutput[]>>(null as any);
+    }
+
+    /**
+     * 获取文章栏目下拉选项
+     * @return Success
+     */
+    treeSelect( cancelToken?: CancelToken): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        let url_ = this.baseUrl + "/api/CategorySs/TreeSelect";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "text/plain"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processTreeSelect(_response);
+        });
+    }
+
+    protected processTreeSelect(response: AxiosResponse): Promise<ZEngineResponse<TreeSelectOutput[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let result200Data: any = null;
+            let resultData200  = _responseText.result;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(TreeSelectOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            result200Data = ZEngineResponse.fromJS(_responseText);
+            result200Data.result = result200;
+            return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(result200Data);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<TreeSelectOutput[]>>(null as any);
+    }
+
+    /**
+     * 更新文章栏目
+     * @param body (optional) 
+     * @return Success
+     */
+    updateCategory(body: UpdateCategoryInput | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/CategorySs/UpdateCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateCategory(_response);
+        });
+    }
+
+    protected processUpdateCategory(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
+    }
+}
+
 export class ArticleSsServiceProxy {
     protected instance: AxiosInstance;
     protected baseUrl: string;
@@ -2315,7 +5199,7 @@ export class ArticleSsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -2368,7 +5252,7 @@ export class ArticleSsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -2930,7 +5814,7 @@ export class ArticleCategorysServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -2983,7 +5867,7 @@ export class ArticleCategorysServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -3050,7 +5934,7 @@ export class AlbumsSsServiceProxy {
         }
         if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<ZEngineResponse<void>>(null as any);
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -3117,6 +6001,59 @@ export class AlbumsSsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<ZEngineResponse<AlbumsPageOutputPageResult>>(null as any);
+    }
+
+    /**
+     * 删除菜单/按钮
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+        let url_ = this.baseUrl + "/api/AlbumsSs/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: AxiosResponse): Promise<ZEngineResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<ZEngineResponse<void>>(_responseText);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ZEngineResponse<void>>(null as any);
     }
 }
 
@@ -3262,6 +6199,79 @@ export class AlbumsCsServiceProxy {
         }
         return Promise.resolve<ZEngineResponse<PictureOutputPageResult>>(null as any);
     }
+}
+
+export class AddCategoryInput implements IAddCategoryInput {
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: number | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+
+    constructor(data?: IAddCategoryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.parentId = _data["parentId"];
+            this.cover = _data["cover"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): AddCategoryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddCategoryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["parentId"] = this.parentId;
+        data["cover"] = this.cover;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): AddCategoryInput {
+        const json = this.toJSON();
+        let result = new AddCategoryInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddCategoryInput {
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: number | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
 }
 
 export class AddCommentInput implements IAddCommentInput {
@@ -3451,6 +6461,460 @@ export interface IAddLinkOutput {
     url: string;
     /** 网站介绍 */
     remark: string;
+}
+
+export class AddOrgInput implements IAddOrgInput {
+    /** 父级Id */
+    parentId: string | undefined;
+    /** 部门名称 */
+    name: string;
+    /** 部门编码 */
+    code: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+
+    constructor(data?: IAddOrgInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.parentId = _data["parentId"];
+            this.name = _data["name"];
+            this.code = _data["code"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): AddOrgInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddOrgInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
+        data["name"] = this.name;
+        data["code"] = this.code;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): AddOrgInput {
+        const json = this.toJSON();
+        let result = new AddOrgInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddOrgInput {
+    /** 父级Id */
+    parentId: string | undefined;
+    /** 部门名称 */
+    name: string;
+    /** 部门编码 */
+    code: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+}
+
+export class AddPictureInput implements IAddPictureInput {
+    /** 相册Id */
+    albumId: string;
+    /** 图片地址 */
+    url: string;
+
+    constructor(data?: IAddPictureInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.albumId = _data["albumId"];
+            this.url = _data["url"];
+        }
+    }
+
+    static fromJS(data: any): AddPictureInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddPictureInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["albumId"] = this.albumId;
+        data["url"] = this.url;
+        return data;
+    }
+
+    clone(): AddPictureInput {
+        const json = this.toJSON();
+        let result = new AddPictureInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddPictureInput {
+    /** 相册Id */
+    albumId: string;
+    /** 图片地址 */
+    url: string;
+}
+
+export class AddRoleInput implements IAddRoleInput {
+    /** 角色名称 */
+    name: string;
+    status: AvailabilityStatus;
+    /** 角色编码 */
+    code: string;
+    /** 排序值 */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 授权按钮菜单Id */
+    menus: string[];
+
+    constructor(data?: IAddRoleInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.menus = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.status = _data["status"];
+            this.code = _data["code"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            if (Array.isArray(_data["menus"])) {
+                this.menus = [] as any;
+                for (let item of _data["menus"])
+                    this.menus.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): AddRoleInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddRoleInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["code"] = this.code;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        if (Array.isArray(this.menus)) {
+            data["menus"] = [];
+            for (let item of this.menus)
+                data["menus"].push(item);
+        }
+        return data;
+    }
+
+    clone(): AddRoleInput {
+        const json = this.toJSON();
+        let result = new AddRoleInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddRoleInput {
+    /** 角色名称 */
+    name: string;
+    status: AvailabilityStatus;
+    /** 角色编码 */
+    code: string;
+    /** 排序值 */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 授权按钮菜单Id */
+    menus: string[];
+}
+
+export class AddSysMenuInput implements IAddSysMenuInput {
+    /** 菜单名称 */
+    name: string;
+    type: MenuType;
+    /** 权限编码 */
+    code: string | undefined;
+    /** 父级菜单 */
+    parentId: string | undefined;
+    /** 路由名 */
+    routeName: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件路径 */
+    component: string | undefined;
+    /** 重定向地址 */
+    redirect: string | undefined;
+    /** 菜单图标 */
+    icon: string | undefined;
+    /** 是否内嵌页面 */
+    isIframe: boolean;
+    /** 外链地址 */
+    link: string | undefined;
+    /** 是否可见 */
+    isVisible: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否固定 */
+    isFixed: boolean;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+
+    constructor(data?: IAddSysMenuInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.type = _data["type"];
+            this.code = _data["code"];
+            this.parentId = _data["parentId"];
+            this.routeName = _data["routeName"];
+            this.path = _data["path"];
+            this.component = _data["component"];
+            this.redirect = _data["redirect"];
+            this.icon = _data["icon"];
+            this.isIframe = _data["isIframe"];
+            this.link = _data["link"];
+            this.isVisible = _data["isVisible"];
+            this.isKeepAlive = _data["isKeepAlive"];
+            this.isFixed = _data["isFixed"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): AddSysMenuInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddSysMenuInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["code"] = this.code;
+        data["parentId"] = this.parentId;
+        data["routeName"] = this.routeName;
+        data["path"] = this.path;
+        data["component"] = this.component;
+        data["redirect"] = this.redirect;
+        data["icon"] = this.icon;
+        data["isIframe"] = this.isIframe;
+        data["link"] = this.link;
+        data["isVisible"] = this.isVisible;
+        data["isKeepAlive"] = this.isKeepAlive;
+        data["isFixed"] = this.isFixed;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): AddSysMenuInput {
+        const json = this.toJSON();
+        let result = new AddSysMenuInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddSysMenuInput {
+    /** 菜单名称 */
+    name: string;
+    type: MenuType;
+    /** 权限编码 */
+    code: string | undefined;
+    /** 父级菜单 */
+    parentId: string | undefined;
+    /** 路由名 */
+    routeName: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件路径 */
+    component: string | undefined;
+    /** 重定向地址 */
+    redirect: string | undefined;
+    /** 菜单图标 */
+    icon: string | undefined;
+    /** 是否内嵌页面 */
+    isIframe: boolean;
+    /** 外链地址 */
+    link: string | undefined;
+    /** 是否可见 */
+    isVisible: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否固定 */
+    isFixed: boolean;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+}
+
+export class AddUserInput implements IAddUserInput {
+    /** 用户名 */
+    userName: string;
+    /** 姓名 */
+    name: string;
+    gender: Gender;
+    /** 组织机构id */
+    orgId: string | undefined;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    status: AvailabilityStatus;
+    /** 邮箱 */
+    email: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 角色 */
+    roles: string[] | undefined;
+
+    constructor(data?: IAddUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userName = _data["userName"];
+            this.name = _data["name"];
+            this.gender = _data["gender"];
+            this.orgId = _data["orgId"];
+            this.nickName = _data["nickName"];
+            this.birthday = _data["birthday"] ? moment(_data["birthday"].toString()) : <any>undefined;
+            this.mobile = _data["mobile"];
+            this.status = _data["status"];
+            this.email = _data["email"];
+            this.remark = _data["remark"];
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): AddUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["name"] = this.name;
+        data["gender"] = this.gender;
+        data["orgId"] = this.orgId;
+        data["nickName"] = this.nickName;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["mobile"] = this.mobile;
+        data["status"] = this.status;
+        data["email"] = this.email;
+        data["remark"] = this.remark;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item);
+        }
+        return data;
+    }
+
+    clone(): AddUserInput {
+        const json = this.toJSON();
+        let result = new AddUserInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddUserInput {
+    /** 用户名 */
+    userName: string;
+    /** 姓名 */
+    name: string;
+    gender: Gender;
+    /** 组织机构id */
+    orgId: string | undefined;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    status: AvailabilityStatus;
+    /** 邮箱 */
+    email: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 角色 */
+    roles: string[] | undefined;
 }
 
 export class AlbumsOutput implements IAlbumsOutput {
@@ -4730,6 +8194,256 @@ export interface IArticleReportOutput {
     linkCount: number;
 }
 
+export class AuthAccountPageOutput implements IAuthAccountPageOutput {
+    /** 主键 */
+    id: string | undefined;
+    /** 昵称 */
+    name: string | undefined;
+    gender: Gender;
+    /** 授权类型 */
+    type: string | undefined;
+    /** 是否是博主 */
+    isBlogger: boolean;
+    /** 头像 */
+    avatar: string | undefined;
+    /** 注册时间 */
+    createdTime: moment.Moment | undefined;
+
+    constructor(data?: IAuthAccountPageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.gender = _data["gender"];
+            this.type = _data["type"];
+            this.isBlogger = _data["isBlogger"];
+            this.avatar = _data["avatar"];
+            this.createdTime = _data["createdTime"] ? moment(_data["createdTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AuthAccountPageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthAccountPageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["gender"] = this.gender;
+        data["type"] = this.type;
+        data["isBlogger"] = this.isBlogger;
+        data["avatar"] = this.avatar;
+        data["createdTime"] = this.createdTime ? this.createdTime.toISOString() : <any>undefined;
+        return data;
+    }
+
+    clone(): AuthAccountPageOutput {
+        const json = this.toJSON();
+        let result = new AuthAccountPageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAuthAccountPageOutput {
+    /** 主键 */
+    id: string | undefined;
+    /** 昵称 */
+    name: string | undefined;
+    gender: Gender;
+    /** 授权类型 */
+    type: string | undefined;
+    /** 是否是博主 */
+    isBlogger: boolean;
+    /** 头像 */
+    avatar: string | undefined;
+    /** 注册时间 */
+    createdTime: moment.Moment | undefined;
+}
+
+export class AuthAccountPageOutputPageResult implements IAuthAccountPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: AuthAccountPageOutput[] | undefined;
+
+    constructor(data?: IAuthAccountPageOutputPageResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.pages = _data["pages"];
+            this.total = _data["total"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows.push(AuthAccountPageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AuthAccountPageOutputPageResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthAccountPageOutputPageResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["pages"] = this.pages;
+        data["total"] = this.total;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): AuthAccountPageOutputPageResult {
+        const json = this.toJSON();
+        let result = new AuthAccountPageOutputPageResult();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAuthAccountPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: AuthAccountPageOutput[] | undefined;
+}
+
+export class AuthAccountPageQueryInput implements IAuthAccountPageQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 昵称 */
+    name: string | undefined;
+
+    constructor(data?: IAuthAccountPageQueryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): AuthAccountPageQueryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthAccountPageQueryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["name"] = this.name;
+        return data;
+    }
+
+    clone(): AuthAccountPageQueryInput {
+        const json = this.toJSON();
+        let result = new AuthAccountPageQueryInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAuthAccountPageQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 昵称 */
+    name: string | undefined;
+}
+
+export class AvailabilityDto implements IAvailabilityDto {
+    id: string | undefined;
+    gId: string | undefined;
+    status: AvailabilityStatus;
+
+    constructor(data?: IAvailabilityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.gId = _data["gId"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): AvailabilityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AvailabilityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["gId"] = this.gId;
+        data["status"] = this.status;
+        return data;
+    }
+
+    clone(): AvailabilityDto {
+        const json = this.toJSON();
+        let result = new AvailabilityDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAvailabilityDto {
+    id: string | undefined;
+    gId: string | undefined;
+    status: AvailabilityStatus;
+}
+
 export enum AvailabilityStatus {
     _0 = 0,
     _1 = 1,
@@ -5033,6 +8747,156 @@ export interface ICategoryOutput {
     name: string | undefined;
     /** 文章条数 */
     total: number;
+}
+
+export class CategoryPageOutput implements ICategoryPageOutput {
+    /** 栏目ID */
+    id: string;
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: string | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 创建时间 */
+    creationTime: moment.Moment | undefined;
+    /** 子栏目 */
+    children: CategoryPageOutput[] | undefined;
+
+    constructor(data?: ICategoryPageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.parentId = _data["parentId"];
+            this.cover = _data["cover"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children.push(CategoryPageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CategoryPageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CategoryPageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["parentId"] = this.parentId;
+        data["cover"] = this.cover;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): CategoryPageOutput {
+        const json = this.toJSON();
+        let result = new CategoryPageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICategoryPageOutput {
+    /** 栏目ID */
+    id: string;
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: string | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 创建时间 */
+    creationTime: moment.Moment | undefined;
+    /** 子栏目 */
+    children: CategoryPageOutput[] | undefined;
+}
+
+export class ChangePasswordOutput implements IChangePasswordOutput {
+    /** 原密码 */
+    originalPwd: string;
+    /** 新密码 */
+    password: string;
+
+    constructor(data?: IChangePasswordOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.originalPwd = _data["originalPwd"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): ChangePasswordOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChangePasswordOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["originalPwd"] = this.originalPwd;
+        data["password"] = this.password;
+        return data;
+    }
+
+    clone(): ChangePasswordOutput {
+        const json = this.toJSON();
+        let result = new ChangePasswordOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IChangePasswordOutput {
+    /** 原密码 */
+    originalPwd: string;
+    /** 新密码 */
+    password: string;
 }
 
 export class CommentOutput implements ICommentOutput {
@@ -6156,6 +10020,12 @@ export interface IFriendLinkPageQueryInput {
     siteName: string | undefined;
 }
 
+export enum Gender {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+}
+
 export class KeyDto implements IKeyDto {
     id: string;
 
@@ -6197,6 +10067,407 @@ export class KeyDto implements IKeyDto {
 
 export interface IKeyDto {
     id: string;
+}
+
+export class Menu implements IMenu {
+    id: string;
+    creatorId: string | undefined;
+    creationTime: moment.Moment | undefined;
+    deleterId: string | undefined;
+    deletionTime: moment.Moment | undefined;
+    isDeleted: boolean | undefined;
+    name: string | undefined;
+    type: MenuType;
+    code: string | undefined;
+    parentId: string | undefined;
+    routeName: string | undefined;
+    path: string | undefined;
+    component: string | undefined;
+    redirect: string | undefined;
+    icon: string | undefined;
+    isIframe: boolean;
+    link: string | undefined;
+    isVisible: boolean;
+    isKeepAlive: boolean;
+    isFixed: boolean;
+    status: AvailabilityStatus;
+    sort: number;
+    remark: string | undefined;
+    children: Menu[] | undefined;
+
+    constructor(data?: IMenu) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.creatorId = _data["creatorId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.deleterId = _data["deleterId"];
+            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
+            this.isDeleted = _data["isDeleted"];
+            this.name = _data["name"];
+            this.type = _data["type"];
+            this.code = _data["code"];
+            this.parentId = _data["parentId"];
+            this.routeName = _data["routeName"];
+            this.path = _data["path"];
+            this.component = _data["component"];
+            this.redirect = _data["redirect"];
+            this.icon = _data["icon"];
+            this.isIframe = _data["isIframe"];
+            this.link = _data["link"];
+            this.isVisible = _data["isVisible"];
+            this.isKeepAlive = _data["isKeepAlive"];
+            this.isFixed = _data["isFixed"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children.push(Menu.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): Menu {
+        data = typeof data === 'object' ? data : {};
+        let result = new Menu();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["creatorId"] = this.creatorId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["deleterId"] = this.deleterId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["isDeleted"] = this.isDeleted;
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["code"] = this.code;
+        data["parentId"] = this.parentId;
+        data["routeName"] = this.routeName;
+        data["path"] = this.path;
+        data["component"] = this.component;
+        data["redirect"] = this.redirect;
+        data["icon"] = this.icon;
+        data["isIframe"] = this.isIframe;
+        data["link"] = this.link;
+        data["isVisible"] = this.isVisible;
+        data["isKeepAlive"] = this.isKeepAlive;
+        data["isFixed"] = this.isFixed;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): Menu {
+        const json = this.toJSON();
+        let result = new Menu();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMenu {
+    id: string;
+    creatorId: string | undefined;
+    creationTime: moment.Moment | undefined;
+    deleterId: string | undefined;
+    deletionTime: moment.Moment | undefined;
+    isDeleted: boolean | undefined;
+    name: string | undefined;
+    type: MenuType;
+    code: string | undefined;
+    parentId: string | undefined;
+    routeName: string | undefined;
+    path: string | undefined;
+    component: string | undefined;
+    redirect: string | undefined;
+    icon: string | undefined;
+    isIframe: boolean;
+    link: string | undefined;
+    isVisible: boolean;
+    isKeepAlive: boolean;
+    isFixed: boolean;
+    status: AvailabilityStatus;
+    sort: number;
+    remark: string | undefined;
+    children: Menu[] | undefined;
+}
+
+export class MenuDetailOutput implements IMenuDetailOutput {
+    /** 菜单Id */
+    id: string;
+    /** 菜单名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: string | undefined;
+    status: AvailabilityStatus;
+    /** 权限标识 */
+    code: string | undefined;
+    /** 排序 */
+    sort: number;
+    /** 组件路径 */
+    component: string | undefined;
+    /** 图标 */
+    icon: string | undefined;
+    /** 是否固定 */
+    isFixed: boolean;
+    /** 是否内嵌 */
+    isIframe: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否可见 */
+    isVisible: boolean;
+    /** 外链 */
+    link: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 重定向地址 */
+    redirect: string | undefined;
+    /** 路由名称 */
+    routeName: string | undefined;
+    type: MenuType;
+
+    constructor(data?: IMenuDetailOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.parentId = _data["parentId"];
+            this.status = _data["status"];
+            this.code = _data["code"];
+            this.sort = _data["sort"];
+            this.component = _data["component"];
+            this.icon = _data["icon"];
+            this.isFixed = _data["isFixed"];
+            this.isIframe = _data["isIframe"];
+            this.isKeepAlive = _data["isKeepAlive"];
+            this.isVisible = _data["isVisible"];
+            this.link = _data["link"];
+            this.remark = _data["remark"];
+            this.path = _data["path"];
+            this.redirect = _data["redirect"];
+            this.routeName = _data["routeName"];
+            this.type = _data["type"];
+        }
+    }
+
+    static fromJS(data: any): MenuDetailOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MenuDetailOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["parentId"] = this.parentId;
+        data["status"] = this.status;
+        data["code"] = this.code;
+        data["sort"] = this.sort;
+        data["component"] = this.component;
+        data["icon"] = this.icon;
+        data["isFixed"] = this.isFixed;
+        data["isIframe"] = this.isIframe;
+        data["isKeepAlive"] = this.isKeepAlive;
+        data["isVisible"] = this.isVisible;
+        data["link"] = this.link;
+        data["remark"] = this.remark;
+        data["path"] = this.path;
+        data["redirect"] = this.redirect;
+        data["routeName"] = this.routeName;
+        data["type"] = this.type;
+        return data;
+    }
+
+    clone(): MenuDetailOutput {
+        const json = this.toJSON();
+        let result = new MenuDetailOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMenuDetailOutput {
+    /** 菜单Id */
+    id: string;
+    /** 菜单名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: string | undefined;
+    status: AvailabilityStatus;
+    /** 权限标识 */
+    code: string | undefined;
+    /** 排序 */
+    sort: number;
+    /** 组件路径 */
+    component: string | undefined;
+    /** 图标 */
+    icon: string | undefined;
+    /** 是否固定 */
+    isFixed: boolean;
+    /** 是否内嵌 */
+    isIframe: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否可见 */
+    isVisible: boolean;
+    /** 外链 */
+    link: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 重定向地址 */
+    redirect: string | undefined;
+    /** 路由名称 */
+    routeName: string | undefined;
+    type: MenuType;
+}
+
+export class MenuPageOutput implements IMenuPageOutput {
+    /** 菜单Id */
+    id: string;
+    /** 菜单名称 */
+    name: string | undefined;
+    /** 权限标识 */
+    code: string | undefined;
+    /** 菜单图标 */
+    icon: string | undefined;
+    type: MenuType;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件路径 */
+    component: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    /** 子菜单 */
+    children: MenuPageOutput[] | undefined;
+
+    constructor(data?: IMenuPageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.code = _data["code"];
+            this.icon = _data["icon"];
+            this.type = _data["type"];
+            this.path = _data["path"];
+            this.component = _data["component"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.createdTime = _data["createdTime"] ? moment(_data["createdTime"].toString()) : <any>undefined;
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children.push(MenuPageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): MenuPageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MenuPageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["code"] = this.code;
+        data["icon"] = this.icon;
+        data["type"] = this.type;
+        data["path"] = this.path;
+        data["component"] = this.component;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["createdTime"] = this.createdTime ? this.createdTime.toISOString() : <any>undefined;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): MenuPageOutput {
+        const json = this.toJSON();
+        let result = new MenuPageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMenuPageOutput {
+    /** 菜单Id */
+    id: string;
+    /** 菜单名称 */
+    name: string | undefined;
+    /** 权限标识 */
+    code: string | undefined;
+    /** 菜单图标 */
+    icon: string | undefined;
+    type: MenuType;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件路径 */
+    component: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    /** 子菜单 */
+    children: MenuPageOutput[] | undefined;
+}
+
+export enum MenuType {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
 }
 
 export class OAuthAccountDetailOutput implements IOAuthAccountDetailOutput {
@@ -6522,6 +10793,244 @@ export interface IPictureOutputPageResult {
     rows: PictureOutput[] | undefined;
 }
 
+export class PicturesPageOutput implements IPicturesPageOutput {
+    id: string;
+    url: string | undefined;
+
+    constructor(data?: IPicturesPageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.url = _data["url"];
+        }
+    }
+
+    static fromJS(data: any): PicturesPageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PicturesPageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["url"] = this.url;
+        return data;
+    }
+
+    clone(): PicturesPageOutput {
+        const json = this.toJSON();
+        let result = new PicturesPageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IPicturesPageOutput {
+    id: string;
+    url: string | undefined;
+}
+
+export class PicturesPageOutputPageResult implements IPicturesPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: PicturesPageOutput[] | undefined;
+
+    constructor(data?: IPicturesPageOutputPageResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.pages = _data["pages"];
+            this.total = _data["total"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows.push(PicturesPageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PicturesPageOutputPageResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new PicturesPageOutputPageResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["pages"] = this.pages;
+        data["total"] = this.total;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): PicturesPageOutputPageResult {
+        const json = this.toJSON();
+        let result = new PicturesPageOutputPageResult();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IPicturesPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: PicturesPageOutput[] | undefined;
+}
+
+export class PicturesPageQueryInput implements IPicturesPageQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 相册ID */
+    id: string;
+
+    constructor(data?: IPicturesPageQueryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): PicturesPageQueryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PicturesPageQueryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): PicturesPageQueryInput {
+        const json = this.toJSON();
+        let result = new PicturesPageQueryInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IPicturesPageQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 相册ID */
+    id: string;
+}
+
+export class QueryUserInput implements IQueryUserInput {
+    pageNo: number;
+    pageSize: number;
+    /** 账号 */
+    userName: string | undefined;
+    /** 组织机构Id */
+    orgId: string | undefined;
+    /** 手机号 */
+    mobile: string | undefined;
+    /** 姓名 */
+    name: string | undefined;
+
+    constructor(data?: IQueryUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.userName = _data["userName"];
+            this.orgId = _data["orgId"];
+            this.mobile = _data["mobile"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): QueryUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new QueryUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["userName"] = this.userName;
+        data["orgId"] = this.orgId;
+        data["mobile"] = this.mobile;
+        data["name"] = this.name;
+        return data;
+    }
+
+    clone(): QueryUserInput {
+        const json = this.toJSON();
+        let result = new QueryUserInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IQueryUserInput {
+    pageNo: number;
+    pageSize: number;
+    /** 账号 */
+    userName: string | undefined;
+    /** 组织机构Id */
+    orgId: string | undefined;
+    /** 手机号 */
+    mobile: string | undefined;
+    /** 姓名 */
+    name: string | undefined;
+}
+
 export class ReplyOutput implements IReplyOutput {
     /** 评论ID */
     id: string;
@@ -6718,9 +11227,411 @@ export interface IReplyOutputPageResult {
     rows: ReplyOutput[] | undefined;
 }
 
+export class ResetPasswordInput implements IResetPasswordInput {
+    id: string | undefined;
+    /** 密码 */
+    password: string;
+
+    constructor(data?: IResetPasswordInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): ResetPasswordInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResetPasswordInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["password"] = this.password;
+        return data;
+    }
+
+    clone(): ResetPasswordInput {
+        const json = this.toJSON();
+        let result = new ResetPasswordInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IResetPasswordInput {
+    id: string | undefined;
+    /** 密码 */
+    password: string;
+}
+
+export class RolePageOutput implements IRolePageOutput {
+    /** 主键 */
+    id: string | undefined;
+    /** 角色名称 */
+    name: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    status: AvailabilityStatus;
+    /** 角色编码 */
+    code: string | undefined;
+    /** 排序值 */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+
+    constructor(data?: IRolePageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.createdTime = _data["createdTime"] ? moment(_data["createdTime"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.code = _data["code"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+        }
+    }
+
+    static fromJS(data: any): RolePageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RolePageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["createdTime"] = this.createdTime ? this.createdTime.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["code"] = this.code;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        return data;
+    }
+
+    clone(): RolePageOutput {
+        const json = this.toJSON();
+        let result = new RolePageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IRolePageOutput {
+    /** 主键 */
+    id: string | undefined;
+    /** 角色名称 */
+    name: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    status: AvailabilityStatus;
+    /** 角色编码 */
+    code: string | undefined;
+    /** 排序值 */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+}
+
+export class RolePageOutputPageResult implements IRolePageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: RolePageOutput[] | undefined;
+
+    constructor(data?: IRolePageOutputPageResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.pages = _data["pages"];
+            this.total = _data["total"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows.push(RolePageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): RolePageOutputPageResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new RolePageOutputPageResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["pages"] = this.pages;
+        data["total"] = this.total;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): RolePageOutputPageResult {
+        const json = this.toJSON();
+        let result = new RolePageOutputPageResult();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IRolePageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: RolePageOutput[] | undefined;
+}
+
+export class RoleQueryInput implements IRoleQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 角色名称 */
+    name: string | undefined;
+
+    constructor(data?: IRoleQueryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): RoleQueryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleQueryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["name"] = this.name;
+        return data;
+    }
+
+    clone(): RoleQueryInput {
+        const json = this.toJSON();
+        let result = new RoleQueryInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IRoleQueryInput {
+    pageNo: number;
+    pageSize: number;
+    /** 角色名称 */
+    name: string | undefined;
+}
+
+export class RouterMetaOutput implements IRouterMetaOutput {
+    /** 标题 */
+    title: string | undefined;
+    /** 外链 */
+    isLink: string | undefined;
+    /** 是否隐藏 */
+    isHide: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否固定 */
+    isAffix: boolean;
+    /** 菜单 */
+    icon: string | undefined;
+    type: MenuType;
+
+    constructor(data?: IRouterMetaOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data["title"];
+            this.isLink = _data["isLink"];
+            this.isHide = _data["isHide"];
+            this.isKeepAlive = _data["isKeepAlive"];
+            this.isAffix = _data["isAffix"];
+            this.icon = _data["icon"];
+            this.type = _data["type"];
+        }
+    }
+
+    static fromJS(data: any): RouterMetaOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RouterMetaOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["isLink"] = this.isLink;
+        data["isHide"] = this.isHide;
+        data["isKeepAlive"] = this.isKeepAlive;
+        data["isAffix"] = this.isAffix;
+        data["icon"] = this.icon;
+        data["type"] = this.type;
+        return data;
+    }
+
+    clone(): RouterMetaOutput {
+        const json = this.toJSON();
+        let result = new RouterMetaOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IRouterMetaOutput {
+    /** 标题 */
+    title: string | undefined;
+    /** 外链 */
+    isLink: string | undefined;
+    /** 是否隐藏 */
+    isHide: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否固定 */
+    isAffix: boolean;
+    /** 菜单 */
+    icon: string | undefined;
+    type: MenuType;
+}
+
+export class RouterOutput implements IRouterOutput {
+    /** 路由名称 */
+    name: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件 */
+    component: string | undefined;
+    meta: RouterMetaOutput;
+    /** 子菜单 */
+    children: RouterOutput[] | undefined;
+
+    constructor(data?: IRouterOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.path = _data["path"];
+            this.component = _data["component"];
+            this.meta = _data["meta"] ? RouterMetaOutput.fromJS(_data["meta"]) : <any>undefined;
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children.push(RouterOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): RouterOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RouterOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["path"] = this.path;
+        data["component"] = this.component;
+        data["meta"] = this.meta ? this.meta.toJSON() : <any>undefined;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): RouterOutput {
+        const json = this.toJSON();
+        let result = new RouterOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IRouterOutput {
+    /** 路由名称 */
+    name: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件 */
+    component: string | undefined;
+    meta: RouterMetaOutput;
+    /** 子菜单 */
+    children: RouterOutput[] | undefined;
+}
+
 export class SelectOutput implements ISelectOutput {
     label: string | undefined;
-    value: string;
+    value: any | undefined;
 
     constructor(data?: ISelectOutput) {
         if (data) {
@@ -6762,7 +11673,104 @@ export class SelectOutput implements ISelectOutput {
 
 export interface ISelectOutput {
     label: string | undefined;
-    value: string;
+    value: any | undefined;
+}
+
+export class SysOrgPageOutput implements ISysOrgPageOutput {
+    /** 组织机构Id */
+    id: string | undefined;
+    /** 父级Id */
+    parentId: string | undefined;
+    /** 部门名称 */
+    name: string | undefined;
+    /** 部门编码 */
+    code: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    children: SysOrgPageOutput[] | undefined;
+
+    constructor(data?: ISysOrgPageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.parentId = _data["parentId"];
+            this.name = _data["name"];
+            this.code = _data["code"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            this.createdTime = _data["createdTime"] ? moment(_data["createdTime"].toString()) : <any>undefined;
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children.push(SysOrgPageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SysOrgPageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SysOrgPageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["parentId"] = this.parentId;
+        data["name"] = this.name;
+        data["code"] = this.code;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        data["createdTime"] = this.createdTime ? this.createdTime.toISOString() : <any>undefined;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): SysOrgPageOutput {
+        const json = this.toJSON();
+        let result = new SysOrgPageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ISysOrgPageOutput {
+    /** 组织机构Id */
+    id: string | undefined;
+    /** 父级Id */
+    parentId: string | undefined;
+    /** 部门名称 */
+    name: string | undefined;
+    /** 部门编码 */
+    code: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    children: SysOrgPageOutput[] | undefined;
 }
 
 export class TagsOutput implements ITagsOutput {
@@ -7481,6 +12489,217 @@ export interface ITalksPageQueryInput {
     keyword: string | undefined;
 }
 
+export class TreeSelectOutput implements ITreeSelectOutput {
+    label: string | undefined;
+    value: any | undefined;
+    children: TreeSelectOutput[] | undefined;
+
+    constructor(data?: ITreeSelectOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.label = _data["label"];
+            this.value = _data["value"];
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children.push(TreeSelectOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TreeSelectOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new TreeSelectOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["label"] = this.label;
+        data["value"] = this.value;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): TreeSelectOutput {
+        const json = this.toJSON();
+        let result = new TreeSelectOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ITreeSelectOutput {
+    label: string | undefined;
+    value: any | undefined;
+    children: TreeSelectOutput[] | undefined;
+}
+
+export class UpdateCategoryInput implements IUpdateCategoryInput {
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: number | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 栏目ID */
+    id: string;
+
+    constructor(data?: IUpdateCategoryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.parentId = _data["parentId"];
+            this.cover = _data["cover"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCategoryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCategoryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["parentId"] = this.parentId;
+        data["cover"] = this.cover;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): UpdateCategoryInput {
+        const json = this.toJSON();
+        let result = new UpdateCategoryInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUpdateCategoryInput {
+    /** 栏目名称 */
+    name: string | undefined;
+    /** 父级id */
+    parentId: number | undefined;
+    /** 封面图 */
+    cover: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 栏目ID */
+    id: string;
+}
+
+export class UpdateCurrentUserInput implements IUpdateCurrentUserInput {
+    /** 姓名 */
+    name: string;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+
+    constructor(data?: IUpdateCurrentUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.gender = _data["gender"];
+            this.nickName = _data["nickName"];
+            this.birthday = _data["birthday"] ? moment(_data["birthday"].toString()) : <any>undefined;
+            this.mobile = _data["mobile"];
+            this.email = _data["email"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCurrentUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCurrentUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["gender"] = this.gender;
+        data["nickName"] = this.nickName;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["mobile"] = this.mobile;
+        data["email"] = this.email;
+        return data;
+    }
+
+    clone(): UpdateCurrentUserInput {
+        const json = this.toJSON();
+        let result = new UpdateCurrentUserInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUpdateCurrentUserInput {
+    /** 姓名 */
+    name: string;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+}
+
 export class UpdateCustomConfigItemInput implements IUpdateCustomConfigItemInput {
     /** 自定义配置Id */
     configId: string;
@@ -7536,6 +12755,779 @@ export interface IUpdateCustomConfigItemInput {
     id: string;
 }
 
+export class UpdateOrgInput implements IUpdateOrgInput {
+    /** 父级Id */
+    parentId: string | undefined;
+    /** 部门名称 */
+    name: string;
+    /** 部门编码 */
+    code: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 部门Id */
+    id: string | undefined;
+
+    constructor(data?: IUpdateOrgInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.parentId = _data["parentId"];
+            this.name = _data["name"];
+            this.code = _data["code"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): UpdateOrgInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateOrgInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
+        data["name"] = this.name;
+        data["code"] = this.code;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): UpdateOrgInput {
+        const json = this.toJSON();
+        let result = new UpdateOrgInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUpdateOrgInput {
+    /** 父级Id */
+    parentId: string | undefined;
+    /** 部门名称 */
+    name: string;
+    /** 部门编码 */
+    code: string | undefined;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 部门Id */
+    id: string | undefined;
+}
+
+export class UpdateSysMenuInput implements IUpdateSysMenuInput {
+    /** 菜单名称 */
+    name: string;
+    type: MenuType;
+    /** 权限编码 */
+    code: string | undefined;
+    /** 父级菜单 */
+    parentId: string | undefined;
+    /** 路由名 */
+    routeName: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件路径 */
+    component: string | undefined;
+    /** 重定向地址 */
+    redirect: string | undefined;
+    /** 菜单图标 */
+    icon: string | undefined;
+    /** 是否内嵌页面 */
+    isIframe: boolean;
+    /** 外链地址 */
+    link: string | undefined;
+    /** 是否可见 */
+    isVisible: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否固定 */
+    isFixed: boolean;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 菜单/按钮Id */
+    id: string;
+
+    constructor(data?: IUpdateSysMenuInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.type = _data["type"];
+            this.code = _data["code"];
+            this.parentId = _data["parentId"];
+            this.routeName = _data["routeName"];
+            this.path = _data["path"];
+            this.component = _data["component"];
+            this.redirect = _data["redirect"];
+            this.icon = _data["icon"];
+            this.isIframe = _data["isIframe"];
+            this.link = _data["link"];
+            this.isVisible = _data["isVisible"];
+            this.isKeepAlive = _data["isKeepAlive"];
+            this.isFixed = _data["isFixed"];
+            this.status = _data["status"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSysMenuInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSysMenuInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["code"] = this.code;
+        data["parentId"] = this.parentId;
+        data["routeName"] = this.routeName;
+        data["path"] = this.path;
+        data["component"] = this.component;
+        data["redirect"] = this.redirect;
+        data["icon"] = this.icon;
+        data["isIframe"] = this.isIframe;
+        data["link"] = this.link;
+        data["isVisible"] = this.isVisible;
+        data["isKeepAlive"] = this.isKeepAlive;
+        data["isFixed"] = this.isFixed;
+        data["status"] = this.status;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): UpdateSysMenuInput {
+        const json = this.toJSON();
+        let result = new UpdateSysMenuInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUpdateSysMenuInput {
+    /** 菜单名称 */
+    name: string;
+    type: MenuType;
+    /** 权限编码 */
+    code: string | undefined;
+    /** 父级菜单 */
+    parentId: string | undefined;
+    /** 路由名 */
+    routeName: string | undefined;
+    /** 路由地址 */
+    path: string | undefined;
+    /** 组件路径 */
+    component: string | undefined;
+    /** 重定向地址 */
+    redirect: string | undefined;
+    /** 菜单图标 */
+    icon: string | undefined;
+    /** 是否内嵌页面 */
+    isIframe: boolean;
+    /** 外链地址 */
+    link: string | undefined;
+    /** 是否可见 */
+    isVisible: boolean;
+    /** 是否缓存 */
+    isKeepAlive: boolean;
+    /** 是否固定 */
+    isFixed: boolean;
+    status: AvailabilityStatus;
+    /** 排序值（值越小越靠前） */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 菜单/按钮Id */
+    id: string;
+}
+
+export class UpdateSysRoleInput implements IUpdateSysRoleInput {
+    /** 角色名称 */
+    name: string;
+    status: AvailabilityStatus;
+    /** 角色编码 */
+    code: string;
+    /** 排序值 */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 授权按钮菜单Id */
+    menus: string[];
+    /** 角色Id */
+    id: string | undefined;
+
+    constructor(data?: IUpdateSysRoleInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.menus = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.status = _data["status"];
+            this.code = _data["code"];
+            this.sort = _data["sort"];
+            this.remark = _data["remark"];
+            if (Array.isArray(_data["menus"])) {
+                this.menus = [] as any;
+                for (let item of _data["menus"])
+                    this.menus.push(item);
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSysRoleInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSysRoleInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["code"] = this.code;
+        data["sort"] = this.sort;
+        data["remark"] = this.remark;
+        if (Array.isArray(this.menus)) {
+            data["menus"] = [];
+            for (let item of this.menus)
+                data["menus"].push(item);
+        }
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): UpdateSysRoleInput {
+        const json = this.toJSON();
+        let result = new UpdateSysRoleInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUpdateSysRoleInput {
+    /** 角色名称 */
+    name: string;
+    status: AvailabilityStatus;
+    /** 角色编码 */
+    code: string;
+    /** 排序值 */
+    sort: number;
+    /** 备注 */
+    remark: string | undefined;
+    /** 授权按钮菜单Id */
+    menus: string[];
+    /** 角色Id */
+    id: string | undefined;
+}
+
+export class UpdateUserInput implements IUpdateUserInput {
+    /** 用户名 */
+    userName: string;
+    /** 姓名 */
+    name: string;
+    gender: Gender;
+    /** 组织机构id */
+    orgId: string | undefined;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    status: AvailabilityStatus;
+    /** 邮箱 */
+    email: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 角色 */
+    roles: string[] | undefined;
+    /** 用户Id */
+    id: string | undefined;
+
+    constructor(data?: IUpdateUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userName = _data["userName"];
+            this.name = _data["name"];
+            this.gender = _data["gender"];
+            this.orgId = _data["orgId"];
+            this.nickName = _data["nickName"];
+            this.birthday = _data["birthday"] ? moment(_data["birthday"].toString()) : <any>undefined;
+            this.mobile = _data["mobile"];
+            this.status = _data["status"];
+            this.email = _data["email"];
+            this.remark = _data["remark"];
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles.push(item);
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["name"] = this.name;
+        data["gender"] = this.gender;
+        data["orgId"] = this.orgId;
+        data["nickName"] = this.nickName;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["mobile"] = this.mobile;
+        data["status"] = this.status;
+        data["email"] = this.email;
+        data["remark"] = this.remark;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item);
+        }
+        data["id"] = this.id;
+        return data;
+    }
+
+    clone(): UpdateUserInput {
+        const json = this.toJSON();
+        let result = new UpdateUserInput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUpdateUserInput {
+    /** 用户名 */
+    userName: string;
+    /** 姓名 */
+    name: string;
+    gender: Gender;
+    /** 组织机构id */
+    orgId: string | undefined;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    status: AvailabilityStatus;
+    /** 邮箱 */
+    email: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 角色 */
+    roles: string[] | undefined;
+    /** 用户Id */
+    id: string | undefined;
+}
+
+export class UploadFileOutput implements IUploadFileOutput {
+    /** 文件名 */
+    name: string | undefined;
+    /** 附件链接 */
+    url: string | undefined;
+
+    constructor(data?: IUploadFileOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.url = _data["url"];
+        }
+    }
+
+    static fromJS(data: any): UploadFileOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UploadFileOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["url"] = this.url;
+        return data;
+    }
+
+    clone(): UploadFileOutput {
+        const json = this.toJSON();
+        let result = new UploadFileOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUploadFileOutput {
+    /** 文件名 */
+    name: string | undefined;
+    /** 附件链接 */
+    url: string | undefined;
+}
+
+export class UserInfoOutput implements IUserInfoOutput {
+    /** Id */
+    id: string | undefined;
+    /** 姓名 */
+    name: string | undefined;
+    /** 账户名 */
+    userName: string | undefined;
+    /** 头像 */
+    avatar: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 最后登录ip */
+    lastLoginIp: string | undefined;
+    /** 最后登录IP所属地址 */
+    lastLoginAddress: string | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    /** 机构id */
+    orgId: string | undefined;
+    /** 机构名称 */
+    orgName: string | undefined;
+    /** 授权按钮 */
+    authBtnList: string[] | undefined;
+
+    constructor(data?: IUserInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.userName = _data["userName"];
+            this.avatar = _data["avatar"];
+            this.birthday = _data["birthday"] ? moment(_data["birthday"].toString()) : <any>undefined;
+            this.email = _data["email"];
+            this.gender = _data["gender"];
+            this.nickName = _data["nickName"];
+            this.remark = _data["remark"];
+            this.lastLoginIp = _data["lastLoginIp"];
+            this.lastLoginAddress = _data["lastLoginAddress"];
+            this.mobile = _data["mobile"];
+            this.orgId = _data["orgId"];
+            this.orgName = _data["orgName"];
+            if (Array.isArray(_data["authBtnList"])) {
+                this.authBtnList = [] as any;
+                for (let item of _data["authBtnList"])
+                    this.authBtnList.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UserInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["userName"] = this.userName;
+        data["avatar"] = this.avatar;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["email"] = this.email;
+        data["gender"] = this.gender;
+        data["nickName"] = this.nickName;
+        data["remark"] = this.remark;
+        data["lastLoginIp"] = this.lastLoginIp;
+        data["lastLoginAddress"] = this.lastLoginAddress;
+        data["mobile"] = this.mobile;
+        data["orgId"] = this.orgId;
+        data["orgName"] = this.orgName;
+        if (Array.isArray(this.authBtnList)) {
+            data["authBtnList"] = [];
+            for (let item of this.authBtnList)
+                data["authBtnList"].push(item);
+        }
+        return data;
+    }
+
+    clone(): UserInfoOutput {
+        const json = this.toJSON();
+        let result = new UserInfoOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUserInfoOutput {
+    /** Id */
+    id: string | undefined;
+    /** 姓名 */
+    name: string | undefined;
+    /** 账户名 */
+    userName: string | undefined;
+    /** 头像 */
+    avatar: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 最后登录ip */
+    lastLoginIp: string | undefined;
+    /** 最后登录IP所属地址 */
+    lastLoginAddress: string | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    /** 机构id */
+    orgId: string | undefined;
+    /** 机构名称 */
+    orgName: string | undefined;
+    /** 授权按钮 */
+    authBtnList: string[] | undefined;
+}
+
+export class UserPageOutput implements IUserPageOutput {
+    id: string | undefined;
+    /** 姓名 */
+    name: string | undefined;
+    status: AvailabilityStatus;
+    /** 账户名 */
+    userName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+
+    constructor(data?: IUserPageOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.status = _data["status"];
+            this.userName = _data["userName"];
+            this.birthday = _data["birthday"] ? moment(_data["birthday"].toString()) : <any>undefined;
+            this.mobile = _data["mobile"];
+            this.gender = _data["gender"];
+            this.nickName = _data["nickName"];
+            this.createdTime = _data["createdTime"] ? moment(_data["createdTime"].toString()) : <any>undefined;
+            this.email = _data["email"];
+        }
+    }
+
+    static fromJS(data: any): UserPageOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserPageOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["userName"] = this.userName;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["mobile"] = this.mobile;
+        data["gender"] = this.gender;
+        data["nickName"] = this.nickName;
+        data["createdTime"] = this.createdTime ? this.createdTime.toISOString() : <any>undefined;
+        data["email"] = this.email;
+        return data;
+    }
+
+    clone(): UserPageOutput {
+        const json = this.toJSON();
+        let result = new UserPageOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUserPageOutput {
+    id: string | undefined;
+    /** 姓名 */
+    name: string | undefined;
+    status: AvailabilityStatus;
+    /** 账户名 */
+    userName: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 创建时间 */
+    createdTime: moment.Moment | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+}
+
+export class UserPageOutputPageResult implements IUserPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: UserPageOutput[] | undefined;
+
+    constructor(data?: IUserPageOutputPageResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageNo = _data["pageNo"];
+            this.pageSize = _data["pageSize"];
+            this.pages = _data["pages"];
+            this.total = _data["total"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows.push(UserPageOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UserPageOutputPageResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserPageOutputPageResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNo"] = this.pageNo;
+        data["pageSize"] = this.pageSize;
+        data["pages"] = this.pages;
+        data["total"] = this.total;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): UserPageOutputPageResult {
+        const json = this.toJSON();
+        let result = new UserPageOutputPageResult();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IUserPageOutputPageResult {
+    pageNo: number;
+    pageSize: number;
+    pages: number;
+    total: number;
+    rows: UserPageOutput[] | undefined;
+}
+
 export class ZUserInfo implements IZUserInfo {
     id: string | undefined;
     creatorId: string | undefined;
@@ -7546,6 +13538,16 @@ export class ZUserInfo implements IZUserInfo {
     name: string | undefined;
     userName: string | undefined;
     passWord: string | undefined;
+    orgId: string | undefined;
+    gender: Gender;
+    avatar: string | undefined;
+    mobile: string | undefined;
+    birthday: moment.Moment | undefined;
+    email: string | undefined;
+    status: AvailabilityStatus;
+    lastLoginIp: string | undefined;
+    lastLoginAddress: string | undefined;
+    lockExpired: moment.Moment | undefined;
 
     constructor(data?: IZUserInfo) {
         if (data) {
@@ -7567,6 +13569,16 @@ export class ZUserInfo implements IZUserInfo {
             this.name = _data["name"];
             this.userName = _data["userName"];
             this.passWord = _data["passWord"];
+            this.orgId = _data["orgId"];
+            this.gender = _data["gender"];
+            this.avatar = _data["avatar"];
+            this.mobile = _data["mobile"];
+            this.birthday = _data["birthday"] ? moment(_data["birthday"].toString()) : <any>undefined;
+            this.email = _data["email"];
+            this.status = _data["status"];
+            this.lastLoginIp = _data["lastLoginIp"];
+            this.lastLoginAddress = _data["lastLoginAddress"];
+            this.lockExpired = _data["lockExpired"] ? moment(_data["lockExpired"].toString()) : <any>undefined;
         }
     }
 
@@ -7588,6 +13600,16 @@ export class ZUserInfo implements IZUserInfo {
         data["name"] = this.name;
         data["userName"] = this.userName;
         data["passWord"] = this.passWord;
+        data["orgId"] = this.orgId;
+        data["gender"] = this.gender;
+        data["avatar"] = this.avatar;
+        data["mobile"] = this.mobile;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["email"] = this.email;
+        data["status"] = this.status;
+        data["lastLoginIp"] = this.lastLoginIp;
+        data["lastLoginAddress"] = this.lastLoginAddress;
+        data["lockExpired"] = this.lockExpired ? this.lockExpired.toISOString() : <any>undefined;
         return data;
     }
 
@@ -7609,6 +13631,16 @@ export interface IZUserInfo {
     name: string | undefined;
     userName: string | undefined;
     passWord: string | undefined;
+    orgId: string | undefined;
+    gender: Gender;
+    avatar: string | undefined;
+    mobile: string | undefined;
+    birthday: moment.Moment | undefined;
+    email: string | undefined;
+    status: AvailabilityStatus;
+    lastLoginIp: string | undefined;
+    lastLoginAddress: string | undefined;
+    lockExpired: moment.Moment | undefined;
 }
 
 export class ZUserInfoDto implements IZUserInfoDto {
@@ -7619,6 +13651,8 @@ export class ZUserInfoDto implements IZUserInfoDto {
     userName: string | undefined;
     /** 密码 */
     passWord: string | undefined;
+    /** 验证码 */
+    code: string | undefined;
 
     constructor(data?: IZUserInfoDto) {
         if (data) {
@@ -7635,6 +13669,7 @@ export class ZUserInfoDto implements IZUserInfoDto {
             this.name = _data["name"];
             this.userName = _data["userName"];
             this.passWord = _data["passWord"];
+            this.code = _data["code"];
         }
     }
 
@@ -7651,6 +13686,7 @@ export class ZUserInfoDto implements IZUserInfoDto {
         data["name"] = this.name;
         data["userName"] = this.userName;
         data["passWord"] = this.passWord;
+        data["code"] = this.code;
         return data;
     }
 
@@ -7670,6 +13706,142 @@ export interface IZUserInfoDto {
     userName: string | undefined;
     /** 密码 */
     passWord: string | undefined;
+    /** 验证码 */
+    code: string | undefined;
+}
+
+export class ZUserInfoOutput implements IZUserInfoOutput {
+    /** 姓名 */
+    name: string | undefined;
+    /** 账户名 */
+    userName: string | undefined;
+    /** 头像 */
+    avatar: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 最后登录ip */
+    lastLoginIp: string | undefined;
+    /** 最后登录IP所属地址 */
+    lastLoginAddress: string | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    /** 机构id */
+    orgId: string | undefined;
+    /** 机构名称 */
+    orgName: string | undefined;
+    /** 授权按钮 */
+    authBtnList: string[] | undefined;
+
+    constructor(data?: IZUserInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.userName = _data["userName"];
+            this.avatar = _data["avatar"];
+            this.birthday = _data["birthday"] ? moment(_data["birthday"].toString()) : <any>undefined;
+            this.email = _data["email"];
+            this.gender = _data["gender"];
+            this.nickName = _data["nickName"];
+            this.remark = _data["remark"];
+            this.lastLoginIp = _data["lastLoginIp"];
+            this.lastLoginAddress = _data["lastLoginAddress"];
+            this.mobile = _data["mobile"];
+            this.orgId = _data["orgId"];
+            this.orgName = _data["orgName"];
+            if (Array.isArray(_data["authBtnList"])) {
+                this.authBtnList = [] as any;
+                for (let item of _data["authBtnList"])
+                    this.authBtnList.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): ZUserInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ZUserInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["userName"] = this.userName;
+        data["avatar"] = this.avatar;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["email"] = this.email;
+        data["gender"] = this.gender;
+        data["nickName"] = this.nickName;
+        data["remark"] = this.remark;
+        data["lastLoginIp"] = this.lastLoginIp;
+        data["lastLoginAddress"] = this.lastLoginAddress;
+        data["mobile"] = this.mobile;
+        data["orgId"] = this.orgId;
+        data["orgName"] = this.orgName;
+        if (Array.isArray(this.authBtnList)) {
+            data["authBtnList"] = [];
+            for (let item of this.authBtnList)
+                data["authBtnList"].push(item);
+        }
+        return data;
+    }
+
+    clone(): ZUserInfoOutput {
+        const json = this.toJSON();
+        let result = new ZUserInfoOutput();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IZUserInfoOutput {
+    /** 姓名 */
+    name: string | undefined;
+    /** 账户名 */
+    userName: string | undefined;
+    /** 头像 */
+    avatar: string | undefined;
+    /** 生日 */
+    birthday: moment.Moment | undefined;
+    /** 邮箱 */
+    email: string | undefined;
+    gender: Gender;
+    /** 昵称 */
+    nickName: string | undefined;
+    /** 备注 */
+    remark: string | undefined;
+    /** 最后登录ip */
+    lastLoginIp: string | undefined;
+    /** 最后登录IP所属地址 */
+    lastLoginAddress: string | undefined;
+    /** 手机号码 */
+    mobile: string | undefined;
+    /** 机构id */
+    orgId: string | undefined;
+    /** 机构名称 */
+    orgName: string | undefined;
+    /** 授权按钮 */
+    authBtnList: string[] | undefined;
+}
+
+export interface FileParameter {
+    data: any;
+    fileName: string;
 }
 
 export class SwaggerException extends Error {
