@@ -240,7 +240,7 @@ const state = reactive({
 const runTime = (): void => {
   const timespan: number =
     new Date().getTime() -
-    dayjs(blogSetting.value.runTime.format("yyyy/MM/dd") ?? "2023/06/01")
+    dayjs(blogSetting.value.runTime.toString() ?? "2023/06/01")
       .toDate()
       .getTime();
   const msPerDay: number = 24 * 60 * 60 * 1000;
