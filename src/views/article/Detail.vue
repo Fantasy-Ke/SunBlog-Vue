@@ -107,11 +107,11 @@
             <div class="animated fadeInDown reward-main">
               <ul class="reward-all">
                 <li class="reward-item">
-                  <img class="reward-img" :src="blogInfo.websiteConfig.weiXinQRCode" />
+                  <img class="reward-img" :src="blogSetting.wxPayUrl ?? ''" />
                   <div class="reward-desc">微信</div>
                 </li>
                 <li class="reward-item">
-                  <img class="reward-img" :src="blogInfo.websiteConfig.alipayQRCode" />
+                  <img class="reward-img" :src="blogSetting.aliPayUrl ?? ''" />
                   <div class="reward-desc">支付宝</div>
                 </li>
               </ul>
@@ -234,11 +234,10 @@
 // import "https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js";
 import Comment from "../../components/Comment.vue";
 import { computed, ref, onMounted, onUnmounted, nextTick, reactive, inject } from "vue";
-import { images, article, blogInfo } from "../../api/data";
 import markdownToHtml from "../../utils/markdown";
 import Clipboard from "clipboard";
 import Viewer from "viewerjs";
-import { useToast, POSITION } from "vue-toastification";
+import { useToast } from "vue-toastification";
 import * as tocbot from "tocbot";
 import "viewerjs/dist/viewer.css";
 import Share from "../../components/Share/Index.vue";
@@ -252,20 +251,18 @@ import {
 } from "@/shared/service-proxies";
 import { useRoute } from "vue-router";
 import hljs from "highlight.js";
-const appStore = useApp();
 import { storeToRefs } from "pinia";
 import moment from "moment";
 import { useApp } from "@/stores/app";
+const appStore = useApp();
 const { blogSetting } = storeToRefs(appStore);
 const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
 const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
 const detail = ref<HTMLElement | null>(null);
 
-let clipboard: Clipboard | null = null; //ref<Clipboard>();
+let clipboard: Clipboard | null = null;
 let viewer: Viewer | null = null;
 
-//const appStore = useApp();
-//const { blogSetting } = storeToRefs(appStore);
 const toastStore = useToast();
 const route = useRoute();
 const state = reactive({

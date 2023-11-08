@@ -5,9 +5,9 @@
   <!-- 关于我内容 -->
   <v-card class="blog-container">
     <div class="my-wrapper">
-      <v-avatar size="110" class="author-avatar" :image="img"> </v-avatar>
+      <v-avatar size="110" class="author-avatar" :image="info.avatarUrl ?? img"> </v-avatar>
     </div>
-    <!-- <div class="about-content markdown-body" v-html="aboutContent" /> -->
+    <div class="about-content markdown-body" v-html="info.about" />
   </v-card>
 </template>
 
@@ -15,10 +15,11 @@
 import img from "../assets/images/1.jpg";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { images } from "../api/data";
 import { useApp } from "@/stores/app";
+import { storeToRefs } from "pinia";
 const route = useRoute();
 const appStore = useApp();
+const { info } = storeToRefs(appStore);
 const cover = computed(() => {
   return "background: url(" + appStore.aboutCover() + ") center center / cover no-repeat";
 });

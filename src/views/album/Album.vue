@@ -34,14 +34,10 @@
 
 <script setup lang="ts">
 import { AlbumsOutput, Pagination, AlbumsCsServiceProxy } from "@/shared/service-proxies";
-import { images, albums } from "../../api/data";
 import { computed, inject, onMounted, reactive, watch } from "vue";
-import { useRoute } from "vue-router";
 import { useApp } from "@/stores/app";
 
 const _albumsCService = new AlbumsCsServiceProxy(inject("$baseurl"), inject("$api"));
-
-const route = useRoute();
 const appStore = useApp();
 const state = reactive({
   query: {

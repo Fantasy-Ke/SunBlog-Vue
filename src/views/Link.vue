@@ -24,7 +24,7 @@
     <blockquote>
       <div>名称：{{ blogSetting.siteName }}</div>
       <div>简介：{{ blogSetting.description }}</div>
-      <div>头像：{{ blogSetting.logo ?? avatar }}</div>
+      <div>头像：{{ blogSetting.logoUrl ?? avatar }}</div>
     </blockquote>
     <div class="mt-5 mb-5">需要交换友链的可前往个人中心填写💖</div>
     <blockquote class="mb-10">友链信息展示需要，您的信息格式要包含：名称、介绍、链接、头像</blockquote>
@@ -36,8 +36,6 @@
 <script setup lang="ts">
 import Comment from "../components/Comment.vue";
 import { computed, inject, onMounted, reactive } from "vue";
-import { useRoute } from "vue-router";
-import { images, linkList } from "../api/data";
 import { useApp } from "@/stores/app";
 import { FriendLinkOutput, OAuthsServiceProxy } from "@/shared/service-proxies";
 import { storeToRefs } from "pinia";

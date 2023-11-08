@@ -63,19 +63,15 @@
 </template>
 
 <script setup lang="ts">
-import { images, talks as talkList } from "../api/data";
 import { computed, inject, onMounted, reactive, watch } from "vue";
-import { useRoute } from "vue-router";
 import Viewer from "viewerjs";
 import "viewerjs/dist/viewer.css";
 import { Pagination, TalksCsServiceProxy, TalksOutput } from "@/shared/service-proxies";
-import moment from "moment";
 import { storeToRefs } from "pinia";
 import { useApp } from "@/stores/app";
 const appStore = useApp();
 const { info } = storeToRefs(appStore);
 const _talksCService = new TalksCsServiceProxy(inject("$baseurl"), inject("$api"));
-const route = useRoute();
 
 const state = reactive({
   query: {} as Pagination,
@@ -84,10 +80,7 @@ const state = reactive({
 });
 
 const previewImg = (e: Event): void => {
-  const viewer = new Viewer(e.target as HTMLElement, {
-    // exit(){
-    // }
-  });
+  const viewer = new Viewer(e.target as HTMLElement, {});
   viewer.show();
 };
 

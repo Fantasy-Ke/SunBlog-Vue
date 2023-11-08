@@ -19,12 +19,8 @@
 
 <script setup lang="ts">
 import { computed, inject, onMounted, reactive } from "vue";
-import { useRoute } from "vue-router";
-import { images } from "../../api/data";
-import { categoryies } from "../../api/data";
 import { ArticleCsServiceProxy, ArticleReportOutput, CategoryOutput } from "@/shared/service-proxies";
 import { useApp } from "@/stores/app";
-const route = useRoute();
 const appStore = useApp();
 const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
 const state = reactive({

@@ -94,7 +94,7 @@
         <v-card class="animated zoomIn blog-card">
           <div class="author-wrapper">
             <!-- 博主头像 -->
-            <v-avatar size="110" class="author-avatar" :image="info.avatar!" />
+            <v-avatar size="110" class="author-avatar" :image="info.avatarUrl!" />
             <div style="font-size: 1.375rem; margin-top: 0.625rem">
               {{ info.nikeName }}
             </div>
@@ -189,12 +189,10 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-import { ref, reactive, onMounted, computed, inject, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { reactive, onMounted, computed, inject, watch } from "vue";
 import EasyTyper from "easy-typer-js/src/ts";
 import Swiper from "../components/Swiper.vue";
-import { talkList as talks, articles, images } from "../api/data";
-import img from "../assets/images/1.jpg";
 import { useToast } from "@/stores/toast";
 import moment from "moment";
 import {
@@ -207,8 +205,12 @@ import {
 } from "@/shared/service-proxies";
 import { useApp } from "@/stores/app";
 import { storeToRefs } from "pinia";
+import { dayjs } from "element-plus";
+import { useAuth } from "@/stores/auth";
 const route = useRoute();
+const router = useRouter();
 const appStore = useApp();
+const authStore = useAuth();
 const { blogSetting, info, report } = storeToRefs(appStore);
 const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
 const _talksCService = new TalksCsServiceProxy(inject("$baseurl"), inject("$api"));
@@ -234,15 +236,13 @@ const state = reactive({
     items: [] as ArticleOutput[], //文章列表
   },
 });
-// 运行时长
-const time = ref<string>("");
-
-const page = reactive({
-  articles: [] as Array<any>,
-});
 
 const runTime = (): void => {
-  const timespan: number = new Date().getTime() - new Date(2020, 12).getTime();
+  const timespan: number =
+    new Date().getTime() -
+    dayjs(blogSetting.value.runTime.format("yyyy/MM/dd") ?? "2023/06/01")
+      .toDate()
+      .getTime();
   const msPerDay: number = 24 * 60 * 60 * 1000;
   const daysold: number = Math.floor(timespan / msPerDay);
   let str: string = "";
@@ -251,7 +251,7 @@ const runTime = (): void => {
   str += day.getHours() + "时";
   str += day.getMinutes() + "分";
   str += day.getSeconds() + "秒";
-  time.value = str;
+  state.runTime = str;
 };
 
 const articlePage = async () => {
@@ -271,13 +271,20 @@ const articlePage = async () => {
     });
 };
 
-onMounted(() => {
+onMounted(async () => {
   new EasyTyper(
     state.print,
     blogSetting.value.motto ?? "虽然人生在世有种种不如意，但你仍可以在幸福与不幸中做选择。-王小波",
     () => {},
     () => {}
   );
+  const code = route.query.code || route.params.code;
+  if (code) {
+    const res = await authStore.login(code as string);
+    if (res) {
+      router.push(res);
+    }
+  }
 
   _talksCService.getList({ pageNo: 1, pageSize: 10 } as Pagination).then((res) => {
     let data = res.result;
@@ -286,7 +293,6 @@ onMounted(() => {
       articlePage();
     }
   });
-  page.articles = articles;
   setInterval(() => {
     runTime();
   }, 1000);

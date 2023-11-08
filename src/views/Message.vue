@@ -27,8 +27,6 @@
 //弹幕开源地址：https://github.com/hellodigua/vue-danmaku/tree/vue3
 import vueDanmaku from "vue3-danmaku";
 import { computed, ref, reactive, onMounted, inject } from "vue";
-import { useRoute } from "vue-router";
-import { images, messageList } from "../api/data";
 import { useApp } from "@/stores/app";
 import { useAuth } from "@/stores/auth";
 import { useToast } from "@/stores/toast";

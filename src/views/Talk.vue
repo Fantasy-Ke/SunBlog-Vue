@@ -8,7 +8,7 @@
     <div class="talk-wrapper">
       <!-- 用户信息 -->
       <div class="user-info-wrapper">
-        <v-avatar size="36" class="user-avatar" :image="info.avatar!" />
+        <v-avatar size="36" class="user-avatar" :image="info.avatarUrl!" />
         <div class="user-detail-wrapper">
           <div class="user-nickname">
             {{ info.nikeName }}
@@ -55,7 +55,6 @@ import { reactive, computed, inject, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import Viewer from "viewerjs";
 import "viewerjs/dist/viewer.css";
-import { images, talks as talkList, talks } from "../api/data";
 import { CommentsCsServiceProxy, KeyDto, TalkDetailOutput, TalksCsServiceProxy } from "@/shared/service-proxies";
 import { useApp } from "@/stores/app";
 import { storeToRefs } from "pinia";

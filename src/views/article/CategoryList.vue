@@ -61,7 +61,6 @@
 
 <script setup lang="ts">
 import { computed, inject, onMounted, reactive, watch } from "vue";
-import { articles, images } from "../../api/data";
 import { useRoute } from "vue-router";
 import { ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput } from "@/shared/service-proxies";
 import moment from "moment";

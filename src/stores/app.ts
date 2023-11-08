@@ -43,8 +43,6 @@ export const useApp = defineStore("app", () => {
    * 初始化博客基本信息
    */
   const init = async () => {
-    console.log(123456);
-
     if (app.isInit) {
       return;
     }
@@ -75,7 +73,6 @@ export const useApp = defineStore("app", () => {
           keyword: "Fantasy-Ke的博客",
           visitorNumbers: 0,
         } as any);
-
       app.covers.home = covers.Home ?? ["/cover/default.jpg"];
       app.covers.about = covers.About ?? ["/cover/about.jpg"];
       app.covers.archives = covers.Archives ?? ["/cover/archives.jpg"];
@@ -88,6 +85,8 @@ export const useApp = defineStore("app", () => {
       app.covers.link = covers.Link ?? ["/cover/default.jpg"];
       app.covers.tagList = covers.TagList ?? ["/cover/default.jpg"];
       app.covers.categories = covers.Categories ?? ["/cover/default.jpg"];
+
+      console.log(app);
     });
   };
   /**

@@ -18,12 +18,11 @@ export const useAuth = defineStore("auth", () => {
    * @returns
    */
   const login = async (code: string) => {
-    await _oAuthCService.login(code).then(async (res) => {
-      if (res.success) {
-        await getUserInfo();
-      }
-      return res.result;
-    });
+    const { result, success } = await _oAuthCService.login(code);
+    if (success) {
+      await getUserInfo();
+    }
+    return result;
   };
 
   /**
