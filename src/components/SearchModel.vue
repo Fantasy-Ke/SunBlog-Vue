@@ -1,6 +1,6 @@
 <template>
- <!-- 搜索框 -->
- <v-dialog
+  <!-- 搜索框 -->
+  <v-dialog
     v-bind:model-value="isShow"
     @update:model-value="handlerUpdateValue"
     max-width="600"
@@ -22,25 +22,15 @@
       <div class="search-result-wrapper">
         <hr class="divider" />
         <ul>
-          <li
-            class="search-reslut"
-            v-for="item of articleList.list"
-            :key="item.id"
-          >
+          <li class="search-reslut" v-for="item of articleList.list" :key="item.id">
             <!-- 文章标题 -->
             <a @click="goTo(item.id)" v-html="item.title" />
             <!-- 文章内容 -->
-            <p
-              class="search-reslut-content text-justify"
-              v-html="item.summary"
-            />
+            <p class="search-reslut-content text-justify" v-html="item.summary" />
           </li>
         </ul>
         <!-- 搜索结果不存在提示 -->
-        <div
-          v-show="keywords.trim().length === 0 && articleList.list.length == 0"
-          style="font-size: 0.875rem"
-        >
+        <div v-show="keywords.trim().length === 0 && articleList.list.length == 0" style="font-size: 0.875rem">
           找不到您查询的内容：{{ keywords }}
         </div>
       </div>
@@ -51,9 +41,8 @@
 <script setup lang="ts">
 import { computed, ref, watch, reactive, inject } from "vue";
 import { useRouter } from "vue-router";
-import { articles } from "../api/data";
-import { ArticleCsServiceProxy, ArticleListQueryInput } from "@/shared/service-proxies";
-const _articleCService = new ArticleCsServiceProxy(inject('$baseurl'),inject('$api'));
+import { ArticleCsServiceProxy, ArticleListQueryInput, ArticleOutput } from "@/shared/service-proxies";
+const _articleCService = new ArticleCsServiceProxy(inject("$baseurl"), inject("$api"));
 
 defineProps<{
   isShow: boolean;
@@ -78,7 +67,7 @@ const handlerUpdateValue = (v: boolean) => {
   emit("update:isShow", v);
 };
 const articleList = reactive({
-  list: articles,
+  list: [] as ArticleOutput[],
 });
 
 const isMobile = computed(() => {
@@ -92,16 +81,17 @@ watch(keywords, async (val: string) => {
   if (val.trim().length === 0) {
     articleList.list = [];
   } else {
-    await _articleCService.getList({
-      keyword: val,
-      pageNo: 1,
-      pageSize: 10,
-    } as ArticleListQueryInput).then(res=>{
-      if(res.success){
-        articleList.list = res.result?.rows ?? [];
-      }
-    });
-    
+    await _articleCService
+      .getList({
+        keyword: val,
+        pageNo: 1,
+        pageSize: 10,
+      } as ArticleListQueryInput)
+      .then((res) => {
+        if (res.success) {
+          articleList.list = res.result?.rows ?? [];
+        }
+      });
   }
 });
 watch(isMobile, () => {
