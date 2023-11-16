@@ -185,7 +185,7 @@ const searchModelHandel = () => {
 };
 
 const handleLogin = async () => {
-  await _oAuthCService.getIpAddress("qq").then((res) => {
+  await _oAuthCService.getIpAddress("gitee").then((res) => {
     location.href = res.result!;
   });
 };

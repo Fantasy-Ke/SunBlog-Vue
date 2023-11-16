@@ -156,7 +156,7 @@ const onSubmit = async () => {
 };
 onMounted(async () => {
   if (!info.value) {
-    const { result } = await _oAuthCService.getIpAddress("qq");
+    const { result } = await _oAuthCService.getIpAddress("gitee");
     location.href = result!;
   }
   if (info.value?.status === 1) {

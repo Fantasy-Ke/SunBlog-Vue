@@ -144,7 +144,7 @@ const { drawer } = storeToRefs(useDrawerSettingStore());
 const appStore = useApp();
 const { blogSetting, info, report } = storeToRefs(appStore);
 const handleLogin = async () => {
-  const { result } = await _oAuthCService.getIpAddress("qq");
+  const { result } = await _oAuthCService.getIpAddress("gitee");
   location.href = result!;
 };
 const handleLoginOut = () => {
