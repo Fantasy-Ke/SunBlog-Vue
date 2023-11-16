@@ -11,7 +11,7 @@ jobs:
       - name: login aliyun
         run: |
           sudo docker login --username=${{ secrets.ALINAME }} --password=${{ secrets.ALIPASSWORD }}  registry.cn-hangzhou.aliyuncs.com
-      
+
       - name: Build Docker Image
         run: |
           image_name="${{ secrets.USERNAME }}/sunblog"
@@ -28,7 +28,7 @@ jobs:
           tag_name="${{secrets.VUETAG}}"
           sudo docker tag  $image_name:$tag_name registry.cn-hangzhou.aliyuncs.com/learn-zhou/zhou-learn:$tag_name
           sudo docker push registry.cn-hangzhou.aliyuncs.com/learn-zhou/zhou-learn:$tag_name
-  
+
   deploy:
     needs: build
     runs-on: self-hosted
@@ -38,7 +38,7 @@ jobs:
           sudo docker login --username=${{ secrets.ALINAME }} --password=${{ secrets.ALIPASSWORD }}  registry.cn-hangzhou.aliyuncs.com
       - name: check container
         run: |
-          container_name="sunblog"
+          container_name="sunblogvue"
           tag_name="${{secrets.IMAGETAG}}"
           if docker ps -a | grep $container_name > /dev/null ; then
             echo "Docker container already exists, removing..."        
@@ -53,7 +53,7 @@ jobs:
            docker rmi $image_name:$tag_name
           fi
           sudo  docker pull ${{ secrets.ALIREPOSITORY }}:$tag_name
-      
+
       - name: Run Docker container
         run: |
           container_name="sunblog"
