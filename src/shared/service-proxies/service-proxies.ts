@@ -5366,17 +5366,13 @@ export class OAuthsServiceProxy {
 
     /**
      * 授权回调
-     * @param type (optional) 授权类型
      * @param code (optional) 
      * @param state (optional) 缓存唯一ID
+     * @param type (optional) 授权类型
      * @return Success
      */
-    callback(type: string | undefined, code: string | undefined, state: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
+    callback(code: string | undefined, state: string | undefined, type: string | undefined, cancelToken?: CancelToken): Promise<ZEngineResponse<void>> {
         let url_ = this.baseUrl + "/api/OAuths/Callback?";
-        if (type === null)
-            throw new Error("The parameter 'type' cannot be null.");
-        else if (type !== undefined)
-            url_ += "type=" + encodeURIComponent("" + type) + "&";
         if (code === null)
             throw new Error("The parameter 'code' cannot be null.");
         else if (code !== undefined)
@@ -5385,10 +5381,14 @@ export class OAuthsServiceProxy {
             throw new Error("The parameter 'state' cannot be null.");
         else if (state !== undefined)
             url_ += "state=" + encodeURIComponent("" + state) + "&";
+        if (type === null)
+            throw new Error("The parameter 'type' cannot be null.");
+        else if (type !== undefined)
+            url_ += "type=" + encodeURIComponent("" + type) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
-            method: "POST",
+            method: "GET",
             url: url_,
             headers: {
             },
@@ -5441,7 +5441,7 @@ export class OAuthsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
-            method: "POST",
+            method: "GET",
             url: url_,
             headers: {
                 "Accept": "text/plain"
