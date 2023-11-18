@@ -281,8 +281,8 @@ onMounted(async () => {
   const code = route.query.code || route.params.code;
   if (code) {
     const res = await authStore.login(code as string);
-    if (res) {
-      router.push(res);
+    if (res.redirectUrl) {
+      router.push(res.redirectUrl);
     }
   }
 

@@ -2,16 +2,14 @@ import { AppConsts } from "@/assets/appConst/AppConsts";
 import { useToast } from "@/stores/toast";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { Session } from "./storage";
+import { useUserStore } from "@/stores/user";
 
 // token 键定义
 export const accessTokenKey = "access-token";
 export const refreshAccessTokenKey = `x-${accessTokenKey}`;
 
 // 清除 token
-export const clearAccessTokens = () => {
-  Session.remove(accessTokenKey);
-  Session.remove(refreshAccessTokenKey);
-};
+export const clearAccessTokens = () => {};
 
 /**
  * 检查并存储授权信息
@@ -68,23 +66,28 @@ class Axios {
     // request 拦截器 axios 的一些配置
     this.apiHttpClient.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        const accessToken = Session.getString(accessTokenKey);
-        if (accessToken) {
-          // 将 token 添加到请求报文头中
-          config.headers!["Authorization"] = `Bearer ${accessToken}`;
-          // 判断 accessToken 是否过期
-          const jwt: any = decryptJWT(accessToken);
-          const exp = getJWTDate(jwt.exp as number);
-          //token已过期
-          if (new Date() >= exp) {
-            // 获取刷新 token
-            const refreshAccessToken = Session.getString(refreshAccessTokenKey);
-            // 携带刷新 token
-            if (refreshAccessToken) {
-              config.headers!["X-Authorization"] = `Bearer ${refreshAccessToken}`;
-            }
-          }
+        const userStore = useUserStore();
+        console.log(userStore);
+
+        if (config.headers && typeof config.headers.set === "function") {
+          config.headers.set("Authorization", `Bearer ${userStore.zToken?.accessToken}`);
         }
+        // if (accessToken) {
+        //   // 将 token 添加到请求报文头中
+        //   config.headers!["Authorization"] = `Bearer ${accessToken}`;
+        //   // 判断 accessToken 是否过期
+        //   // const jwt: any = decryptJWT(accessToken);
+        //   // const exp = getJWTDate(jwt.exp as number);
+        //   // //token已过期
+        //   // if (new Date() >= exp) {
+        //   //   // 获取刷新 token
+        //   //   const refreshAccessToken = Session.getString(refreshAccessTokenKey);
+        //   //   // 携带刷新 token
+        //   //   if (refreshAccessToken) {
+        //   //     config.headers!["X-Authorization"] = `Bearer ${refreshAccessToken}`;
+        //   //   }
+        //   // }
+        // }
 
         return config;
       },
@@ -97,12 +100,8 @@ class Axios {
     this.apiHttpClient.interceptors.response.use(
       async (res: AxiosResponse) => {
         // 检查并存储授权信息
-        checkAndStoreAuthentication(res);
+        // checkAndStoreAuthentication(res);
         const data = res.data;
-        // if (res.config.url?.toLocaleLowerCase() === "/file/upload".toLowerCase()) {
-        //   return res;
-        // }
-
         // code为200 或 返回的是文件流 直接返回
         if (data.statusCode === 200 || res.config.responseType === "blob") {
           return res;

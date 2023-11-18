@@ -1,4 +1,4 @@
-const domain = "https://oss.37czone.com/emoji/";
+const domain = "/emoji/";
 const emoji: Record<string, string> = {
   "[18禁]": domain + "18jin" + ".png",
   "[爱慕]": domain + "aimu" + ".png",
