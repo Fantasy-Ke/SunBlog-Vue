@@ -2452,13 +2452,18 @@ pify@^2.3.0:
   resolved "https://registry.npmmirror.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
   integrity sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==
 
-pinia@^2.0.35:
-  version "2.0.35"
-  resolved "https://registry.npmmirror.com/pinia/-/pinia-2.0.35.tgz#aa2597038bb55ea14ad689f83065d2814ebb8c10"
-  integrity sha512-P1IKKQWhxGXiiZ3atOaNI75bYlFUbRxtJdhPLX059Z7+b9Z04rnTZdSY8Aph1LA+/4QEMAYHsTQ638Wfe+6K5g==
+pinia-plugin-persistedstate@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/pinia-plugin-persistedstate/-/pinia-plugin-persistedstate-3.2.0.tgz#9932ca2ae88aa6c0d6763bebc6447d7bd1f097d0"
+  integrity sha512-tZbNGf2vjAQcIm7alK40sE51Qu/m9oWr+rEgNm/2AWr1huFxj72CjvpQcIQzMknDBJEkQznCLAGtJTIcLKrKdw==
+
+pinia@^2.1.6:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/pinia/-/pinia-2.1.7.tgz#4cf5420d9324ca00b7b4984d3fbf693222115bbc"
+  integrity sha512-+C2AHFtcFqjPih0zpYuvof37SFxMQ7OEG2zV9jRI12i9BOy3YQVAHwdKtyyc8pDcDyIc33WCIsZaCFWU7WWxGQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
-    vue-demi "*"
+    vue-demi ">=0.14.5"
 
 pkg-dir@^4.1.0:
   version "4.2.0"
@@ -3333,6 +3338,11 @@ vue-demi@*:
   version "0.14.0"
   resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.14.0.tgz#dcfd9a9cf9bb62ada1582ec9042372cf67ca6190"
   integrity sha512-gt58r2ogsNQeVoQ3EhoUAvUsH9xviydl0dWJj7dabBC/2L4uBId7ujtCwDRD0JhkGsV1i0CtfLAeyYKBht9oWg==
+
+vue-demi@>=0.14.5:
+  version "0.14.6"
+  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.6.tgz#dc706582851dc1cdc17a0054f4fec2eb6df74c92"
+  integrity sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==
 
 vue-eslint-parser@^9.0.1, vue-eslint-parser@^9.1.1:
   version "9.1.1"
