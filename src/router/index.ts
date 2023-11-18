@@ -8,6 +8,13 @@ import pinia from "@/stores";
 const appStore = useApp(pinia);
 const routes: Array<RouteRecordRaw> = [
   {
+    path: "/:catchAll(.*)",
+    redirect: "/index",
+    meta: {
+      menuHide: true,
+    },
+  },
+  {
     name: "home",
     path: "/index",
     component: Index,
