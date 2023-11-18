@@ -10,7 +10,7 @@
   >
     <!-- 博主介绍 -->
     <div class="blogger-info">
-      <v-avatar size="110" :image="info.avatar!" style="margin-bottom: 0.5rem"> </v-avatar>
+      <v-avatar size="110" :image="info.avatarUrl!" style="margin-bottom: 0.5rem"> </v-avatar>
     </div>
     <!-- 博客信息 -->
     <div class="blog-info-wrapper">
@@ -37,7 +37,7 @@
     <!-- 页面导航 -->
     <div class="menu-container">
       <div class="menus-item">
-        <router-link to="/">
+        <router-link to="/index">
           <!-- <i class="iconfont iconzhuye" />  -->
           <v-icon size="small">mdi mdi-home</v-icon>
           首页
@@ -133,11 +133,9 @@
 import { inject, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useDrawerSettingStore } from "../../stores/drawerSetting";
-import img from "@/assets/images/1.jpg";
 import { useAuth } from "@/stores/auth";
 import { useApp } from "@/stores/app";
 import { OAuthsServiceProxy } from "@/shared/service-proxies";
-const isLogin = ref(false);
 const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), inject("$api"));
 const authStore = useAuth();
 const { drawer } = storeToRefs(useDrawerSettingStore());

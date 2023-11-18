@@ -30,7 +30,7 @@
           </a>
         </div>
         <div class="menus-item">
-          <router-link class="menu-btn" to="/">
+          <router-link class="menu-btn" to="/index">
             <!-- <i class="iconfont iconzhuye" />  -->
             <v-icon size="small">mdi mdi-home</v-icon>
             首页
@@ -157,8 +157,10 @@ import { useDrawerSettingStore } from "../../stores/drawerSetting";
 import SearchModel from "../SearchModel.vue";
 import { OAuthsServiceProxy } from "@/shared/service-proxies";
 import { useAuth } from "@/stores/auth";
+import { useToast } from "@/stores/toast";
 const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), inject("$api"));
 const authStore = useAuth();
+const toast = useToast();
 const vm = reactive({
   scrollTop: 0,
   navClass: "nav",
