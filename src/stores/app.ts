@@ -57,7 +57,7 @@ export const useApp = defineStore("app", () => {
           motto: "凡是过往，皆为序章",
           qq: "2246080525",
           avatar: "/cover/login.jpg",
-        } as BloggerInfo);
+        } as unknown as BloggerInfo);
       app.blogSetting =
         data!.site ??
         ({
