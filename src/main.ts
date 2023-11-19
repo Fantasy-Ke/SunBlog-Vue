@@ -2,7 +2,6 @@ import App from "./App.vue";
 
 // Composables
 import { createApp } from "vue";
-
 // Plugins
 import { registerPlugins, registerglobal } from "@/plugins";
 import ElementPlus from "element-plus";
@@ -21,16 +20,11 @@ import { AppPreBootstrap } from "./AppPreBootstrap";
 async function start() {
   const app = createApp(App);
   registerPlugins(app);
-  const options: PluginOptions = {
-    // You can set your default options here
-  };
+  const options: PluginOptions = {};
   app.use(InfiniteLoading).use(Toast, options);
   app.use(ElementPlus);
-  // app.mixin(messageComponent);
-  // app.mixin(SharedComponents);
   app.mount("#app");
   registerglobal(app);
-  app.provide("$message", Toast);
 }
 
 AppPreBootstrap.run(() => {
