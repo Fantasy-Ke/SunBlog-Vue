@@ -188,6 +188,7 @@ const searchModelHandel = () => {
 
 const handleLogin = async () => {
   await _oAuthCService.getIpAddress("gitee").then((res) => {
+    debugger;
     location.href = res.result!;
   });
 };
