@@ -67,8 +67,6 @@ class Axios {
     this.apiHttpClient.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         const userStore = useUserStore();
-        console.log(userStore);
-
         if (config.headers && typeof config.headers.set === "function") {
           config.headers.set("Authorization", `Bearer ${userStore.zToken?.accessToken}`);
         }

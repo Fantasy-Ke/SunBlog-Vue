@@ -187,10 +187,9 @@ const searchModelHandel = () => {
   vm.isShow = true;
 };
 
-const handleLogin = () => {
-  _oAuthCService.getIpAddress("gitee").then((res) => {
-    console.log(res);
-    //location.href = res.result!;
+const handleLogin = async () => {
+  await _oAuthCService.getIpAddress("gitee").then((res) => {
+    location.href = res.result!;
   });
 };
 const handleLoginOut = () => {
