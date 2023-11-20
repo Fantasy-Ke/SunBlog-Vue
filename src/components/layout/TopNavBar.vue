@@ -158,7 +158,8 @@ import SearchModel from "../SearchModel.vue";
 import { OAuthsServiceProxy } from "@/shared/service-proxies";
 import { useAuth } from "@/stores/auth";
 import { useToast } from "@/stores/toast";
-const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), inject("$api"));
+import apiHttpClient from "@/utils/api-http-client";
+const _oAuthCService = new OAuthsServiceProxy(inject("$baseurl"), apiHttpClient as any);
 const authStore = useAuth();
 const toast = useToast();
 const vm = reactive({
