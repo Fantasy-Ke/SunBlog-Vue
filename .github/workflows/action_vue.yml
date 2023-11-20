@@ -56,6 +56,6 @@ jobs:
 
       - name: Run Docker container
         run: |
-          container_name="sunblog"
+          container_name="sunblogvue"
           tag_name="${{secrets.VUETAG}}"
           sudo docker run --name $container_name -p ${{secrets.VUEPORT}}:80 -d ${{ secrets.ALIREPOSITORY }}:$tag_name
