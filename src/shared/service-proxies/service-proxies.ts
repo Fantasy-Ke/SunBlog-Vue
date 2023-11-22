@@ -9222,6 +9222,7 @@ export class BloggerInfo implements IBloggerInfo {
     gitee: string | undefined;
     motto: string | undefined;
     about: string | undefined;
+    donation: string | undefined;
 
     constructor(data?: IBloggerInfo) {
         if (data) {
@@ -9246,6 +9247,7 @@ export class BloggerInfo implements IBloggerInfo {
             this.gitee = _data["gitee"];
             this.motto = _data["motto"];
             this.about = _data["about"];
+            this.donation = _data["donation"];
         }
     }
 
@@ -9270,6 +9272,7 @@ export class BloggerInfo implements IBloggerInfo {
         data["gitee"] = this.gitee;
         data["motto"] = this.motto;
         data["about"] = this.about;
+        data["donation"] = this.donation;
         return data;
     }
 
@@ -9290,6 +9293,7 @@ export interface IBloggerInfo {
     gitee: string | undefined;
     motto: string | undefined;
     about: string | undefined;
+    donation: string | undefined;
 }
 
 export class BlogOutput implements IBlogOutput {
@@ -9977,6 +9981,7 @@ export enum CoverType {
     _9 = 9,
     _10 = 10,
     _11 = 11,
+    _12 = 12,
 }
 
 export class CreateOrUpdateAlbumsInput implements ICreateOrUpdateAlbumsInput {

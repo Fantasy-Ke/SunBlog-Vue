@@ -54,7 +54,7 @@
         <router-link to="/albums">
           <!-- <i class="iconfont iconxiangce1" />  -->
           <v-icon size="small">mdi mdi-image-size-select-actual</v-icon>
-          相册
+          模块封面
         </router-link>
       </div>
       <div class="menus-item">
@@ -86,6 +86,13 @@
         </router-link>
       </div>
       <div class="menus-item">
+        <router-link to="/donation">
+          <!-- <i class="iconfont iconzhifeiji" />  -->
+          <v-icon size="small" style="transform: rotate(-45deg); margin-bottom: 3px; margin-right: 1.5em">mdi mdi-heart</v-icon>
+          打赏
+        </router-link>
+      </div>
+      <div class="menus-item">
         <router-link to="/about">
           <!-- <i class="iconfont iconzhifeiji" />  -->
           <v-icon size="small" style="transform: rotate(-45deg); margin-bottom: 3px; margin-right: 1.5em"
@@ -102,11 +109,17 @@
         </router-link>
       </div>
       <div v-if="!authStore.info" class="menus-item">
-        <!-- <a><i class="iconfont icondenglu" /> 登录 </a> -->
-        <a @click="handleLogin">
+        <a @click="handleLogin('gitee')">
           <!-- <i class="iconfont iconqq" />  -->
-          <v-icon size="small">mdi mdi-qqchat</v-icon>
-          登录
+          <v-icon size="small">mdi mdi-github</v-icon>
+          Gitee登录
+        </a>
+      </div>
+      <div v-if="!authStore.info" class="menus-item">
+        <a @click="handleLogin('github')">
+          <!-- <i class="iconfont iconqq" />  -->
+          <v-icon size="small">mdi mdi-github</v-icon>
+          Github登录
         </a>
       </div>
       <template v-else>
@@ -142,8 +155,8 @@ const authStore = useAuth();
 const { drawer } = storeToRefs(useDrawerSettingStore());
 const appStore = useApp();
 const { blogSetting, info, report } = storeToRefs(appStore);
-const handleLogin = async () => {
-  const { result } = await _oAuthCService.getIpAddress("gitee");
+const handleLogin = async (type: string) => {
+  const { result } = await _oAuthCService.getIpAddress(type);
   location.href = result!;
 };
 const handleLoginOut = () => {

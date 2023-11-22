@@ -81,7 +81,7 @@
               <router-link to="/albums">
                 <!-- <i class="iconfont iconxiangce1" /> -->
                 <v-icon size="small">mdi mdi-image-size-select-actual</v-icon>
-                相册
+                模块封面
               </router-link>
             </li>
             <li>
@@ -94,35 +94,72 @@
           </ul>
         </div>
         <div class="menus-item">
-          <router-link class="menu-btn" to="/links">
-            <!-- <i class="iconfont iconlianjie" />  -->
-            <v-icon size="small">mdi mdi-camera-iris</v-icon>
-            友链
-          </router-link>
-        </div>
-        <div class="menus-item">
-          <router-link class="menu-btn" to="/about">
-            <!-- <i class="iconfont iconzhifeiji" />  -->
-            <v-icon size="small" style="transform: rotate(-45deg); margin-bottom: 3px; margin-right: 0px"
-              >mdi mdi-send-variant</v-icon
-            >
-            关于
-          </router-link>
-        </div>
-        <div class="menus-item">
-          <router-link class="menu-btn" to="/message">
-            <!-- <i class="iconfont iconpinglunzu" />  -->
-            <v-icon size="small">mdi mdi-message-bulleted</v-icon>
-            留言
-          </router-link>
-        </div>
-        <div class="menus-item">
-          <!-- <a class="menu-btn"> <i class="iconfont icondenglu" /> 登录 </a> -->
-          <a v-if="!authStore.info" @click="handleLogin" class="menu-btn">
-            <!-- <i class="iconfont iconqq" />  -->
-            <v-icon size="small">mdi mdi-qqchat</v-icon>
-            登录
+          <a class="menu-btn">
+            <!-- <i class="iconfont iconqita" />  -->
+            <v-icon size="small">mdi mdi-silverware-variant</v-icon>
+            更多
+            <!-- <i class="iconfont iconxiangxia2 expand" /> -->
+            <v-icon>mdi mdi-chevron-down</v-icon>
           </a>
+          <ul class="menus-submenu">
+            <li>
+              <router-link class="menu-btn" to="/about">
+                <!-- <i class="iconfont iconzhifeiji" />  -->
+                <v-icon size="small" style="transform: rotate(-45deg); margin-bottom: 3px; margin-right: 0px"
+                  >mdi mdi-send-variant</v-icon
+                >
+                关于
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/links">
+                <!-- <i class="iconfont iconlianjie" />  -->
+                <v-icon size="small">mdi mdi-camera-iris</v-icon>
+                友链
+              </router-link>
+            </li>
+            <li>
+              <router-link class="menu-btn" to="/message">
+                <!-- <i class="iconfont iconpinglunzu" />  -->
+                <v-icon size="small">mdi mdi-message-bulleted</v-icon>
+                留言
+              </router-link>
+            </li>
+            <li>
+              <router-link class="menu-btn" to="/donation">
+                <!-- <i class="iconfont iconpinglunzu" />  -->
+                <v-icon size="small">mdi mdi-heart</v-icon>
+                打赏
+              </router-link>
+            </li>
+          </ul>
+        </div>
+        <div class="menus-item">
+          <div v-if="!authStore.info">
+            <a class="menu-btn">
+              <!-- <i class="iconfont iconqita" />  -->
+              <v-icon size="small">mdi mdi-login</v-icon>
+              登录
+              <!-- <i class="iconfont iconxiangxia2 expand" /> -->
+              <v-icon>mdi mdi-chevron-down</v-icon>
+            </a>
+            <ul class="menus-submenu">
+              <li>
+                <a v-if="!authStore.info" @click="handleLogin('gitee')" class="menu-btn">
+                  <!-- <i class="iconfont iconqq" />  -->
+                  <v-icon size="small">mdi mdi-gitlab</v-icon>
+                  Gitee
+                </a>
+              </li>
+              <li>
+                <a v-if="!authStore.info" @click="handleLogin('github')" class="menu-btn">
+                  <!-- <i class="iconfont iconqq" />  -->
+                  <v-icon size="small">mdi mdi-github</v-icon>
+                  Github
+                </a>
+              </li>
+            </ul>
+          </div>
 
           <template v-else>
             <img class="user-avatar" :src="info?.avatar!" height="30" width="30" />
@@ -187,8 +224,8 @@ const searchModelHandel = () => {
   vm.isShow = true;
 };
 
-const handleLogin = async () => {
-  await _oAuthCService.getIpAddress("gitee").then((res) => {
+const handleLogin = async (type: string) => {
+  await _oAuthCService.getIpAddress(type).then((res) => {
     location.href = res.result!;
   });
 };

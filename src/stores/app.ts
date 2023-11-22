@@ -18,6 +18,7 @@ export const useApp = defineStore("app", () => {
     covers: {
       home: [] as string[],
       about: [] as string[],
+      donation: [] as string[],
       archives: [] as string[],
       category: [] as string[],
       tag: [] as string[],
@@ -75,6 +76,7 @@ export const useApp = defineStore("app", () => {
         } as any);
       app.covers.home = covers.Home ?? ["/cover/default.jpg"];
       app.covers.about = covers.About ?? ["/cover/about.jpg"];
+      app.covers.donation = covers.Donation ?? ["/cover/about.jpg"];
       app.covers.archives = covers.Archives ?? ["/cover/archives.jpg"];
       app.covers.category = covers.Category ?? ["/cover/category.jpg"];
       app.covers.tag = covers.Tag ?? ["/cover/tag.png"];
@@ -124,6 +126,14 @@ export const useApp = defineStore("app", () => {
     const arr = app.covers.tag;
     return arr[randomNumber(0, arr.length - 1)];
   };
+  /**
+   * 打赏
+   */
+  const donationCover = () => {
+    const arr = app.covers.donation;
+    return arr[randomNumber(0, arr.length - 1)];
+  };
+
   /**
    * 相册
    */
@@ -219,6 +229,7 @@ export const useApp = defineStore("app", () => {
     tagListCover,
     categoriesCover,
     getSiteReport,
+    donationCover,
     isInit,
     info,
     blogSetting,

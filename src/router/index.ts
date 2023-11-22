@@ -119,6 +119,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    name: "donation",
+    path: "/donation",
+    component: () => import("../views/Donation.vue"),
+    meta: {
+      title: "打赏",
+    },
+  },
+  {
     name: "about",
     path: "/about",
     component: () => import("../views/About.vue"),
