@@ -158,7 +158,9 @@ import {
   ReplyOutput,
 } from "@/shared/service-proxies";
 import { useToast } from "@/stores/toast";
+import { useUserStore } from "@/stores/user";
 const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
+const userStore = useUserStore();
 const toast = useToast();
 const props = defineProps<{
   type?: any;
@@ -228,6 +230,10 @@ const addEmoji = (key: string): void => {
 
 //提交评论
 const insertComment = async () => {
+  if (userStore.userInfo == null) {
+    toast.warning("请登录后发表评论哦！！");
+    return;
+  }
   //删除html标签
   const content = formatContent(state.commentContent);
   if (content.length === 0) {
@@ -268,6 +274,10 @@ const replyComment = (index: number, item: any, rootId?: string): void => {
 };
 
 const reloadReply = async (index: number) => {
+  if (userStore.userInfo == null) {
+    toast.warning("请登录后发表评论哦！！");
+    return;
+  }
   const item = reply.value[index].replay;
   const content = formatContent(item.commentContent ?? "");
   if (content.length === 0) {

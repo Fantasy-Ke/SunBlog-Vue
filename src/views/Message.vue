@@ -49,7 +49,7 @@ const addToList = async () => {
     return;
   }
   if (!info.value) {
-    toast.error("请登录后发表留言");
+    toast.warning("请登录后发表留言！！");
     return;
   }
   const { success } = await _commentsCService.add({
