@@ -67,6 +67,7 @@ const viteConfig = ({ mode }: ConfigEnv): UserConfig => {
       cssCodeSplit: false,
       sourcemap: false,
       outDir: VITE_OUT_DIR,
+      assetsDir: "assets",
       emptyOutDir: true,
       chunkSizeWarningLimit: 1500,
       rollupOptions: {
