@@ -58,9 +58,8 @@
         <!-- 回复人 -->
         <div style="display: flex" v-for="reply of item.replyList?.rows ?? []" :key="reply.id">
           <!-- 头像 -->
-          <v-avatar size="36" class="comment-avatar">
-            <img :src="reply.avatar!" />
-          </v-avatar>
+          <v-avatar size="36" class="comment-avatar" :image="reply.avatar!"> </v-avatar>
+          <!-- 头像 -->
           <div class="reply-meta">
             <!-- 用户名 -->
             <div class="comment-user">
