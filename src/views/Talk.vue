@@ -15,7 +15,7 @@
             <v-icon class="user-sign" size="20" color="#ffa51e"> mdi-check-decagram </v-icon>
           </div>
           <!-- 发表时间 -->
-          <div class="time">{{ state.talk.createdTime }}</div>
+          <div class="time">{{ moment(state.talk.createdTime).format("YYYY-MM-DD HH:mm:ss") }}</div>
           <!-- 说说信息 -->
           <div class="talk-content" v-html="state.talk.content" />
           <!-- 图片列表 -->
@@ -58,6 +58,7 @@ import "viewerjs/dist/viewer.css";
 import { CommentsCsServiceProxy, KeyDto, TalkDetailOutput, TalksCsServiceProxy } from "@/shared/service-proxies";
 import { useApp } from "@/stores/app";
 import { storeToRefs } from "pinia";
+import moment from "moment";
 const _commentsCService = new CommentsCsServiceProxy(inject("$baseurl"), inject("$api"));
 const _talksCService = new TalksCsServiceProxy(inject("$baseurl"), inject("$api"));
 const route = useRoute();

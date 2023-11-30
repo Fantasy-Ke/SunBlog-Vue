@@ -17,7 +17,7 @@
             </div>
             <!-- 发表时间 -->
             <div class="time">
-              {{ item.createdTime }}
+              {{ moment(item.createdTime).format("YYYY-MM-DD HH:mm:ss") }}
               <span class="top" v-if="item.isTop"> <i class="iconfont iconzhiding" /> 置顶 </span>
             </div>
             <!-- 说说信息 -->
@@ -57,7 +57,6 @@
         :total-visible="3"
         variant="elevated"
       ></v-pagination>
-      <!-- <v-btn outlined> 加载更多... </v-btn> -->
     </div>
   </v-card>
 </template>
@@ -69,6 +68,7 @@ import "viewerjs/dist/viewer.css";
 import { Pagination, TalksCsServiceProxy, TalksOutput } from "@/shared/service-proxies";
 import { storeToRefs } from "pinia";
 import { useApp } from "@/stores/app";
+import moment from "moment";
 const appStore = useApp();
 const { info } = storeToRefs(appStore);
 const _talksCService = new TalksCsServiceProxy(inject("$baseurl"), inject("$api"));
